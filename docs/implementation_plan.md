@@ -267,11 +267,16 @@
 - **保存先の一貫性**: 解析結果は`results/{profile}/`以下、データは`.pkl`/`.json`、図は`.png`
 - **GPU/メモリ配慮**: `torch.no_grad()`使用、hook使用後は`handle.remove()`で解除
 
-### ステップ7-1: 感情語トークンに強く反応するheadをスクリーニング（未実施）
+### ステップ7-1: 感情語トークンに強く反応するheadをスクリーニング ✅ 完了
 
-**実装ファイル**: `src/analysis/head_screening.py`（新規）
+**実装ファイル**: `src/analysis/head_screening.py` ✅ 実装済み
 
 **目的**: 各層・各headが感情語トークンに対してどれくらい特異的に反応しているかを定量化
+
+**実装状況**:
+- ✅ 実装完了・修正完了・動作確認済み
+- ✅ プロファイル対応済み（`--profile`オプション）
+- ✅ GPT-2で実行完了（`results/baseline/alignment/head_scores_gpt2.json`）
 
 **入力**:
 - モデル名（例: `gpt2`）
@@ -320,11 +325,16 @@ python -m src.analysis.head_screening \
 
 **保存先**: `results/baseline/alignment/head_scores_{model}.json`
 
-### ステップ7-2: Head ablation実験（未実施）
+### ステップ7-2: Head ablation実験 ✅ 実装済み（テスト待ち）
 
-**実装ファイル**: `src/models/head_ablation.py`（新規）
+**実装ファイル**: `src/models/head_ablation.py` ✅ 実装済み
 
 **目的**: 「怪しいhead」をゼロアウトして生成させ、感情トーンやsentimentがどう変わるかを見る
+
+**実装状況**:
+- ✅ コード実装完了
+- ✅ プロファイル対応済み（`--profile`オプション）
+- ⏳ テスト実行待ち
 
 **CLI仕様**:
 ```bash
@@ -363,11 +373,16 @@ python -m src.models.head_ablation \
 
 **保存先**: `results/baseline/patching/head_ablation/`
 
-### ステップ7-3: Head patching実験（未実施）
+### ステップ7-3: Head patching実験 ✅ 実装済み（テスト待ち）
 
-**実装ファイル**: `src/models/head_patching.py`（新規）
+**実装ファイル**: `src/models/head_patching.py` ✅ 実装済み
 
 **目的**: 感謝文のあるhead出力を、中立文に「移植」するSwap Patchingのhead版
+
+**実装状況**:
+- ✅ コード実装完了
+- ✅ プロファイル対応済み（`--profile`オプション）
+- ⏳ テスト実行待ち
 
 **CLI仕様**:
 ```bash
@@ -394,11 +409,16 @@ python -m src.models.head_patching \
 
 **保存先**: `results/baseline/patching/head_patching/`
 
-### ステップ7-4: Head解析結果の可視化（未実施）
+### ステップ7-4: Head解析結果の可視化 ✅ 実装済み（テスト待ち）
 
-**実装ファイル**: `src/visualization/head_plots.py`（新規）
+**実装ファイル**: `src/visualization/head_plots.py` ✅ 実装済み
 
 **目的**: head_screening・head_ablation・head_patchingの結果を可視化
+
+**実装状況**:
+- ✅ コード実装完了
+- ✅ プロファイル対応済み（`--profile`オプション）
+- ⏳ テスト実行待ち
 
 **CLI仕様**:
 ```bash

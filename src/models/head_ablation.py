@@ -85,31 +85,25 @@ class HeadAblator:
         generated_tokens = tokens.clone()
         
         # Ablation用のhook関数を定義
-        def ablation_hook(activation, hook):
-            """指定headの出力をゼロアウト"""
+        # hook_resultの代わりに、hook_vとhook_patternを使ってhead出力を操作
+        def ablation_hook_v(activation, hook):
+            """指定headのVをゼロアウト"""
             layer_idx = int(hook.name.split('.')[1])
             
             # この層でablationするheadがあるかチェック
             for abl_layer, abl_head in ablated_heads:
                 if abl_layer == layer_idx:
-                    # activation shape: [batch, pos, head, d_head] または [batch, head, pos, d_head]
-                    # TransformerLensの形式に合わせて処理
-                    if len(activation.shape) == 4:
-                        # [batch, pos, head, d_head] の場合
-                        activation = activation.clone()
-                        activation[:, :, abl_head, :] = 0.0
-                    elif len(activation.shape) == 4 and activation.shape[1] == self.model.cfg.n_heads:
-                        # [batch, head, pos, d_head] の場合
-                        activation = activation.clone()
-                        activation[:, abl_head, :, :] = 0.0
+                    # activation shape: [batch, pos, head, d_head]
+                    activation = activation.clone()
+                    activation[:, :, abl_head, :] = 0.0
             
             return activation
         
-        # Hookを登録
+        # Hookを登録（hook_vを使用）
         hook_handles = []
         for layer_idx, head_idx in ablated_heads:
-            hook_name = f"blocks.{layer_idx}.attn.hook_result"
-            handle = self.model.add_hook(hook_name, ablation_hook)
+            hook_name = f"blocks.{layer_idx}.attn.hook_v"
+            handle = self.model.add_hook(hook_name, ablation_hook_v)
             hook_handles.append((hook_name, handle))
         
         try:
@@ -294,18 +288,28 @@ class HeadAblator:
 def main():
     """メイン関数"""
     import argparse
+    from src.config.project_profiles import list_profiles
+    from src.utils.project_context import ProjectContext, profile_help_text
     
     parser = argparse.ArgumentParser(description="Head ablation experiment")
     parser.add_argument("--model", type=str, required=True, help="Model name")
     parser.add_argument("--device", type=str, default=None, help="Device (cuda/cpu)")
+    parser.add_argument("--profile", type=str, choices=list_profiles(), default="baseline",
+                        help=f"Dataset profile ({profile_help_text()})")
     parser.add_argument("--head-spec", type=str, required=True, help="Head specification (e.g., '3:5,7:2')")
-    parser.add_argument("--prompts-file", type=str, required=True, help="Prompts file (JSON)")
-    parser.add_argument("--output", type=str, required=True, help="Output file path")
+    parser.add_argument("--prompts-file", type=str, default=None, help="Prompts file (JSON, overrides profile default)")
+    parser.add_argument("--emotion", type=str, default="gratitude", choices=["gratitude", "anger", "apology"],
+                        help="Emotion label for prompts (used when --prompts-file is not specified)")
+    parser.add_argument("--output", type=str, default=None, help="Output file path (overrides profile default)")
     parser.add_argument("--max-tokens", type=int, default=30, help="Maximum tokens to generate")
     parser.add_argument("--temperature", type=float, default=1.0, help="Sampling temperature")
     parser.add_argument("--top-p", type=float, default=0.9, help="Top-p (nucleus) sampling")
     
     args = parser.parse_args()
+    
+    # ProjectContextを使用してパスを解決
+    context = ProjectContext(profile_name=args.profile)
+    results_dir = context.results_dir()
     
     # Head指定をパース
     ablator = HeadAblator(args.model, device=args.device)
@@ -314,8 +318,12 @@ def main():
     if not ablated_heads:
         raise ValueError(f"No valid heads found in spec: {args.head_spec}")
     
-    # プロンプトを読み込み
-    prompts_file = Path(args.prompts_file)
+    # プロンプトファイルを解決
+    if args.prompts_file:
+        prompts_file = Path(args.prompts_file)
+    else:
+        prompts_file = context.prompt_file(args.emotion)
+    
     if not prompts_file.exists():
         raise FileNotFoundError(f"Prompts file not found: {prompts_file}")
     
@@ -334,8 +342,14 @@ def main():
         top_p=args.top_p
     )
     
-    # 結果を保存
-    output_path = Path(args.output)
+    # 出力パスを解決
+    if args.output:
+        output_path = Path(args.output)
+    else:
+        # デフォルト: results/{profile}/patching/head_ablation/{model}_{emotion}_{head_spec}.pkl
+        head_spec_str = args.head_spec.replace(',', '_').replace(':', '')
+        output_path = results_dir / "patching" / "head_ablation" / f"{args.model.replace('/', '_')}_{args.emotion}_{head_spec_str}.pkl"
+    
     output_path.parent.mkdir(parents=True, exist_ok=True)
     
     with open(output_path, 'wb') as f:

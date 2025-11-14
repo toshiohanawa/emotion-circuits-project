@@ -100,8 +100,8 @@ class HeadScreener:
             layer_idx = int(hook.name.split('.')[1])
             # activation shape: [batch, head, query_pos, key_pos]
             batch_size = activation.shape[0]
-            seq_len = activation.shape[2]
             
+            # 各バッチ（通常は1）ごとに処理
             for batch_idx in range(batch_size):
                 for head_idx in range(self.n_heads):
                     # 各headのattentionパターンを保存
@@ -130,7 +130,7 @@ class HeadScreener:
         token_positions_per_prompt = []
         
         with torch.no_grad():
-            for prompt in tqdm(prompts, desc=f"Processing {emotion_label} prompts"):
+            for prompt_idx, prompt in enumerate(tqdm(prompts, desc=f"Processing {emotion_label} prompts")):
                 tokens = self.model.to_tokens(prompt)
                 token_strings = self.model.to_str_tokens(tokens[0])
                 
@@ -138,7 +138,7 @@ class HeadScreener:
                 emotion_positions = self.find_emotion_token_positions(token_strings, emotion_label)
                 token_positions_per_prompt.append(emotion_positions)
                 
-                # Forward
+                # Forward（この時点でhookが呼ばれ、attentionパターンが保存される）
                 _ = self.model(tokens)
         
         # Hookを削除
@@ -174,11 +174,21 @@ class HeadScreener:
         """
         scores = []
         
+        # プロンプト数を確認（emotion_positionsの長さを使用）
+        n_emotion_prompts = len(emotion_positions)
+        n_neutral_prompts = len(neutral_positions)
+        
         for layer_idx in range(self.n_layers):
             for head_idx in range(self.n_heads):
                 # 感情プロンプトでのattentionを集計
                 emotion_attn_values = []
-                for prompt_idx, attn_patterns in enumerate(emotion_attention[layer_idx][head_idx]):
+                emotion_attn_list = emotion_attention[layer_idx][head_idx]
+                
+                # プロンプト数とattentionパターン数の整合性を確認
+                for prompt_idx in range(min(n_emotion_prompts, len(emotion_attn_list))):
+                    if prompt_idx >= len(emotion_positions):
+                        continue
+                    attn_patterns = emotion_attn_list[prompt_idx]
                     positions = emotion_positions[prompt_idx]
                     for pos in positions:
                         if pos < attn_patterns.shape[0]:
@@ -189,7 +199,13 @@ class HeadScreener:
                 
                 # 中立プロンプトでのattentionを集計
                 neutral_attn_values = []
-                for prompt_idx, attn_patterns in enumerate(neutral_attention[layer_idx][head_idx]):
+                neutral_attn_list = neutral_attention[layer_idx][head_idx]
+                
+                # プロンプト数とattentionパターン数の整合性を確認
+                for prompt_idx in range(min(n_neutral_prompts, len(neutral_attn_list))):
+                    if prompt_idx >= len(neutral_positions):
+                        continue
+                    attn_patterns = neutral_attn_list[prompt_idx]
                     positions = neutral_positions[prompt_idx]
                     for pos in positions:
                         if pos < attn_patterns.shape[0]:

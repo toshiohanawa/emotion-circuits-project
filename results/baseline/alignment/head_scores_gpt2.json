@@ -1,0 +1,3463 @@
+{
+  "model": "gpt2",
+  "layers": 12,
+  "heads_per_layer": 12,
+  "scores": [
+    {
+      "layer": 0,
+      "head": 0,
+      "delta_attn": -0.007897213101387024,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 0,
+      "head": 1,
+      "delta_attn": -0.007897213101387024,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 0,
+      "head": 2,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 0,
+      "head": 3,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 0,
+      "head": 4,
+      "delta_attn": -0.007897213101387024,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 0,
+      "head": 5,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 0,
+      "head": 6,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 0,
+      "head": 7,
+      "delta_attn": -0.007897213101387024,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 0,
+      "head": 8,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 0,
+      "head": 9,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 0,
+      "head": 10,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 0,
+      "head": 11,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 1,
+      "head": 0,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 1,
+      "head": 1,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 1,
+      "head": 2,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 1,
+      "head": 3,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 1,
+      "head": 4,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 1,
+      "head": 5,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 1,
+      "head": 6,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 1,
+      "head": 7,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 1,
+      "head": 8,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 1,
+      "head": 9,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 1,
+      "head": 10,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 1,
+      "head": 11,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 2,
+      "head": 0,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 2,
+      "head": 1,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 2,
+      "head": 2,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 2,
+      "head": 3,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 2,
+      "head": 4,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 2,
+      "head": 5,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 2,
+      "head": 6,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 2,
+      "head": 7,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 2,
+      "head": 8,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 2,
+      "head": 9,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 2,
+      "head": 10,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 2,
+      "head": 11,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 3,
+      "head": 0,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 3,
+      "head": 1,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 3,
+      "head": 2,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 3,
+      "head": 3,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 3,
+      "head": 4,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 3,
+      "head": 5,
+      "delta_attn": -0.007897213101387024,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 3,
+      "head": 6,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 3,
+      "head": 7,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 3,
+      "head": 8,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 3,
+      "head": 9,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 3,
+      "head": 10,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 3,
+      "head": 11,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 4,
+      "head": 0,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 4,
+      "head": 1,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 4,
+      "head": 2,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 4,
+      "head": 3,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 4,
+      "head": 4,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 4,
+      "head": 5,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 4,
+      "head": 6,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 4,
+      "head": 7,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 4,
+      "head": 8,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 4,
+      "head": 9,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 4,
+      "head": 10,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 4,
+      "head": 11,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 5,
+      "head": 0,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 5,
+      "head": 1,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 5,
+      "head": 2,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 5,
+      "head": 3,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 5,
+      "head": 4,
+      "delta_attn": -0.007897213101387024,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 5,
+      "head": 5,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 5,
+      "head": 6,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 5,
+      "head": 7,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 5,
+      "head": 8,
+      "delta_attn": -0.007897213101387024,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 5,
+      "head": 9,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 5,
+      "head": 10,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 5,
+      "head": 11,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 6,
+      "head": 0,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 6,
+      "head": 1,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 6,
+      "head": 2,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 6,
+      "head": 3,
+      "delta_attn": -0.007897213101387024,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 6,
+      "head": 4,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 6,
+      "head": 5,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 6,
+      "head": 6,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 6,
+      "head": 7,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 6,
+      "head": 8,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 6,
+      "head": 9,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 6,
+      "head": 10,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 6,
+      "head": 11,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 7,
+      "head": 0,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 7,
+      "head": 1,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 7,
+      "head": 2,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 7,
+      "head": 3,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 7,
+      "head": 4,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 7,
+      "head": 5,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 7,
+      "head": 6,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 7,
+      "head": 7,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 7,
+      "head": 8,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 7,
+      "head": 9,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 7,
+      "head": 10,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 7,
+      "head": 11,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 8,
+      "head": 0,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 8,
+      "head": 1,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 8,
+      "head": 2,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 8,
+      "head": 3,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 8,
+      "head": 4,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 8,
+      "head": 5,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 8,
+      "head": 6,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 8,
+      "head": 7,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 8,
+      "head": 8,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 8,
+      "head": 9,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 8,
+      "head": 10,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 8,
+      "head": 11,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 9,
+      "head": 0,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 9,
+      "head": 1,
+      "delta_attn": -0.007897153496742249,
+      "emotion_mean_attn": 0.1501697599887848,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 9,
+      "head": 2,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 9,
+      "head": 3,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 9,
+      "head": 4,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 9,
+      "head": 5,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 9,
+      "head": 6,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 9,
+      "head": 7,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 9,
+      "head": 8,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 9,
+      "head": 9,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 9,
+      "head": 10,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 9,
+      "head": 11,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 10,
+      "head": 0,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 10,
+      "head": 1,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 10,
+      "head": 2,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 10,
+      "head": 3,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 10,
+      "head": 4,
+      "delta_attn": -0.007897213101387024,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 10,
+      "head": 5,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 10,
+      "head": 6,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 10,
+      "head": 7,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 10,
+      "head": 8,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 10,
+      "head": 9,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 10,
+      "head": 10,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 10,
+      "head": 11,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 11,
+      "head": 0,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 11,
+      "head": 1,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 11,
+      "head": 2,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 11,
+      "head": 3,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697599887848,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 11,
+      "head": 4,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 11,
+      "head": 5,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 11,
+      "head": 6,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 11,
+      "head": 7,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 11,
+      "head": 8,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 11,
+      "head": 9,
+      "delta_attn": -0.007897168397903442,
+      "emotion_mean_attn": 0.1501697450876236,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 11,
+      "head": 10,
+      "delta_attn": -0.007897183299064636,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 11,
+      "head": 11,
+      "delta_attn": -0.00789719820022583,
+      "emotion_mean_attn": 0.1501697301864624,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "gratitude"
+    },
+    {
+      "layer": 0,
+      "head": 0,
+      "delta_attn": -0.015028387308120728,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "anger"
+    },
+    {
+      "layer": 0,
+      "head": 1,
+      "delta_attn": -0.015028387308120728,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "anger"
+    },
+    {
+      "layer": 0,
+      "head": 2,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 0,
+      "head": 3,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 0,
+      "head": 4,
+      "delta_attn": -0.015028387308120728,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "anger"
+    },
+    {
+      "layer": 0,
+      "head": 5,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 0,
+      "head": 6,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 0,
+      "head": 7,
+      "delta_attn": -0.015028387308120728,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "anger"
+    },
+    {
+      "layer": 0,
+      "head": 8,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 0,
+      "head": 9,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 0,
+      "head": 10,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 0,
+      "head": 11,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 1,
+      "head": 0,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 1,
+      "head": 1,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 1,
+      "head": 2,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 1,
+      "head": 3,
+      "delta_attn": -0.015028387308120728,
+      "emotion_mean_attn": 0.1430385410785675,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 1,
+      "head": 4,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 1,
+      "head": 5,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 1,
+      "head": 6,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 1,
+      "head": 7,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 1,
+      "head": 8,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 1,
+      "head": 9,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 1,
+      "head": 10,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385410785675,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 1,
+      "head": 11,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 2,
+      "head": 0,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 2,
+      "head": 1,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 2,
+      "head": 2,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 2,
+      "head": 3,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 2,
+      "head": 4,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 2,
+      "head": 5,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 2,
+      "head": 6,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 2,
+      "head": 7,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 2,
+      "head": 8,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 2,
+      "head": 9,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 2,
+      "head": 10,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 2,
+      "head": 11,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 3,
+      "head": 0,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 3,
+      "head": 1,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385410785675,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 3,
+      "head": 2,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 3,
+      "head": 3,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 3,
+      "head": 4,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 3,
+      "head": 5,
+      "delta_attn": -0.015028387308120728,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "anger"
+    },
+    {
+      "layer": 3,
+      "head": 6,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 3,
+      "head": 7,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 3,
+      "head": 8,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 3,
+      "head": 9,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385410785675,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 3,
+      "head": 10,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385410785675,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 3,
+      "head": 11,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 4,
+      "head": 0,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 4,
+      "head": 1,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 4,
+      "head": 2,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 4,
+      "head": 3,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 4,
+      "head": 4,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 4,
+      "head": 5,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 4,
+      "head": 6,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 4,
+      "head": 7,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 4,
+      "head": 8,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 4,
+      "head": 9,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 4,
+      "head": 10,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 4,
+      "head": 11,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 5,
+      "head": 0,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 5,
+      "head": 1,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 5,
+      "head": 2,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 5,
+      "head": 3,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 5,
+      "head": 4,
+      "delta_attn": -0.015028387308120728,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "anger"
+    },
+    {
+      "layer": 5,
+      "head": 5,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 5,
+      "head": 6,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 5,
+      "head": 7,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 5,
+      "head": 8,
+      "delta_attn": -0.015028387308120728,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "anger"
+    },
+    {
+      "layer": 5,
+      "head": 9,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 5,
+      "head": 10,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 5,
+      "head": 11,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 6,
+      "head": 0,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 6,
+      "head": 1,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 6,
+      "head": 2,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 6,
+      "head": 3,
+      "delta_attn": -0.015028387308120728,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "anger"
+    },
+    {
+      "layer": 6,
+      "head": 4,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 6,
+      "head": 5,
+      "delta_attn": -0.015028387308120728,
+      "emotion_mean_attn": 0.1430385410785675,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 6,
+      "head": 6,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 6,
+      "head": 7,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 6,
+      "head": 8,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 6,
+      "head": 9,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 6,
+      "head": 10,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 6,
+      "head": 11,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 7,
+      "head": 0,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 7,
+      "head": 1,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 7,
+      "head": 2,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 7,
+      "head": 3,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 7,
+      "head": 4,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 7,
+      "head": 5,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 7,
+      "head": 6,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 7,
+      "head": 7,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 7,
+      "head": 8,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 7,
+      "head": 9,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 7,
+      "head": 10,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 7,
+      "head": 11,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 8,
+      "head": 0,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 8,
+      "head": 1,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 8,
+      "head": 2,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 8,
+      "head": 3,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 8,
+      "head": 4,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 8,
+      "head": 5,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385410785675,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 8,
+      "head": 6,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 8,
+      "head": 7,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 8,
+      "head": 8,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 8,
+      "head": 9,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 8,
+      "head": 10,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 8,
+      "head": 11,
+      "delta_attn": -0.015028387308120728,
+      "emotion_mean_attn": 0.1430385410785675,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 9,
+      "head": 0,
+      "delta_attn": -0.015028387308120728,
+      "emotion_mean_attn": 0.1430385410785675,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 9,
+      "head": 1,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 9,
+      "head": 2,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 9,
+      "head": 3,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 9,
+      "head": 4,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 9,
+      "head": 5,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 9,
+      "head": 6,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 9,
+      "head": 7,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 9,
+      "head": 8,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 9,
+      "head": 9,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 9,
+      "head": 10,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 9,
+      "head": 11,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 10,
+      "head": 0,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 10,
+      "head": 1,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 10,
+      "head": 2,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 10,
+      "head": 3,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 10,
+      "head": 4,
+      "delta_attn": -0.015028387308120728,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "anger"
+    },
+    {
+      "layer": 10,
+      "head": 5,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 10,
+      "head": 6,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 10,
+      "head": 7,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 10,
+      "head": 8,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 10,
+      "head": 9,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 10,
+      "head": 10,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 10,
+      "head": 11,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 11,
+      "head": 0,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 11,
+      "head": 1,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 11,
+      "head": 2,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 11,
+      "head": 3,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 11,
+      "head": 4,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 11,
+      "head": 5,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 11,
+      "head": 6,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 11,
+      "head": 7,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 11,
+      "head": 8,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 11,
+      "head": 9,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 11,
+      "head": 10,
+      "delta_attn": -0.01502835750579834,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "anger"
+    },
+    {
+      "layer": 11,
+      "head": 11,
+      "delta_attn": -0.015028372406959534,
+      "emotion_mean_attn": 0.1430385559797287,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "anger"
+    },
+    {
+      "layer": 0,
+      "head": 0,
+      "delta_attn": -0.025819480419158936,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "apology"
+    },
+    {
+      "layer": 0,
+      "head": 1,
+      "delta_attn": -0.025819480419158936,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "apology"
+    },
+    {
+      "layer": 0,
+      "head": 2,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 0,
+      "head": 3,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 0,
+      "head": 4,
+      "delta_attn": -0.025819480419158936,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "apology"
+    },
+    {
+      "layer": 0,
+      "head": 5,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 0,
+      "head": 6,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 0,
+      "head": 7,
+      "delta_attn": -0.025819480419158936,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "apology"
+    },
+    {
+      "layer": 0,
+      "head": 8,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 0,
+      "head": 9,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 0,
+      "head": 10,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 0,
+      "head": 11,
+      "delta_attn": -0.025819435715675354,
+      "emotion_mean_attn": 0.13224747776985168,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 1,
+      "head": 0,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 1,
+      "head": 1,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 1,
+      "head": 2,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 1,
+      "head": 3,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 1,
+      "head": 4,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 1,
+      "head": 5,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 1,
+      "head": 6,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 1,
+      "head": 7,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 1,
+      "head": 8,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 1,
+      "head": 9,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 1,
+      "head": 10,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 1,
+      "head": 11,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 2,
+      "head": 0,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 2,
+      "head": 1,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 2,
+      "head": 2,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 2,
+      "head": 3,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 2,
+      "head": 4,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 2,
+      "head": 5,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 2,
+      "head": 6,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 2,
+      "head": 7,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 2,
+      "head": 8,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 2,
+      "head": 9,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 2,
+      "head": 10,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 2,
+      "head": 11,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 3,
+      "head": 0,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 3,
+      "head": 1,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 3,
+      "head": 2,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 3,
+      "head": 3,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 3,
+      "head": 4,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 3,
+      "head": 5,
+      "delta_attn": -0.025819480419158936,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "apology"
+    },
+    {
+      "layer": 3,
+      "head": 6,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 3,
+      "head": 7,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 3,
+      "head": 8,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 3,
+      "head": 9,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 3,
+      "head": 10,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 3,
+      "head": 11,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 4,
+      "head": 0,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 4,
+      "head": 1,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 4,
+      "head": 2,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 4,
+      "head": 3,
+      "delta_attn": -0.025819435715675354,
+      "emotion_mean_attn": 0.13224747776985168,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 4,
+      "head": 4,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 4,
+      "head": 5,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 4,
+      "head": 6,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 4,
+      "head": 7,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 4,
+      "head": 8,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 4,
+      "head": 9,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 4,
+      "head": 10,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 4,
+      "head": 11,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 5,
+      "head": 0,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 5,
+      "head": 1,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 5,
+      "head": 2,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 5,
+      "head": 3,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 5,
+      "head": 4,
+      "delta_attn": -0.025819480419158936,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "apology"
+    },
+    {
+      "layer": 5,
+      "head": 5,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 5,
+      "head": 6,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 5,
+      "head": 7,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 5,
+      "head": 8,
+      "delta_attn": -0.025819480419158936,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "apology"
+    },
+    {
+      "layer": 5,
+      "head": 9,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 5,
+      "head": 10,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 5,
+      "head": 11,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 6,
+      "head": 0,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.13224747776985168,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 6,
+      "head": 1,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 6,
+      "head": 2,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 6,
+      "head": 3,
+      "delta_attn": -0.025819480419158936,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "apology"
+    },
+    {
+      "layer": 6,
+      "head": 4,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 6,
+      "head": 5,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 6,
+      "head": 6,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 6,
+      "head": 7,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 6,
+      "head": 8,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 6,
+      "head": 9,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 6,
+      "head": 10,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 6,
+      "head": 11,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 7,
+      "head": 0,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 7,
+      "head": 1,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 7,
+      "head": 2,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 7,
+      "head": 3,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 7,
+      "head": 4,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 7,
+      "head": 5,
+      "delta_attn": -0.025819435715675354,
+      "emotion_mean_attn": 0.13224747776985168,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 7,
+      "head": 6,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 7,
+      "head": 7,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 7,
+      "head": 8,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 7,
+      "head": 9,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 7,
+      "head": 10,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 7,
+      "head": 11,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 8,
+      "head": 0,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 8,
+      "head": 1,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 8,
+      "head": 2,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.13224747776985168,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 8,
+      "head": 3,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 8,
+      "head": 4,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 8,
+      "head": 5,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 8,
+      "head": 6,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 8,
+      "head": 7,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 8,
+      "head": 8,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 8,
+      "head": 9,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 8,
+      "head": 10,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 8,
+      "head": 11,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 9,
+      "head": 0,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 9,
+      "head": 1,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 9,
+      "head": 2,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 9,
+      "head": 3,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 9,
+      "head": 4,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 9,
+      "head": 5,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 9,
+      "head": 6,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 9,
+      "head": 7,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 9,
+      "head": 8,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 9,
+      "head": 9,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 9,
+      "head": 10,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 9,
+      "head": 11,
+      "delta_attn": -0.025819435715675354,
+      "emotion_mean_attn": 0.13224747776985168,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 10,
+      "head": 0,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 10,
+      "head": 1,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 10,
+      "head": 2,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 10,
+      "head": 3,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 10,
+      "head": 4,
+      "delta_attn": -0.025819480419158936,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806694328784943,
+      "emotion": "apology"
+    },
+    {
+      "layer": 10,
+      "head": 5,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 10,
+      "head": 6,
+      "delta_attn": -0.025819435715675354,
+      "emotion_mean_attn": 0.13224747776985168,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 10,
+      "head": 7,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 10,
+      "head": 8,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 10,
+      "head": 9,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 10,
+      "head": 10,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 10,
+      "head": 11,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 11,
+      "head": 0,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 11,
+      "head": 1,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 11,
+      "head": 2,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 11,
+      "head": 3,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 11,
+      "head": 4,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 11,
+      "head": 5,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 11,
+      "head": 6,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    },
+    {
+      "layer": 11,
+      "head": 7,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 11,
+      "head": 8,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 11,
+      "head": 9,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 11,
+      "head": 10,
+      "delta_attn": -0.025819450616836548,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806691348552704,
+      "emotion": "apology"
+    },
+    {
+      "layer": 11,
+      "head": 11,
+      "delta_attn": -0.02581946551799774,
+      "emotion_mean_attn": 0.1322474628686905,
+      "neutral_mean_attn": 0.15806692838668823,
+      "emotion": "apology"
+    }
+  ]
+}

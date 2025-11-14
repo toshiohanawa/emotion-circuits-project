@@ -49,8 +49,10 @@ def extract_activations_for_model_emotion(
     start_time = time.time()
     
     # 活性抽出を実行
+    import sys
+    python_exec = sys.executable
     cmd = [
-        "python", "-m", "src.models.extract_activations",
+        python_exec, "-m", "src.models.extract_activations",
         "--model", model,
         "--dataset", str(dataset_path),
         "--output", str(output_dir),

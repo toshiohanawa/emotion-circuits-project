@@ -227,19 +227,38 @@ def plot_top_heads(
 def main():
     """メイン関数"""
     import argparse
+    from src.config.project_profiles import list_profiles
+    from src.utils.project_context import ProjectContext, profile_help_text
     
     parser = argparse.ArgumentParser(description="Visualize head analysis results")
-    parser.add_argument("--head-scores", type=str, default=None, help="Head scores file (JSON)")
+    parser.add_argument("--profile", type=str, choices=list_profiles(), default="baseline",
+                        help=f"Dataset profile ({profile_help_text()})")
+    parser.add_argument("--head-scores", type=str, default=None, help="Head scores file (JSON, overrides profile default)")
     parser.add_argument("--ablation-file", type=str, default=None, help="Head ablation results file (pkl)")
     parser.add_argument("--patching-file", type=str, default=None, help="Head patching results file (pkl)")
-    parser.add_argument("--output-dir", type=str, required=True, help="Output directory")
+    parser.add_argument("--output-dir", type=str, default=None, help="Output directory (overrides profile default)")
     parser.add_argument("--emotion", type=str, default=None, choices=['gratitude', 'anger', 'apology'], help="Filter by emotion")
     parser.add_argument("--top-n", type=int, default=20, help="Number of top heads to display")
     
     args = parser.parse_args()
     
-    output_dir = Path(args.output_dir)
+    # ProjectContextを使用してパスを解決
+    context = ProjectContext(profile_name=args.profile)
+    results_dir = context.results_dir()
+    
+    # 出力ディレクトリを解決
+    if args.output_dir:
+        output_dir = Path(args.output_dir)
+    else:
+        output_dir = results_dir / "plots" / "heads"
+    
     output_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Head scoresファイルのデフォルトパスを設定
+    if not args.head_scores:
+        # デフォルト: results/{profile}/alignment/head_scores_{model}.json
+        # モデル名は推測できないので、ユーザーに指定してもらう必要がある
+        pass
     
     # Head scoresの可視化
     if args.head_scores:
