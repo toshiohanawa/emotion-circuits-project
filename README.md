@@ -130,20 +130,21 @@ emotion-circuits-project/
 │   ├── phase3.5_and_4light_report.md  # Phase 3.5/4 Lightレポート
 │   ├── phase5_report.md       # Phase 5レポート
 │   └── phase6_expansion_report.md     # Phase 6レポート
-├── notebooks/                 # Jupyterノートブック
+├── notebooks/                 # Jupyterノートブック（Gitに追跡）
 ├── results/                   # 実験結果
-│   ├── activations/           # 抽出した活性データ
+│   ├── activations/           # 抽出した活性データ（*.pklはGit除外）
 │   │   ├── gpt2/
 │   │   ├── pythia-160m/
 │   │   └── gpt-neo-125m/
-│   ├── emotion_vectors/       # 感情方向ベクトル
-│   ├── subspaces/             # サブスペースデータ
-│   ├── patching/              # Patching実験結果
-│   ├── alignment/             # アライメント実験結果
-│   │   ├── linear_maps/       # 線形写像
-│   │   └── *.json, *.pkl     # 実験結果
-│   ├── evaluation/            # 評価結果
-│   └── plots/                 # 可視化結果
+│   ├── emotion_vectors/       # 感情方向ベクトル（*.pklはGit除外）
+│   ├── emotion_subspaces/     # サブスペースデータ（*.pklはGit除外）
+│   ├── subspaces/             # サブスペースデータ（*.pklはGit除外）
+│   ├── patching/              # Patching実験結果（*.pklはGit除外）
+│   ├── alignment/             # アライメント実験結果（*.pkl, *.ptはGit除外）
+│   │   ├── linear_maps/       # 線形写像（*.ptはGit除外）
+│   │   └── *.json, *.pkl     # 実験結果（*.pklはGit除外）
+│   ├── evaluation/            # 評価結果（*.pklはGit除外）
+│   └── plots/                 # 可視化結果（Gitに追跡）
 │       ├── cross_model/
 │       ├── k_sweep/
 │       ├── alignment/
@@ -313,12 +314,14 @@ python -m src.visualization.alignment_plots \
 
 実験結果は`results/`以下に保存されます：
 
-- **活性データ**: `results/activations/{model_name}/activations_{emotion}.pkl`
-- **感情ベクトル**: `results/emotion_vectors/{model}_vectors.pkl`
-- **サブスペース**: `results/subspaces/{model}_subspaces.pkl`
-- **アライメント結果**: `results/alignment/*.pkl`, `results/alignment/*.json`
-- **Patching結果**: `results/patching/*.pkl`
-- **可視化**: `results/plots/**/*.png`
+- **活性データ**: `results/activations/{model_name}/activations_{emotion}.pkl`（各ファイル20-30MB）
+- **感情ベクトル**: `results/emotion_vectors/{model}_vectors.pkl`（各ファイル約100KB）
+- **サブスペース**: `results/emotion_subspaces/{model}_subspaces.pkl`（各ファイル約1.5MB）
+- **アライメント結果**: `results/alignment/*.pkl`, `results/alignment/*.json`（数MB〜数十MB）
+- **Patching結果**: `results/patching/*.pkl`（数百KB〜数MB）
+- **可視化**: `results/plots/**/*.png`（Gitに追跡されます）
+
+**注意**: `.gitignore`により、大きなデータファイル（`.pkl`, `.pt`）はGitに追跡されません。実験結果はローカルに保存され、必要に応じて手動でバックアップしてください。
 
 ## トラブルシューティング
 
@@ -338,6 +341,21 @@ python -m src.visualization.alignment_plots \
 
 - `results/`ディレクトリが存在することを確認
 - 必要な親ディレクトリを作成（スクリプトが自動作成する場合もあります）
+
+### Gitリポジトリの管理
+
+**大きなファイルについて**:
+- 実験結果ファイル（`.pkl`, `.pt`）は`.gitignore`によりGitに追跡されません
+- これにより、リポジトリのサイズを小さく保ちます
+- 実験結果はローカルに保存され、必要に応じて手動でバックアップしてください
+
+**既にGitに追跡されている大きなファイルを削除する場合**:
+```bash
+git rm --cached results/**/*.pkl results/**/*.pt 2>/dev/null || true
+git commit -m "Remove large data files from Git tracking"
+```
+
+詳細は[`SETUP.md`](SETUP.md)の「Gitリポジトリの管理」セクションを参照してください。
 
 ## プロジェクト統計
 

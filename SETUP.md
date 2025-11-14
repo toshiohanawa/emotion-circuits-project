@@ -89,6 +89,12 @@ python -m src.models.extract_activations --help
 
 `results/`ディレクトリには実験結果が保存されます。初回実行時は空です。
 
+**重要な注意事項**:
+- 実験結果ファイル（`.pkl`, `.pt`など）は非常に大きくなる可能性があります（数MB〜数十MB）
+- `.gitignore`により、これらの大きなファイルはGitに追跡されません
+- 実験結果はローカルに保存され、必要に応じて手動でバックアップしてください
+- `results/plots/`配下の可視化結果（`.png`など）はGitに追跡されます
+
 ## 実行例
 
 ### 最小限の実行例（GPT-2 smallのみ）
@@ -162,6 +168,38 @@ pip install -e .
 ```bash
 # 必要なディレクトリを作成
 mkdir -p results/{activations,emotion_vectors,subspaces,patching,alignment,evaluation,plots}
+```
+
+## Gitリポジトリの管理
+
+### `.gitignore`について
+
+プロジェクトの`.gitignore`は以下のファイル/ディレクトリを除外します：
+
+- **大きなデータファイル**: `results/**/*.pkl`, `results/**/*.pt`（実験結果）
+- **モデルファイル**: `/models/`（ダウンロードしたモデル）
+- **仮想環境**: `.venv/`, `venv/`
+- **キャッシュ**: `__pycache__/`, `.pytest_cache/`, `.mypy_cache/`
+- **ML/AIフレームワーク**: `wandb/`, `mlruns/`, `*.pt`, `*.onnx`
+- **IDE設定**: `.vscode/`, `.idea/`, `.cursor/`
+
+**追跡されるもの**:
+- ソースコード（`src/`配下）
+- ドキュメント（`docs/`配下）
+- 設定ファイル（`pyproject.toml`, `requirements.txt`など）
+- プロンプトデータ（`data/`配下のJSONファイル）
+- 可視化結果（`results/plots/`配下の`.png`など）
+
+### 既にGitに追跡されている大きなファイルの削除
+
+もし過去に大きなファイルがGitに追加されてしまった場合、以下のコマンドでGitの追跡から削除できます（ファイル自体は残ります）：
+
+```bash
+# すべての大きなファイルをGitの追跡から削除
+git rm --cached results/**/*.pkl results/**/*.pt 2>/dev/null || true
+
+# 変更をコミット
+git commit -m "Remove large data files from Git tracking"
 ```
 
 ## 環境変数（オプション）
