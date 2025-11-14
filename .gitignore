@@ -30,6 +30,9 @@ env/
 # Jupyter Notebook
 .ipynb_checkpoints
 *.ipynb
+# Allow notebooks/ directory (source code)
+!notebooks/
+!notebooks/*.ipynb
 
 # IDE
 .vscode/
@@ -42,17 +45,19 @@ env/
 .DS_Store
 Thumbs.db
 
-# Project specific
-results/activations/*.pkl
-results/emotion_vectors/*.pkl
-results/subspaces/*.pkl
-results/patching/*.pkl
-results/evaluation/*.pkl
-results/alignment/*.pkl
-results/alignment/linear_maps/*.pt
+# Project specific - exclude all large data files
+results/activations/**/*.pkl
+results/emotion_vectors/**/*.pkl
+results/emotion_subspaces/**/*.pkl
+results/subspaces/**/*.pkl
+results/patching/**/*.pkl
+results/evaluation/**/*.pkl
+results/alignment/**/*.pkl
+results/alignment/**/*.pt
 # Keep directory structure but ignore large data files
 !results/activations/.gitkeep
 !results/emotion_vectors/.gitkeep
+!results/emotion_subspaces/.gitkeep
 !results/subspaces/.gitkeep
 !results/patching/.gitkeep
 !results/evaluation/.gitkeep
@@ -61,9 +66,11 @@ results/alignment/linear_maps/*.pt
 
 # Model cache (HuggingFace)
 .cache/
-models/
+/models/
 *.bin
 *.safetensors
+# Allow src/models/ (source code)
+!src/models/
 
 # Logs
 *.log
@@ -81,4 +88,21 @@ logs/
 # Environment variables
 .env
 .env.local
+
+# Testing and coverage
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# ML/AI frameworks
+wandb/
+mlruns/
+*.pt
+*.onnx
+
+# Cursor IDE
+.cursor/
 
