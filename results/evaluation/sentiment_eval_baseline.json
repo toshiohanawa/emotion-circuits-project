@@ -1,0 +1,702 @@
+[
+  {
+    "text": "<|endoftext|> The  weather  today  is  no  stranger  to  storms  in  Philadelphia . \n \n Update :  # Gov Pat ts  issued  this  story  during  a  \" beaut iful  weather  report  for  the  top - five",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 1,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.021760839968919754,
+      "POSITIVE": 0.978239119052887
+    },
+    "prompt": "The weather today is",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> I  need  to  check  in  with  M ys pace : \n \n https :// m ys pace . com / arts / f res no / space / \n \n I 'm  looking  for",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9950045943260193,
+      "POSITIVE": 0.004995439667254686
+    },
+    "prompt": "I need to check",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> Can  you  help  me  with  the  construction  of  my  of ga ? \n \n I  thought  it  might  be  your  go  to  for  a  loan . \n \n Where  I  am  now ,  my  loan",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9942342638969421,
+      "POSITIVE": 0.005765746347606182
+    },
+    "prompt": "Can you help me with",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> What  is  the  best  way  to  get  money  out  of  your  passport ?  Credit  cards  or  death  threats  can  help . \n \n But  the  best  way  to  get  money  out  of  your  passport  is  to",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.998651921749115,
+      "POSITIVE": 0.001348098972812295
+    },
+    "prompt": "What is the best way to",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> I  would  like  to  know  about  the  reasons  the  factions  are  following  this  performance  set .  For  me ,  this  means  it 's  all  about  friends .  Who  was  the  best  t ester ,  who  reached",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.0011252890108153224,
+      "POSITIVE": 0.9988747239112854
+    },
+    "prompt": "I would like to know about",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> Please  tell  me  when  it 's  time  to  head  to  work ,  and  when  the  train  is .  I  don 't  know  what  the  worst  form  of  City  of  Inc ogn ito  is",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9996329545974731,
+      "POSITIVE": 0.0003670214209705591
+    },
+    "prompt": "Please tell me",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> I 'm  working  on  a  smart  lightweight  script  that  makes  as  little  as  possible  from  the  box  you  use .  When  you 're  sending  all  your  code  to  a  common  folder ,  like  /",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.02123180963099003,
+      "POSITIVE": 0.9787681698799133
+    },
+    "prompt": "I'm working on",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> Let  me  review  first .  Suppose  a  gang ster  had  terror ized  the  island  and  so  used  his  run  on  the  mayor  to  rebuild  the  reputation  of  his  \" family \"  of  crime",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9964117407798767,
+      "POSITIVE": 0.003588317194953561
+    },
+    "prompt": "Let me review",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> The  meeting  is  scheduled  for  Thursday ,  Feb .  13 .  It 'll  be  one  of  the  most  spectacular  moments  of  Vermont 's  student  government  since  its  founding ,  and  the  setting  has  been  among",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.0004152656765654683,
+      "POSITIVE": 0.9995847344398499
+    },
+    "prompt": "The meeting is scheduled for",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> I 'll  get  back  to  you  about  this  three  days  from  now .  First ,  here 's  what  you  can  do . \n \n You  can  check  in  with  your  early  sign ups  for  more  of  my",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.20195788145065308,
+      "POSITIVE": 0.7980420589447021
+    },
+    "prompt": "I'll get back to you about",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> The  project  deadline  is  at  midnight  EDT .  We  are  simply  getting  ready  for  war !  The  clock  is  ticking  on  his  RE E I .  Now  let 's  follow  the  lead  of  the",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9909857511520386,
+      "POSITIVE": 0.009014314971864223
+    },
+    "prompt": "The project deadline is",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> I  have  a  question  about  how  exactly  I  will  communicate  this  to  my  visitors  to  the  Mos he  P ache co  Convention  Center . \n \n How  can  I  be  sure  that  my  visitors  want",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.16011330485343933,
+      "POSITIVE": 0.8398867249488831
+    },
+    "prompt": "I have a question about",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> Could  you  provide  information  on  how  you  got  involved  and  are  involved  in  behalf  of  the  girl  you  love  or  knows  in  this  breaking  news  story ?  Submit  a  tip  below ! \n \n HOU",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9941273927688599,
+      "POSITIVE": 0.005872633308172226
+    },
+    "prompt": "Could you provide information on",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> The  document  contains  detailed  information  about  the  weaknesses ,  vulnerabilities  and  enhancements  to  the  IT  B GP .  The  document  will  guide  you  through  a  general  outline  of  the  problem ( s )",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.004015747923403978,
+      "POSITIVE": 0.9959843158721924
+    },
+    "prompt": "The document contains",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> I 'm  looking  for  what  you  have  been  doing  to  make  your  platform  better . \n \n When  engaging  with  changing  your  forum  postings ,  make  sure  you  consistently  keep  posting  and  updating .",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.13797657191753387,
+      "POSITIVE": 0.8620234727859497
+    },
+    "prompt": "I'm looking for",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> The  system  requires ,  among  other  things ,  six  or  seven  hours  of  travel  time  before  you  can  get  to  some  of  the  above  countries ,  allowing  airlines  to  only  attempt  to  do",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9968670010566711,
+      "POSITIVE": 0.0031329572666436434
+    },
+    "prompt": "The system requires",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> Let  me  check  the  details  of  these  fights  and  which  are  up  for  grabs  on  the  Sports book . \n \n W AM U  vs .  Navy :  \" B reath \"  battle  between  the",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9978858828544617,
+      "POSITIVE": 0.002114116447046399
+    },
+    "prompt": "Let me check the details",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> The  report  shows  three  of  the  top  five  non - profit  organizations  \u2013  the  American  Lung  Association ,  New  York 's  Athe ist  Society ,  and  New  York  Presbyterian  Hospital  \u2013  have  a",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.006474296096712351,
+      "POSITIVE": 0.9935257434844971
+    },
+    "prompt": "The report shows",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> I  need  to  understand  things  through  my  own  perspective  and  other 's .  I 'd  love  to  respond  by  asking  why  he  forgot  to  explain  to  me  why ,  I  think  he 'll  like",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.04791639745235443,
+      "POSITIVE": 0.9520836472511292
+    },
+    "prompt": "I need to understand",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> The  data  indicates  that  there  have  been  increased  three fold  increases  in  alcohol  content  ( 12 - 15 mg  alcohol / kg  body  weight )  following  a  12 - hour  session  of  alcohol",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9697731137275696,
+      "POSITIVE": 0.030226927250623703
+    },
+    "prompt": "The data indicates",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> Please  consider  becoming  a  Patron  and  tell  us  what  you  think  about  the  Patreon . \n\n \n The  Portal  is  undergoing  major  changes  to  keep  up  with  the  ner fs  and  changes",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.00715506449341774,
+      "POSITIVE": 0.9928448796272278
+    },
+    "prompt": "Please consider",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> The  analysis  reveals  that  there  is  a  lack  of  altru ism  in  institutions ,  such  as  governmental  agencies ,  free  markets ,  and  corporate  politics ,  and  its  ethics  is  never  explained  by",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9980261921882629,
+      "POSITIVE": 0.001973782666027546
+    },
+    "prompt": "The analysis reveals",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> I  want  to  discuss  two  items  associated  with  the  D MD SA :  the  True  IA  and  the  Enc ryption  by  Value  Principle .  True  IA  is  the  standard  whereby  an  unt race able",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9077755808830261,
+      "POSITIVE": 0.09222446382045746
+    },
+    "prompt": "I want to discuss",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> The  results  suggest  that  twins  are  unlikely  to  be  common  in  the  United  States  for  seven  or  more  consecutive  years .  The  researchers  note  that  in  January  2016 ,  there  were  8 93",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9809853434562683,
+      "POSITIVE": 0.019014647230505943
+    },
+    "prompt": "The results suggest",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> Let  me  explain . \n \n At  first ,  it  might  seem  counter intuitive .  \" I 'm  going  to  let  you  take  this ,\"  because  I  want  you  to  take  it  from",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.011566546745598316,
+      "POSITIVE": 0.9884334206581116
+    },
+    "prompt": "Let me explain",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> The  process  involves  a  p ung ent  presence  of  parasites  that  the  end ocrine  system  may  have  come  to  a  complete  halt  through  exposure  to  pesticides ,  hormones  and  arsenic  in  their  human",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9995493292808533,
+      "POSITIVE": 0.0004506883560679853
+    },
+    "prompt": "The process involves",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> I 'm  interested  in  hearing  any  questions  you  might  have ,  and  while  I  may  have  been  giving  up  when  you  told  me  about  it ,  I 'll  let  you  know  if  anything  gets",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.010190135799348354,
+      "POSITIVE": 0.9898098707199097
+    },
+    "prompt": "I'm interested in",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> The  information  shows  very  slight  increases  in  the  economic  value  of  the  Cuba  exchange  rate  compared  with  the  US  dollar  at  the  time  of  the  reversal .  The  Trump  company  had  more  profits",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9564721584320068,
+      "POSITIVE": 0.04352780058979988
+    },
+    "prompt": "The information shows",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> Please  review  the  mission  statement : \n \n Our  mission  has  been  to  bring  the  issues  of  inequality  and  diversity  of  power ,  power  that  has  increased  human  flourishing  and  technological  change",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.003173500532284379,
+      "POSITIVE": 0.9968265295028687
+    },
+    "prompt": "Please review",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> The  task  requires  more  than  just  physical  strength  and  endurance .  By  finishing  at  least  100  mar ath ons  a  year ,  athletes  may  need  to  train  to  overcome  specific  challenges . \n",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.8852704763412476,
+      "POSITIVE": 0.11472951620817184
+    },
+    "prompt": "The task requires",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> I  need  to  verify  that  this  is  indeed  done ;  instead  of  an  error  message ,  this  has  been  converted  to  the  actual  path ,  which  is  two  zones  from  the  second  one .",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9932153224945068,
+      "POSITIVE": 0.006784672848880291
+    },
+    "prompt": "I need to verify",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> The  solution  involves  subtract ing  the  number  of  squares  and  dividing  them  by  the  number  of  pairs  in  your  PS 1  controller .  The  dots  in  the  video  below  are  not  rounded :",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9994282126426697,
+      "POSITIVE": 0.0005718120373785496
+    },
+    "prompt": "The solution involves",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> Let  me  clarify  a  little  about  some  of  the  things  I  know  about  the  Rod olf o  Bos ch  cartridge .  It  was  first  introduced  in  1975  and  the  an ci ently  utilized",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.41962340474128723,
+      "POSITIVE": 0.5803765058517456
+    },
+    "prompt": "Let me clarify",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> The  approach  includes  focusing  only  on  your  customer - facing  content .  Second ,  we 'll  manage  your  customers '  data :  Content  across  companies ,  sites ,  and  apps  \u2014  from  product",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9786964654922485,
+      "POSITIVE": 0.021303540095686913
+    },
+    "prompt": "The approach includes",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> I 'm  trying  to  write  this  to  say  that  writing  long  statements  and  prov able  explanations  is  just  as  crucial  as  writing  the  real  truth .  The  way  this  is  done ,  it  doesn",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9337874054908752,
+      "POSITIVE": 0.06621264666318893
+    },
+    "prompt": "I'm trying to",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> The  method  consists  of  scheduling  an  inactive  meeting  by  email ing  the  following : \n \n email \n \n mail \n \n # 7 . \n \n The  meeting  will  be  made  at  6",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 1,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.998036801815033,
+      "POSITIVE": 0.0019631790928542614
+    },
+    "prompt": "The method consists of",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> Please  confirm  your  email  address . <|endoftext|> Indust ry 's  \" Control  Room \"  \u2013  a  small  venue  opened  in  2011  \u2013  has  been  raided  by  police  and  charged  with  intimidation  of",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9961584210395813,
+      "POSITIVE": 0.0038416150491684675
+    },
+    "prompt": "Please confirm",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> The  system  operates  using  a  manual  on - board  serv o  set - up .  The  name  is  generally  User  Switch  or  SD M ,  depending  on  your  manufacturer  and  the  set -",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9964359998703003,
+      "POSITIVE": 0.0035640292335301638
+    },
+    "prompt": "The system operates",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> I  need  to  complete  this  sentence .  I  need  to  let  you  know  that  your  team  is  incredible . \n \n GO OD  WORK ,  DE EP  BAD  GU YS .  Your  work  was",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.0028396714478731155,
+      "POSITIVE": 0.9971603155136108
+    },
+    "prompt": "I need to complete",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> The  procedure  follows  the  Re zz ed  Tail  Gun ,  although  I  have  rec he ck ed  both  and  with  suggestions  for  what  to  look  for . \n \n I  have  named  it",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9965949654579163,
+      "POSITIVE": 0.00340498355217278
+    },
+    "prompt": "The procedure follows",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> Let  me  summarize  briefly  to  tell  you  of  some  of  the  things  I  have  found  interesting ,  when  I  began  this  work .  In  this  final  section ,  I  want  to  talk  about",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.002235038671642542,
+      "POSITIVE": 0.9977649450302124
+    },
+    "prompt": "Let me summarize",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> The  framework  provides  more  than  50  common  third - party  APIs  for  extracting  script  data  ( such  as  the  following  from  Google  analytics  data )  from  existing  K ib ana  script  data .",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.5155172348022461,
+      "POSITIVE": 0.4844827651977539
+    },
+    "prompt": "The framework provides",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> I 'm  focusing  on  pitching  my  own  starters  last  week  because  I  think  it 's  time  for  a  much  more  creative  turn  around .  If  this  gets  to  the  point  where  a  major  theme",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9965067505836487,
+      "POSITIVE": 0.003493257099762559
+    },
+    "prompt": "I'm focusing on",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> The  structure  contains  a  grid  with  eight  lin ers .  Two  larger  sheets  for  photographs  are  laid  side  by  side  on  the  first  two  rows ,  each  of  which  is  a  node .",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9938212633132935,
+      "POSITIVE": 0.006178649142384529
+    },
+    "prompt": "The structure contains",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> Please  note  that  examples  of  Fox woods  and  various  ' unique '  footage  made  available  on  the  ' Special  Report '  on  the  ' Cast ron  Min if igs '  has  been  altered",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 1,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9767331480979919,
+      "POSITIVE": 0.023266879841685295
+    },
+    "prompt": "Please note that",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> The  mechanism  works  as  shown  in  the  following  diagram : \n \n Exper iment  is  shown  to  work  in  parallel  on  two  the ta - ring  electrodes \n \n Exper iment  # 1",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9746821522712708,
+      "POSITIVE": 0.025317858904600143
+    },
+    "prompt": "The mechanism works",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> I  need  to  address  this  problem  with  bitcoin  but  it  doesn 't  stop  me .  For  one  thing  it  has  been  very  confusing  to  keep  track  of  when  I  couldn 't  actually  buy  or",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.00911889597773552,
+      "POSITIVE": 0.990881085395813
+    },
+    "prompt": "I need to address",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> The  concept  relates  to  the  tourism  industry  of  Europe ,  which  is  receiving  far  less  attention  here  than  in  the  United  States  and  Western  Europe  due  to  restrictive  rules  which  require  companies  to  establish",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9991157650947571,
+      "POSITIVE": 0.0008842515526339412
+    },
+    "prompt": "The concept relates to",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> Let  me  describe  what  we 're  doing  now .  The  team  will  take  on  the  Raptors  by  tri pling  the  second  shot  clock  and  developing  the  massive  high - pressure  offensive  platform ,",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9411116242408752,
+      "POSITIVE": 0.05888834595680237
+    },
+    "prompt": "Let me describe",
+    "max_new_tokens": 30
+  },
+  {
+    "text": "<|endoftext|> The  function  performs  three  key  actions .  The  first  action  should  be  to  automatically  start  the  VM  and  enable  profiling  at  boot .  The  second  action  should  be  to  enable  C MD  operations",
+    "emotion_keywords": {
+      "gratitude": 0,
+      "anger": 0,
+      "apology": 0
+    },
+    "sentiment": {
+      "NEGATIVE": 0.9395979046821594,
+      "POSITIVE": 0.06040213257074356
+    },
+    "prompt": "The function performs",
+    "max_new_tokens": 30
+  }
+]
