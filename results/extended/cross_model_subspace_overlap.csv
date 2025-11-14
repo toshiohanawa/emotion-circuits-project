@@ -1,0 +1,10 @@
+emotion,model1,model2,avg_overlap,std_overlap,min_overlap,max_overlap
+gratitude,gpt2,EleutherAI-pythia-160m,0.14516495,0.0065270634,0.13231358,0.15654211
+gratitude,gpt2,EleutherAI-gpt-neo-125M,0.13928224,0.008551748,0.13062933,0.16357775
+gratitude,EleutherAI-pythia-160m,EleutherAI-gpt-neo-125M,0.1380875,0.009935412,0.11888913,0.15087782
+anger,gpt2,EleutherAI-pythia-160m,0.14715865,0.014611564,0.12071629,0.1800333
+anger,gpt2,EleutherAI-gpt-neo-125M,0.14428107,0.009512976,0.11822881,0.15477884
+anger,EleutherAI-pythia-160m,EleutherAI-gpt-neo-125M,0.13954662,0.015343195,0.109578505,0.16286741
+apology,gpt2,EleutherAI-pythia-160m,0.15147401,0.0087568285,0.13524243,0.16874322
+apology,gpt2,EleutherAI-gpt-neo-125M,0.14920631,0.008118373,0.13470492,0.16597497
+apology,EleutherAI-pythia-160m,EleutherAI-gpt-neo-125M,0.14275254,0.006028179,0.12919866,0.15009692

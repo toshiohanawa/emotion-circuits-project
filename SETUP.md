@@ -78,47 +78,122 @@ python -m src.models.extract_activations --help
 
 プロジェクトには以下のプロンプトデータが含まれています：
 
-- `data/neutral_prompts.json`: 中立プロンプト50文 ✅
-- `data/gratitude_prompts.json`: 感謝プロンプト10文 ✅
-- `data/anger_prompts.json`: 怒りプロンプト（作成が必要）
-- `data/apology_prompts.json`: 謝罪プロンプト（作成が必要）
+- `data/neutral_prompts.json`: 中立プロンプト70文 ✅
+- `data/gratitude_prompts.json`: 感謝プロンプト70文 ✅
+- `data/anger_prompts.json`: 怒りプロンプト70文 ✅
+- `data/apology_prompts.json`: 謝罪プロンプト70文 ✅
+- `data/gratitude_prompts_extended.json`: 感謝プロンプト拡張版100文 ✅
+- `data/anger_prompts_extended.json`: 怒りプロンプト拡張版100文 ✅
+- `data/apology_prompts_extended.json`: 謝罪プロンプト拡張版100文 ✅
+- `data/neutral_prompts_extended.json`: 中立プロンプト拡張版100文 ✅
+- `data/real_world_samples.json`: 実世界テキストサンプル35文 ✅
 
-不足しているプロンプトデータは、`src/data/create_emotion_dataset.py`を使用して作成できます。
+プロンプトデータは、`src/data/create_individual_prompt_files.py`を使用して作成できます。拡張版データセットは`src/data/build_dataset.py`を使用してJSONL形式に変換できます。
 
 ### 実験結果データ
 
 `results/`ディレクトリには実験結果が保存されます。初回実行時は空です。
 
+**ディレクトリ構造**:
+- `results/baseline/`: Baselineデータセットの結果
+- `results/extended/`: Extendedデータセットの結果（拡張版データセット用）
+
 **重要な注意事項**:
-- 実験結果ファイル（`.pkl`, `.pt`など）は非常に大きくなる可能性があります（数MB〜数十MB）
+- 実験結果ファイル（`.pkl`, `.pt`など）は非常に大きくなる可能性があります（数MB〜数百MB）
 - `.gitignore`により、これらの大きなファイルはGitに追跡されません
 - 実験結果はローカルに保存され、必要に応じて手動でバックアップしてください
-- `results/plots/`配下の可視化結果（`.png`など）はGitに追跡されます
+- `results/{profile}/plots/`配下の可視化結果（`.png`など）はGitに追跡されます
+
+### MLflow統合
+
+プロジェクトはMLflowを使用して実験追跡を行います：
+
+- **Tracking URI**: `http://localhost:5001`（デフォルト）
+- **実験名**: リポジトリ名から自動設定（`auto_experiment_from_repo()`）
+- **ログ内容**: パラメータ、メトリクス、アーティファクト
+
+MLflowサーバーが起動していることを確認してください。詳細は`src/utils/mlflow_utils.py`を参照してください。
 
 ## 実行例
+
+### データセットの作成
+
+```bash
+# 1. 個別プロンプトファイルの作成
+python -m src.data.create_individual_prompt_files --data_dir data
+
+# 2. Baselineデータセットの構築（プロファイルベース）
+python -m src.data.build_dataset --profile baseline
+
+# 3. Extendedデータセットの構築（プロファイルベース）
+python -m src.data.build_dataset --profile extended
+
+# 4. データセットの検証
+python -m src.data.validate_dataset data/emotion_dataset.jsonl
+python -m src.data.validate_dataset data/emotion_dataset_extended.jsonl
+```
+
+> ℹ️ **プロファイルベースのワークフロー**: プロジェクトでは、データセットプロファイル（`baseline`/`extended`）を使用して、プロンプトファイル、データセット、結果ディレクトリを自動的に解決します。多くのスクリプトは `--profile` 引数を受け取り、適切なパスを自動的に設定します。
 
 ### 最小限の実行例（GPT-2 smallのみ）
 
 ```bash
-# 1. 内部活性を抽出
+# 1. 内部活性を抽出（Baseline、プロファイルベースのスイープスクリプトを使用）
+PYTHONPATH=. python scripts/phase2_extract_all_activations.py --profile baseline
+
+# または、個別に実行する場合:
 python -m src.models.extract_activations \
   --model gpt2 \
   --dataset data/emotion_dataset.jsonl \
-  --output results/activations/gpt2/
+  --output results/baseline/activations/gpt2/
 
-# 2. 感情方向ベクトルを抽出
+# 2. 感情方向ベクトルを抽出（Token-based）
 python -m src.analysis.emotion_vectors_token_based \
-  --activations_dir results/activations/gpt2 \
-  --output results/emotion_vectors/gpt2_vectors_token_based.pkl
+  --activations_dir results/baseline/activations/gpt2 \
+  --output results/baseline/emotion_vectors/gpt2_vectors_token_based.pkl
 
 # 3. Activation Patching実験
 python -m src.models.activation_patching_sweep \
   --model gpt2 \
-  --vectors_file results/emotion_vectors/gpt2_vectors_token_based.pkl \
+  --vectors_file results/baseline/emotion_vectors/gpt2_vectors_token_based.pkl \
   --prompts_file data/neutral_prompts.json \
-  --output results/patching/gpt2_sweep.pkl \
+  --output results/baseline/patching/gpt2_sweep_token_based.pkl \
   --layers 3 5 7 9 11 \
   --alpha -2 -1 -0.5 0 0.5 1 2
+```
+
+### Extendedデータセットでの実行例
+
+```bash
+# Extendedデータセットでの活性抽出
+python -m src.models.extract_activations \
+  --model gpt2 \
+  --dataset data/emotion_dataset_extended.jsonl \
+  --output results/extended/activations/gpt2/
+
+# Extendedデータセットでのベクトル抽出
+python -m src.analysis.emotion_vectors_token_based \
+  --activations_dir results/extended/activations/gpt2 \
+  --output results/extended/emotion_vectors/gpt2_vectors_token_based.pkl
+```
+
+### ランダム対照実験
+
+```bash
+# ランダム対照ベクトルでのPatching実験
+python -m src.models.activation_patching_random \
+  --model gpt2 \
+  --vectors_file results/extended/emotion_vectors/gpt2_vectors_token_based.pkl \
+  --prompts_file data/neutral_prompts.json \
+  --output_dir results/extended/patching_random \
+  --layers 7 \
+  --alpha 1.0 \
+  --num_random 3
+
+# ランダム vs 感情ベクトルの比較分析
+python -m src.analysis.random_vs_emotion_effect \
+  --results_file results/extended/patching_random/gpt2_random_control.pkl \
+  --output_dir results/extended/plots/random_control
 ```
 
 ## トラブルシューティング
@@ -166,8 +241,8 @@ pip install -e .
 
 **解決策**:
 ```bash
-# 必要なディレクトリを作成
-mkdir -p results/{activations,emotion_vectors,subspaces,patching,alignment,evaluation,plots}
+# 必要なディレクトリを作成（プロファイルごとに用意）
+mkdir -p results/{baseline,extended}/{activations,emotion_vectors,subspaces,patching,alignment,evaluation,plots}
 ```
 
 ## Gitリポジトリの管理
@@ -188,7 +263,7 @@ mkdir -p results/{activations,emotion_vectors,subspaces,patching,alignment,evalu
 - ドキュメント（`docs/`配下）
 - 設定ファイル（`pyproject.toml`, `requirements.txt`など）
 - プロンプトデータ（`data/`配下のJSONファイル）
-- 可視化結果（`results/plots/`配下の`.png`など）
+- 可視化結果（`results/{profile}/plots/`配下の`.png`など）
 
 ### 既にGitに追跡されている大きなファイルの削除
 
@@ -220,9 +295,10 @@ export TRANSFORMERS_CACHE=/path/to/transformers_cache
 ## 次のステップ
 
 1. `docs/implementation_plan.md`を読んでプロジェクトの全体像を理解
-2. `docs/phase6_expansion_report.md`でPhase 6の結果を確認
-3. 小さな実験から始める（GPT-2 smallのみ）
-4. 結果を確認してから、より大きな実験に進む
+2. `docs/report/`配下のPhase 0-6のレポートを確認
+3. 小さな実験から始める（GPT-2 smallのみ、Baselineデータセット）
+4. 結果を確認してから、Extendedデータセットやより大きな実験に進む
+5. MLflowで実験結果を追跡・比較
 
 ## サポート
 
@@ -232,4 +308,3 @@ export TRANSFORMERS_CACHE=/path/to/transformers_cache
 2. 依存関係のインストール状況: `pip list`
 3. GPUの利用可能性: `python -c "import torch; print(torch.cuda.is_available())"`
 4. ディスク容量: `df -h`（Linux/Mac）または`dir`（Windows）
-

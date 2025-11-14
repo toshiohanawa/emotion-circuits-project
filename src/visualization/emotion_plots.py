@@ -254,12 +254,24 @@ class EmotionVisualizer:
 def main():
     """メイン関数（テスト用）"""
     import argparse
+    from src.config.project_profiles import list_profiles
+    from src.utils.project_context import ProjectContext, profile_help_text
     
     parser = argparse.ArgumentParser(description="Visualize emotion vectors")
     parser.add_argument("--vectors_file", type=str, required=True, help="Emotion vectors pickle file")
-    parser.add_argument("--output_dir", type=str, default="results/plots", help="Output directory")
+    parser.add_argument("--profile", type=str, choices=list_profiles(), default="baseline",
+                        help=f"Dataset profile ({profile_help_text()})")
+    parser.add_argument("--output_dir", type=str, default=None, help="Output directory (overrides profile default)")
     
     args = parser.parse_args()
+    
+    # ProjectContextを使用してパスを解決
+    context = ProjectContext(profile_name=args.profile)
+    results_dir = context.results_dir()
+    
+    # デフォルト値を設定（指定されていない場合）
+    output_dir = Path(args.output_dir) if args.output_dir else results_dir / "plots"
+    output_dir.mkdir(parents=True, exist_ok=True)
     
     # データを読み込み
     with open(args.vectors_file, 'rb') as f:
@@ -269,7 +281,7 @@ def main():
     emotion_distances = data['emotion_distances']
     
     # Visualizerを作成
-    visualizer = EmotionVisualizer(args.output_dir)
+    visualizer = EmotionVisualizer(str(output_dir))
     
     # プロットを作成
     model_name = Path(args.vectors_file).stem.replace('_vectors', '')
@@ -299,4 +311,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

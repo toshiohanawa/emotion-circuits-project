@@ -39,7 +39,7 @@ Phase 7のモジュールは実装済みですが、まだ実験を実行して�
 python -m src.analysis.head_screening \
   --model gpt2 \
   --device cuda \
-  --output results/alignment/head_scores_gpt2.json
+  --output results/baseline/alignment/head_scores_gpt2.json
 ```
 
 **必要なデータ**:
@@ -59,7 +59,7 @@ python -m src.models.head_ablation \
   --device cuda \
   --head-spec "3:5,7:2" \
   --prompts-file data/gratitude_prompts.json \
-  --output results/patching/head_ablation_gpt2_gratitude.pkl
+  --output results/baseline/patching/head_ablation_gpt2_gratitude.pkl
 ```
 
 #### 1-3. Head patching実験
@@ -71,17 +71,17 @@ python -m src.models.head_patching \
   --head-spec "3:5,7:2" \
   --neutral-prompts data/neutral_prompts.json \
   --emotion-prompts data/gratitude_prompts.json \
-  --output results/patching/head_patching_gpt2_gratitude.pkl
+  --output results/baseline/patching/head_patching_gpt2_gratitude.pkl
 ```
 
 #### 1-4. Head解析結果の可視化
 
 ```bash
 python -m src.visualization.head_plots \
-  --head-scores results/alignment/head_scores_gpt2.json \
-  --ablation-file results/patching/head_ablation_gpt2_gratitude.pkl \
-  --patching-file results/patching/head_patching_gpt2_gratitude.pkl \
-  --output-dir results/plots/heads
+  --head-scores results/baseline/alignment/head_scores_gpt2.json \
+  --ablation-file results/baseline/patching/head_ablation_gpt2_gratitude.pkl \
+  --patching-file results/baseline/patching/head_patching_gpt2_gratitude.pkl \
+  --output-dir results/baseline/plots/heads
 ```
 
 ### 2. 不足しているデータファイルの作成
@@ -150,16 +150,16 @@ python -m src.analysis.subspace_k_sweep \
   --model-b gpt2-medium \
   --layers 3 5 7 9 11 \
   --k-values 2 5 10 20 \
-  --output results/alignment/k_sweep_gpt2_gpt2medium.json
+  --output results/baseline/alignment/k_sweep_gpt2_gpt2medium.json
 
 # 線形写像アライメント（GPT-2 small vs GPT-2 medium）
 python -m src.analysis.model_alignment \
   --model-a gpt2 \
   --model-b gpt2-medium \
   --neutral_prompts_file data/neutral_prompts.json \
-  --model1_activations_dir results/activations/gpt2 \
-  --model2_activations_dir results/activations/gpt2-medium \
-  --output results/alignment/model_alignment_gpt2_gpt2medium.pkl \
+  --model1_activations_dir results/baseline/activations/gpt2 \
+  --model2_activations_dir results/baseline/activations/gpt2-medium \
+  --output results/baseline/alignment/model_alignment_gpt2_gpt2medium.pkl \
   --n-components 10 \
   --layers 3 5 7 9 11
 ```
@@ -298,4 +298,3 @@ python -m src.analysis.model_alignment \
 - Phase 8の`hf_hooks.py`は実装済みだが、既存モジュールとの統合が必要
 - より大きなモデルでの実験は、GPUメモリと時間を考慮して計画する必要がある
 - すべての実験結果を統合して、研究クエスチョンへの回答をまとめることが最終目標
-

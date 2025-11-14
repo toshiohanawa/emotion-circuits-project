@@ -6,6 +6,9 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from typing import Dict, List
+
+from src.config.project_profiles import list_profiles
+from src.utils.project_context import ProjectContext, profile_help_text
 from src.visualization.emotion_plots import EmotionVisualizer
 
 
@@ -123,16 +126,28 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(description="Cross-model emotion vector analysis (token-based)")
-    parser.add_argument("--vectors_dir", type=str, default="results/emotion_vectors", help="Vectors directory")
+    parser.add_argument("--profile", type=str, choices=list_profiles(), default="baseline",
+                        help=f"Dataset profile ({profile_help_text()})")
+    parser.add_argument("--vectors_dir", type=str, default=None, help="Vectors directory (overrides profile default)")
     parser.add_argument("--models", type=str, nargs='+', default=["gpt2", "pythia-160m", "gpt-neo-125m"], help="Model names")
-    parser.add_argument("--output_dir", type=str, default="results/plots/cross_model_token_based", help="Output directory")
-    parser.add_argument("--output_table", type=str, default="results/cross_model_similarity_token_based.csv", help="Output CSV file")
+    parser.add_argument("--output_dir", type=str, default=None, help="Output directory (overrides profile default)")
+    parser.add_argument("--output_table", type=str, default=None, help="Output CSV file (overrides profile default)")
     
     args = parser.parse_args()
     
+    # ProjectContextを使用してパスを解決
+    context = ProjectContext(profile_name=args.profile)
+    results_dir = context.results_dir()
+    
+    # デフォルト値を設定（指定されていない場合）
+    vectors_dir = Path(args.vectors_dir) if args.vectors_dir else results_dir / "emotion_vectors"
+    output_dir = Path(args.output_dir) if args.output_dir else results_dir / "plots" / "cross_model_token_based"
+    output_table = Path(args.output_table) if args.output_table else results_dir / "cross_model_similarity_token_based.csv"
+    output_table.parent.mkdir(parents=True, exist_ok=True)
+    
     # モデルベクトルを読み込み
     print("Loading model vectors (token-based)...")
-    model_vectors = load_model_vectors(args.models, Path(args.vectors_dir), suffix="_token_based")
+    model_vectors = load_model_vectors(args.models, vectors_dir, suffix="_token_based")
     
     print(f"Loaded vectors for {len(model_vectors)} models: {list(model_vectors.keys())}")
     
@@ -141,8 +156,8 @@ def main():
     similarity_table = create_similarity_table(model_vectors)
     
     # テーブルを保存
-    similarity_table.to_csv(args.output_table, index=False)
-    print(f"\nSimilarity table saved to: {args.output_table}")
+    similarity_table.to_csv(str(output_table), index=False)
+    print(f"\nSimilarity table saved to: {output_table}")
     
     # テーブルを表示
     print("\nCross-Model Similarity Table (Token-Based):")
@@ -152,7 +167,7 @@ def main():
     
     # 可視化
     print("\nCreating visualizations...")
-    visualizer = EmotionVisualizer(args.output_dir)
+    visualizer = EmotionVisualizer(output_dir)
     
     emotion_labels = ["gratitude", "anger", "apology"]
     
@@ -168,4 +183,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -11,6 +11,8 @@ from transformer_lens import HookedTransformer
 from tqdm import tqdm
 
 from src.analysis.emotion_vectors_token_based import EMOTION_TOKENS
+from src.config.project_profiles import list_profiles
+from src.utils.project_context import ProjectContext, profile_help_text
 
 
 class HeadScreener:
@@ -273,32 +275,40 @@ def main():
     parser = argparse.ArgumentParser(description="Head screening for emotion tokens")
     parser.add_argument("--model", type=str, required=True, help="Model name")
     parser.add_argument("--device", type=str, default=None, help="Device (cuda/cpu)")
-    parser.add_argument("--gratitude-prompts", type=str, default="data/gratitude_prompts.json", help="Gratitude prompts file")
-    parser.add_argument("--anger-prompts", type=str, default="data/anger_prompts.json", help="Anger prompts file")
-    parser.add_argument("--apology-prompts", type=str, default="data/apology_prompts.json", help="Apology prompts file")
-    parser.add_argument("--neutral-prompts", type=str, default="data/neutral_prompts.json", help="Neutral prompts file")
+    parser.add_argument("--profile", type=str, choices=list_profiles(), default="baseline",
+                        help=f"Dataset profile used to auto-resolve prompts ({profile_help_text()})")
+    parser.add_argument("--gratitude-prompts", type=str, default=None, help="Optional override for gratitude prompts file")
+    parser.add_argument("--anger-prompts", type=str, default=None, help="Optional override for anger prompts file")
+    parser.add_argument("--apology-prompts", type=str, default=None, help="Optional override for apology prompts file")
+    parser.add_argument("--neutral-prompts", type=str, default=None, help="Optional override for neutral prompts file")
+    parser.add_argument("--data-dir", type=str, default="data", help="Data directory for profile resolution")
     parser.add_argument("--output", type=str, required=True, help="Output file path")
     
     args = parser.parse_args()
     
+    context = ProjectContext(args.profile, data_dir=Path(args.data_dir))
+    
     # プロンプトを読み込み
     emotion_prompts = {}
     
-    for emotion_label, file_path in [
+    for emotion_label, specified_path in [
         ("gratitude", args.gratitude_prompts),
         ("anger", args.anger_prompts),
         ("apology", args.apology_prompts),
         ("neutral", args.neutral_prompts)
     ]:
-        prompt_file = Path(file_path)
-        if prompt_file.exists():
+        if specified_path:
+            prompt_file = Path(specified_path)
+        else:
+            prompt_file = context.prompt_file(emotion_label)
+        if prompt_file and prompt_file.exists():
             with open(prompt_file, 'r') as f:
                 data = json.load(f)
                 prompts = data.get('prompts', [])
                 emotion_prompts[emotion_label] = prompts
-                print(f"Loaded {len(prompts)} {emotion_label} prompts from {file_path}")
+                print(f"Loaded {len(prompts)} {emotion_label} prompts from {prompt_file}")
         else:
-            print(f"Warning: {file_path} not found, skipping {emotion_label}")
+            print(f"Warning: No prompt file found for {emotion_label}")
     
     if not emotion_prompts:
         raise ValueError("No prompts loaded. Please check file paths.")
@@ -329,4 +339,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

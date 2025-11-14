@@ -1,0 +1,364 @@
+{
+  "model1": "gpt2",
+  "model2": "EleutherAI-pythia-160m",
+  "k_values": [
+    2,
+    5,
+    10,
+    20
+  ],
+  "emotions": [
+    "gratitude",
+    "anger",
+    "apology"
+  ],
+  "layers": [
+    3,
+    5,
+    7,
+    9,
+    11
+  ],
+  "sweep_results": {
+    "3": {
+      "gratitude": {
+        "2": {
+          "overlap_cos_squared": 0.003924454562366009,
+          "overlap_principal_angles": 0.06940485537052155,
+          "mean_principal_angle": 1.5012294054031372
+        },
+        "5": {
+          "overlap_cos_squared": 0.0019547634292393923,
+          "overlap_principal_angles": 0.07558191567659378,
+          "mean_principal_angle": 1.4949430227279663
+        },
+        "10": {
+          "overlap_cos_squared": 0.001359489280730486,
+          "overlap_principal_angles": 0.14486224949359894,
+          "mean_principal_angle": 1.478941559791565
+        },
+        "20": {
+          "overlap_cos_squared": 0.0012878191191703081,
+          "overlap_principal_angles": 0.25945064425468445,
+          "mean_principal_angle": 1.4381930828094482
+        }
+      },
+      "anger": {
+        "2": {
+          "overlap_cos_squared": 0.003431942779570818,
+          "overlap_principal_angles": 0.0733046680688858,
+          "mean_principal_angle": 1.497370719909668
+        },
+        "5": {
+          "overlap_cos_squared": 0.002458608942106366,
+          "overlap_principal_angles": 0.08750645816326141,
+          "mean_principal_angle": 1.4829155206680298
+        },
+        "10": {
+          "overlap_cos_squared": 0.0015736978966742754,
+          "overlap_principal_angles": 0.16508546471595764,
+          "mean_principal_angle": 1.4687246084213257
+        },
+        "20": {
+          "overlap_cos_squared": 0.001496779965236783,
+          "overlap_principal_angles": 0.269218385219574,
+          "mean_principal_angle": 1.4222195148468018
+        }
+      },
+      "apology": {
+        "2": {
+          "overlap_cos_squared": 0.006583415903151035,
+          "overlap_principal_angles": 0.08403048664331436,
+          "mean_principal_angle": 1.4864060878753662
+        },
+        "5": {
+          "overlap_cos_squared": 0.0025976956821978092,
+          "overlap_principal_angles": 0.08444716036319733,
+          "mean_principal_angle": 1.4859144687652588
+        },
+        "10": {
+          "overlap_cos_squared": 0.0014432556927204132,
+          "overlap_principal_angles": 0.15325164794921875,
+          "mean_principal_angle": 1.471571683883667
+        },
+        "20": {
+          "overlap_cos_squared": 0.0012820650590583682,
+          "overlap_principal_angles": 0.25315478444099426,
+          "mean_principal_angle": 1.4371793270111084
+        }
+      }
+    },
+    "5": {
+      "gratitude": {
+        "2": {
+          "overlap_cos_squared": 0.0030528474599123,
+          "overlap_principal_angles": 0.07584956288337708,
+          "mean_principal_angle": 1.4948604106903076
+        },
+        "5": {
+          "overlap_cos_squared": 0.0015678186900913715,
+          "overlap_principal_angles": 0.0740291029214859,
+          "mean_principal_angle": 1.496614933013916
+        },
+        "10": {
+          "overlap_cos_squared": 0.0014532661298289895,
+          "overlap_principal_angles": 0.15176643431186676,
+          "mean_principal_angle": 1.4630076885223389
+        },
+        "20": {
+          "overlap_cos_squared": 0.0013630163157358766,
+          "overlap_principal_angles": 0.2571633756160736,
+          "mean_principal_angle": 1.4298133850097656
+        }
+      },
+      "anger": {
+        "2": {
+          "overlap_cos_squared": 0.0026341774500906467,
+          "overlap_principal_angles": 0.0573686882853508,
+          "mean_principal_angle": 1.5133390426635742
+        },
+        "5": {
+          "overlap_cos_squared": 0.0013283782172948122,
+          "overlap_principal_angles": 0.06763540208339691,
+          "mean_principal_angle": 1.503034234046936
+        },
+        "10": {
+          "overlap_cos_squared": 0.001288485829718411,
+          "overlap_principal_angles": 0.14739711582660675,
+          "mean_principal_angle": 1.4724191427230835
+        },
+        "20": {
+          "overlap_cos_squared": 0.0012989103561267257,
+          "overlap_principal_angles": 0.2543165385723114,
+          "mean_principal_angle": 1.4354074001312256
+        }
+      },
+      "apology": {
+        "2": {
+          "overlap_cos_squared": 0.00298329652287066,
+          "overlap_principal_angles": 0.056491028517484665,
+          "mean_principal_angle": 1.5141962766647339
+        },
+        "5": {
+          "overlap_cos_squared": 0.0019979134667664766,
+          "overlap_principal_angles": 0.08293512463569641,
+          "mean_principal_angle": 1.4876207113265991
+        },
+        "10": {
+          "overlap_cos_squared": 0.0015377947129309177,
+          "overlap_principal_angles": 0.16011996567249298,
+          "mean_principal_angle": 1.4614988565444946
+        },
+        "20": {
+          "overlap_cos_squared": 0.0013533212477341294,
+          "overlap_principal_angles": 0.2581753134727478,
+          "mean_principal_angle": 1.4294637441635132
+        }
+      }
+    },
+    "7": {
+      "gratitude": {
+        "2": {
+          "overlap_cos_squared": 0.002510408405214548,
+          "overlap_principal_angles": 0.057069599628448486,
+          "mean_principal_angle": 1.513645052909851
+        },
+        "5": {
+          "overlap_cos_squared": 0.0015788876917213202,
+          "overlap_principal_angles": 0.072868712246418,
+          "mean_principal_angle": 1.4977660179138184
+        },
+        "10": {
+          "overlap_cos_squared": 0.0012016384862363338,
+          "overlap_principal_angles": 0.1417766809463501,
+          "mean_principal_angle": 1.4738765954971313
+        },
+        "20": {
+          "overlap_cos_squared": 0.0011548789916560054,
+          "overlap_principal_angles": 0.23213636875152588,
+          "mean_principal_angle": 1.440068006515503
+        }
+      },
+      "anger": {
+        "2": {
+          "overlap_cos_squared": 0.003532980103045702,
+          "overlap_principal_angles": 0.07970403134822845,
+          "mean_principal_angle": 1.4909789562225342
+        },
+        "5": {
+          "overlap_cos_squared": 0.0011768273543566465,
+          "overlap_principal_angles": 0.05779377743601799,
+          "mean_principal_angle": 1.5128892660140991
+        },
+        "10": {
+          "overlap_cos_squared": 0.0011940512340515852,
+          "overlap_principal_angles": 0.14430412650108337,
+          "mean_principal_angle": 1.4819890260696411
+        },
+        "20": {
+          "overlap_cos_squared": 0.0013363596517592669,
+          "overlap_principal_angles": 0.25681841373443604,
+          "mean_principal_angle": 1.4310739040374756
+        }
+      },
+      "apology": {
+        "2": {
+          "overlap_cos_squared": 0.002325632143765688,
+          "overlap_principal_angles": 0.054652854800224304,
+          "mean_principal_angle": 1.5160704851150513
+        },
+        "5": {
+          "overlap_cos_squared": 0.001784425345249474,
+          "overlap_principal_angles": 0.07940532267093658,
+          "mean_principal_angle": 1.4911983013153076
+        },
+        "10": {
+          "overlap_cos_squared": 0.0011174373794347048,
+          "overlap_principal_angles": 0.13524244725704193,
+          "mean_principal_angle": 1.4797803163528442
+        },
+        "20": {
+          "overlap_cos_squared": 0.0012763170525431633,
+          "overlap_principal_angles": 0.24695682525634766,
+          "mean_principal_angle": 1.434086561203003
+        }
+      }
+    },
+    "9": {
+      "gratitude": {
+        "2": {
+          "overlap_cos_squared": 0.002180391689762473,
+          "overlap_principal_angles": 0.06125257909297943,
+          "mean_principal_angle": 1.5094866752624512
+        },
+        "5": {
+          "overlap_cos_squared": 0.0014888921286910772,
+          "overlap_principal_angles": 0.07535939663648605,
+          "mean_principal_angle": 1.4952977895736694
+        },
+        "10": {
+          "overlap_cos_squared": 0.0012942791217938066,
+          "overlap_principal_angles": 0.14894813299179077,
+          "mean_principal_angle": 1.4782425165176392
+        },
+        "20": {
+          "overlap_cos_squared": 0.00128593307454139,
+          "overlap_principal_angles": 0.25238046050071716,
+          "mean_principal_angle": 1.4346479177474976
+        }
+      },
+      "anger": {
+        "2": {
+          "overlap_cos_squared": 0.002588327042758465,
+          "overlap_principal_angles": 0.0705958679318428,
+          "mean_principal_angle": 1.500134825706482
+        },
+        "5": {
+          "overlap_cos_squared": 0.001303602708503604,
+          "overlap_principal_angles": 0.06912177801132202,
+          "mean_principal_angle": 1.501551866531372
+        },
+        "10": {
+          "overlap_cos_squared": 0.0010363649344071746,
+          "overlap_principal_angles": 0.12869487702846527,
+          "mean_principal_angle": 1.4797742366790771
+        },
+        "20": {
+          "overlap_cos_squared": 0.0012685027904808521,
+          "overlap_principal_angles": 0.25393012166023254,
+          "mean_principal_angle": 1.4357712268829346
+        }
+      },
+      "apology": {
+        "2": {
+          "overlap_cos_squared": 0.0026665437035262585,
+          "overlap_principal_angles": 0.0542323999106884,
+          "mean_principal_angle": 1.5164721012115479
+        },
+        "5": {
+          "overlap_cos_squared": 0.0015037923585623503,
+          "overlap_principal_angles": 0.07071393728256226,
+          "mean_principal_angle": 1.4999306201934814
+        },
+        "10": {
+          "overlap_cos_squared": 0.001479411032050848,
+          "overlap_principal_angles": 0.15682075917720795,
+          "mean_principal_angle": 1.466720461845398
+        },
+        "20": {
+          "overlap_cos_squared": 0.0013212591875344515,
+          "overlap_principal_angles": 0.2550736963748932,
+          "mean_principal_angle": 1.432780385017395
+        }
+      }
+    },
+    "11": {
+      "gratitude": {
+        "2": {
+          "overlap_cos_squared": 0.000981768243946135,
+          "overlap_principal_angles": 0.038701921701431274,
+          "mean_principal_angle": 1.5320756435394287
+        },
+        "5": {
+          "overlap_cos_squared": 0.0009830109775066376,
+          "overlap_principal_angles": 0.059379469603300095,
+          "mean_principal_angle": 1.5113388299942017
+        },
+        "10": {
+          "overlap_cos_squared": 0.0012716373894363642,
+          "overlap_principal_angles": 0.14436163008213043,
+          "mean_principal_angle": 1.4732248783111572
+        },
+        "20": {
+          "overlap_cos_squared": 0.0014145242748782039,
+          "overlap_principal_angles": 0.2682170271873474,
+          "mean_principal_angle": 1.4265217781066895
+        }
+      },
+      "anger": {
+        "2": {
+          "overlap_cos_squared": 0.0017097836825996637,
+          "overlap_principal_angles": 0.0571419857442379,
+          "mean_principal_angle": 1.5136187076568604
+        },
+        "5": {
+          "overlap_cos_squared": 0.0015239563072100282,
+          "overlap_principal_angles": 0.07090768963098526,
+          "mean_principal_angle": 1.4997332096099854
+        },
+        "10": {
+          "overlap_cos_squared": 0.0012748278677463531,
+          "overlap_principal_angles": 0.1491847038269043,
+          "mean_principal_angle": 1.4751814603805542
+        },
+        "20": {
+          "overlap_cos_squared": 0.001210764399729669,
+          "overlap_principal_angles": 0.24322649836540222,
+          "mean_principal_angle": 1.438828706741333
+        }
+      },
+      "apology": {
+        "2": {
+          "overlap_cos_squared": 0.0017192729283124208,
+          "overlap_principal_angles": 0.04435082525014877,
+          "mean_principal_angle": 1.5263981819152832
+        },
+        "5": {
+          "overlap_cos_squared": 0.0017380771460011601,
+          "overlap_principal_angles": 0.08197985589504242,
+          "mean_principal_angle": 1.4886544942855835
+        },
+        "10": {
+          "overlap_cos_squared": 0.0012892718659713864,
+          "overlap_principal_angles": 0.14928826689720154,
+          "mean_principal_angle": 1.4743624925613403
+        },
+        "20": {
+          "overlap_cos_squared": 0.0013829524395987391,
+          "overlap_principal_angles": 0.2597082257270813,
+          "mean_principal_angle": 1.4278557300567627
+        }
+      }
+    }
+  }
+}

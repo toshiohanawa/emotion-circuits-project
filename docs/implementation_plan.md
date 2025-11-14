@@ -6,8 +6,9 @@
 - フェーズ3の結果（モデル間類似度がほぼ0）を受けて、フェーズ3.5とフェーズ4ライトを追加
 - 本質的な研究クエスチョン「異なるLLMの中に、座標系は違うが本質的には同じ感情表現の部分空間は存在するのか？そしてそれを因果的に操作できるのか？」に基づき、フェーズ5-8を追加
 - フェーズ5完了: 層×αのスイープ実験と比較実験を実装完了
-- フェーズ6の評価系強化完了: 長文生成・sentiment評価・iterative/swap patchingを実装完了（詳細は`docs/phase1_expansion_report.md`を参照）
+- フェーズ6の評価系強化完了: 長文生成・sentiment評価・iterative/swap patchingを実装完了
 - Phase 6-8の詳細実装計画を追加: 12モジュールの実装計画と優先順位を明確化
+- **Phase 0-6統合実行完了（2024年12月）**: Baseline + Extendedデータセットでの完全再実行、MLflow統合、ランダム対照実験、実世界検証を追加
 
 ## プロジェクトの本質的な問い
 
@@ -37,10 +38,18 @@
 
 ### データセット作成
 - 感情カテゴリごとに50-200文を収集（英語のみ）
-  - Gratitude（感謝）
-  - Anger（怒り）
-  - Apology（謝罪）
-  - Neutral（中立）
+  - Gratitude（感謝）: Baseline 70文、Extended 100文
+  - Anger（怒り）: Baseline 70文、Extended 100文
+  - Apology（謝罪）: Baseline 70文、Extended 100文
+  - Neutral（中立）: Baseline 70文、Extended 100文
+
+### 実装済みモジュール
+- `src/data/create_individual_prompt_files.py`: 個別プロンプトJSONファイル作成 ✅
+- `src/data/build_dataset.py`: プロンプトJSONからJSONLデータセット構築 ✅
+- `src/data/validate_dataset.py`: データセット検証 ✅
+
+### MLflow統合
+- データセット統計（総サンプル数、感情別カウント、テキスト長統計）をMLflowに記録 ✅
 
 ## フェーズ2: 内部活性の抽出（1-2週間）✅ 完了
 
@@ -99,11 +108,26 @@
 ### Activation Patching実装（簡易版）✅ 完了
 - `src/models/activation_patching.py`を作成 ✅
 - GPT-2とGPT-Neo-125Mで実施 ✅
+- Baseline + Extendedデータセットで実行済み ✅
+
+### ランダム対照実験 ✅ 追加実装
+- `src/models/activation_patching_random.py`: ランダム対照ベクトルでのPatching実験 ✅
+- `src/analysis/random_vs_emotion_effect.py`: ランダム vs 感情ベクトルの効果比較 ✅
+- 同じL2ノルムを持つランダムベクトルを生成し、感情ベクトルとの効果を統計的に比較
+- Extendedデータセットで実行済み ✅
+
+### 実世界検証 ✅ 追加実装
+- `data/real_world_samples.json`: 実世界テキストサンプル（SNS、レビュー、メール）35文 ✅
+- 実世界テキストでのPatching実験を実行 ✅
 
 ## フェーズ5: 因果性をちゃんと殴る（Activation Patching完全版）（2-3週間）✅ 完了
 
 ### 目的
 「この方向 / サブスペースは本当に感情を担っている」と言い切るための実験をやりきる。
+
+### MLflow統合 ✅
+- 全Sweep実験のメトリクス（層数、alpha値、感情数）をMLflowに記録 ✅
+- Baseline + Extendedデータセットの結果を統合的に追跡 ✅
 
 ### ステップ5-1: 層×αのスイープ実験 ✅ 完了
 
@@ -138,7 +162,7 @@
 - 文末ベースはノイズが多く、効果が弱い／不安定
 - → 「感情は局所トークンに宿る」という主張を因果実験付きで言える
 
-## フェーズ6: 構造の正体を暴く（サブスペース & アライメント）（2-3週間）
+## フェーズ6: 構造の正体を暴く（サブスペース & アライメント）（2-3週間）✅ 完了
 
 ### 目的
 「overlap 0.13-0.15 > ランダム」という結果の先に、「何が同じで何が違うのか」を一段深く掘る。
@@ -191,22 +215,18 @@
 - 各関数は独立して使用可能
 - 層ごとの処理を効率化するためのバッチ処理関数も提供
 
-### ステップ6-1: Neutralで線形写像を学習し、Emotionで検証する（未実施）
+### ステップ6-1: Neutralで線形写像を学習し、Emotionで検証する ✅ 完了
 
 **狙い**: 「中立文の表現空間でモデル同士を線形に合わせると、感情サブスペースはどれくらい揃うのか？」
 
 **実装内容**:
-- **新規ファイル**: `src/analysis/model_alignment.py`
-  - GPT-2とPythiaで、中立プロンプトのresidualを大量に取得（100-200文）
-  - 層ごとに：
-    - GPT-2のresidual（d次元）をX、PythiaのresidualをYとして
-    - 線形写像Wを学習: W = argmin ||WX - Y||（最小二乗）
-  - 保存先: `results/linear_maps/layer_{L}.pt`
-  - 学習したWを使って：
-    - GPT-2の感謝/怒り/謝罪サブスペースをWでPythia側に写像
-    - その上でPythiaの感情サブスペースとのoverlapを計算
-    - 「写像前のoverlap」と「写像後のoverlap」を比較
-  - Principal anglesとoverlap scoreを計算（`src/analysis/subspace_utils.py`を使用）
+- **実装済み**: `src/analysis/model_alignment.py` ✅
+  - GPT-2とPythiaで、中立プロンプトのresidualを大量に取得
+  - 層ごとに線形写像Wを学習: W = argmin ||WX - Y||（最小二乗）
+  - 学習したWを使って感情サブスペースを写像し、overlapを計算
+  - 「写像前のoverlap（~0.001）」と「写像後のoverlap（~0.99）」を比較
+  - **重要な発見**: 線形写像によりoverlapが0.001から0.99に大幅改善
+  - Baseline + Extendedデータセットで実行済み ✅
 
 **解釈**:
 - overlapが大きく増える → 実はほぼ同じ構造で、座標変換だけ違う
@@ -216,18 +236,17 @@
 - `src/analysis/subspace_utils.py`: 共通ユーティリティ（PCA、主角度、overlap計算）
 - `src/visualization/alignment_plots.py`: アライメント結果の可視化
 
-### ステップ6-2: サブスペース次元を振ってみる（k = 2, 5, 10, 20）（未実施）
+### ステップ6-2: サブスペース次元を振ってみる（k = 2, 5, 10, 20）✅ 完了
 
 **実装内容**:
-- **新規ファイル**: `src/analysis/subspace_k_sweep.py`
+- **実装済み**: `src/analysis/subspace_k_sweep.py` ✅
   - 各感情ごとにPCAの次元数kを変えてoverlapを測定
   - k = {2, 5, 10, 20}で実験
-  - 各kについて：
-    - 感情サブスペースをPCA(k)で抽出（`src/analysis/subspace_utils.py`を使用）
-    - モデル間overlapを計算（principal angles、`src/analysis/subspace_utils.py`を使用）
-  - 結果を`results/alignment/k_sweep.json`に保存
+  - 各kについて感情サブスペースをPCA(k)で抽出し、モデル間overlapを計算
+  - 結果を`results/baseline/alignment/k_sweep.json`に保存
   - kを増やしたときのoverlapの伸び方をプロット
-  - 可視化: `src/visualization/layer_subspace_plots.py`を使用
+  - 可視化: `src/visualization/layer_subspace_plots.py`を使用 ✅
+  - Baseline + Extendedデータセットで実行済み ✅
 
 **見たいもの**:
 - 小さいk（2-3）で既にoverlapが高い → 「コアとなるshared factorが小さい次元で存在」
@@ -245,7 +264,7 @@
 - **既存構造を尊重**: 既存のディレクトリ構造・モジュール構成は変更しない
 - **インポートパスの統一**: `from src.〜`形式に統一（相対インポートは使わない）
 - **CLIスクリプト化**: すべての新規モジュールは`argparse`でCLI実行可能にする
-- **保存先の一貫性**: 解析結果は`results/`以下、データは`.pkl`/`.json`、図は`.png`
+- **保存先の一貫性**: 解析結果は`results/{profile}/`以下、データは`.pkl`/`.json`、図は`.png`
 - **GPU/メモリ配慮**: `torch.no_grad()`使用、hook使用後は`handle.remove()`で解除
 
 ### ステップ7-1: 感情語トークンに強く反応するheadをスクリーニング（未実施）
@@ -267,7 +286,7 @@
 python -m src.analysis.head_screening \
   --model gpt2 \
   --device cuda \
-  --output results/alignment/head_scores_gpt2.json
+  --output results/baseline/alignment/head_scores_gpt2.json
 ```
 
 **実装要件**:
@@ -299,7 +318,7 @@ python -m src.analysis.head_screening \
    }
    ```
 
-**保存先**: `results/alignment/head_scores_{model}.json`
+**保存先**: `results/baseline/alignment/head_scores_{model}.json`
 
 ### ステップ7-2: Head ablation実験（未実施）
 
@@ -314,7 +333,7 @@ python -m src.models.head_ablation \
   --device cuda \
   --head-spec "3:5,7:2" \
   --prompts-file data/gratitude_prompts.json \
-  --output results/patching/head_ablation_gpt2_gratitude.pkl
+  --output results/baseline/patching/head_ablation_gpt2_gratitude.pkl
 ```
 
 **実装要件**:
@@ -342,7 +361,7 @@ python -m src.models.head_ablation \
    }
    ```
 
-**保存先**: `results/patching/head_ablation/`
+**保存先**: `results/baseline/patching/head_ablation/`
 
 ### ステップ7-3: Head patching実験（未実施）
 
@@ -358,7 +377,7 @@ python -m src.models.head_patching \
   --head-spec "3:5,7:2" \
   --neutral-prompts data/neutral_prompts.json \
   --emotion-prompts data/gratitude_prompts.json \
-  --output results/patching/head_patching_gpt2_gratitude.pkl
+  --output results/baseline/patching/head_patching_gpt2_gratitude.pkl
 ```
 
 **実装要件**:
@@ -373,7 +392,7 @@ python -m src.models.head_patching \
    - Sentimentスコア
 5. 結果形式：`head_ablation.py`と同様のstructでpklに保存
 
-**保存先**: `results/patching/head_patching/`
+**保存先**: `results/baseline/patching/head_patching/`
 
 ### ステップ7-4: Head解析結果の可視化（未実施）
 
@@ -384,10 +403,10 @@ python -m src.models.head_patching \
 **CLI仕様**:
 ```bash
 python -m src.visualization.head_plots \
-  --head-scores results/alignment/head_scores_gpt2.json \
-  --ablation-file results/patching/head_ablation_gpt2_gratitude.pkl \
-  --patching-file results/patching/head_patching_gpt2_gratitude.pkl \
-  --output-dir results/plots/heads
+  --head-scores results/baseline/alignment/head_scores_gpt2.json \
+  --ablation-file results/baseline/patching/head_ablation_gpt2_gratitude.pkl \
+  --patching-file results/baseline/patching/head_patching_gpt2_gratitude.pkl \
+  --output-dir results/baseline/plots/heads
 ```
 
 **生成する図**:
@@ -395,7 +414,7 @@ python -m src.visualization.head_plots \
 2. Ablationによるsentiment変化: 棒グラフ or 箱ひげ図（baseline vs ablationのsentiment mean）
 3. Patchingによる感情キーワード増減: patch前後でのキーワード出現数を比較する棒グラフ
 
-**保存先**: `results/plots/heads/`
+**保存先**: `results/baseline/plots/heads/`
 
 ## フェーズ8: モデルサイズと普遍性（1-2週間）
 
@@ -406,7 +425,7 @@ python -m src.visualization.head_plots \
 - **既存構造を尊重**: 既存のディレクトリ構造・モジュール構成は変更しない
 - **インポートパスの統一**: `from src.〜`形式に統一
 - **CLIスクリプト化**: すべての新規モジュールは`argparse`でCLI実行可能にする
-- **保存先の一貫性**: 解析結果は`results/`以下に保存
+- **保存先の一貫性**: 解析結果は`results/{profile}/`以下に保存
 - **GPU/メモリ配慮**: `torch.no_grad()`使用、hook使用後は適切に解除
 
 ### ステップ8-1: HuggingFaceモデル用フック（未実施）
@@ -464,7 +483,7 @@ python -m src.analysis.subspace_k_sweep \
   --model-b gpt2-medium \
   --layers 3 5 7 9 11 \
   --k-values 2 5 10 20 \
-  --output results/alignment/k_sweep_gpt2_gpt2medium.json
+  --output results/baseline/alignment/k_sweep_gpt2_gpt2medium.json
 ```
 
 ### ステップ8-3: モデルサイズとサブスペース共通性の解析（未実施）
@@ -485,14 +504,14 @@ python -m src.analysis.model_alignment \
   --model-a gpt2 \
   --model-b gpt2-medium \
   --layers 3 5 7 9 11 \
-  --output results/alignment/model_alignment_gpt2_gpt2medium.pkl
+  --output results/baseline/alignment/model_alignment_gpt2_gpt2medium.pkl
 
 python -m src.analysis.subspace_k_sweep \
   --model-a gpt2 \
   --model-b gpt2-medium \
   --layers 3 5 7 9 11 \
   --k-values 2 5 10 20 \
-  --output results/alignment/k_sweep_gpt2_gpt2medium.json
+  --output results/baseline/alignment/k_sweep_gpt2_gpt2medium.json
 ```
 
 **研究クエスチョン**:
@@ -550,46 +569,50 @@ python -m src.analysis.subspace_k_sweep \
    - Neutral residualを用いてGPT-2 → Pythiaの線形写像Wを学習
    - 感情サブスペースをWで変換しoverlapを計算
    - `subspace_utils.py`を使用してoverlap計算
-   - 保存先: `results/linear_maps/layer_{L}.pt`
+   - 保存先: `results/{profile}/linear_maps/layer_{L}.pt`
 
 2. **`src/analysis/subspace_k_sweep.py`**
    - k={2,5,10,20}に対するサブスペースoverlapを計算
    - `subspace_utils.py`を使用してPCAとoverlap計算
-   - 保存先: `results/alignment/k_sweep.json`
+   - 保存先: `results/baseline/alignment/k_sweep.json`
 
 3. **`src/analysis/principal_angles.py`**（オプション）
    - `subspace_utils.py`の関数をラップする形で実装
    - または`subspace_utils.py`に統合
 
-4. **`src/analysis/subspace_alignment.py`**
+4. **`src/analysis/subspace_alignment.py`** ✅ 実装済み
    - PCA後の10次元サブスペースに対し
-   - `subspace_utils.py`のCCA/Procrustes関数を使用
+   - Procrustesアライメントを適用
    - before/afterのoverlapを比較
+   - Baseline + Extendedデータセットで実行済み ✅
 
 ### 第二優先（Phase 7のhead-level解析）
 
 5. **`src/analysis/head_screening.py`**
    - 各headのΔactivationによる感情反応度をランキング
-   - 保存先: `results/alignment/head_scores.json`
+   - 保存先: `results/baseline/alignment/head_scores.json`
 
 6. **`src/models/head_ablation.py`**
    - 指定headのzero-outによるcausal ablation
-   - 保存先: `results/patching/head_ablation/`
+   - 保存先: `results/baseline/patching/head_ablation/`
 
 7. **`src/models/head_patching.py`**
    - 感情文のhead出力を中立文へswapするpatching
-   - 保存先: `results/patching/head_patching/`
+   - 保存先: `results/baseline/patching/head_patching/`
 
 ### 第三優先（補助モジュール・可視化）
 
 8. **`src/analysis/subspace_clusterability.py`**
    - サブスペースのクラスタリング可能性を分析
 
-9. **`src/visualization/alignment_plots.py`**
+9. **`src/visualization/alignment_plots.py`** ✅ 実装済み
    - アライメント結果の可視化
+   - Baseline + Extendedデータセットで実行済み ✅
 
-10. **`src/visualization/layer_subspace_plots.py`**
+10. **`src/visualization/layer_subspace_plots.py`** ✅ 実装済み
     - 層ごとのサブスペース可視化
+    - k-sweep結果の可視化
+    - Baseline + Extendedデータセットで実行済み ✅
 
 11. **`src/visualization/head_plots.py`**
     - Head-level解析結果の可視化
@@ -603,15 +626,16 @@ python -m src.analysis.subspace_k_sweep \
 ```
 emotion-circuits/
 ├── results/
-│   ├── linear_maps/          ← 新規（W写像）
-│   │   └── layer_{L}.pt
-│   ├── alignment/            ← 新規
-│   │   ├── k_sweep.json
-│   │   └── head_scores.json
-│   └── plots/
-│       ├── alignment/        ← 新規
-│       ├── layers/           ← 新規
-│       └── heads/            ← 新規
+│   └── {profile}/
+│       ├── linear_maps/          ← 新規（W写像）
+│       │   └── layer_{L}.pt
+│       ├── alignment/            ← 新規
+│       │   ├── k_sweep.json
+│       │   └── head_scores.json
+│       └── plots/
+│           ├── alignment/        ← 新規
+│           ├── layers/           ← 新規
+│           └── heads/            ← 新規
 ├── src/
 │   ├── models/
 │   │   ├── head_patching.py  ← 新規
@@ -636,9 +660,41 @@ emotion-circuits/
 
 1. 既存ファイルを破壊せず新規ファイルを追加
 2. インポートは`from src.〜`の形で統一
-3. 生成物はすべて`results/`以下に保存
+3. 生成物はすべて`results/{profile}/`以下に保存
 4. パラメータ（層、α、モデル名、k値）は引数で変更可能に
 5. Notebook前提ではなくPython CLIで動作
 6. 大規模モデルでは`torch.no_grad()`を必ず使用
 7. GPUメモリ対策としてHook解除を実装
 8. すべてのモジュールはCLI実行可能にする
+
+## 統合実行の成果（2024年12月）
+
+### 完了した統合実行
+- **Phase 0-6の完全再実行**: Baseline + Extendedデータセットでの統合実行完了 ✅
+- **MLflow統合**: 全フェーズで実験追跡対応 ✅
+- **新規モジュール追加**:
+  - `src/data/build_dataset.py`: 統合データセット構築 ✅
+  - `src/models/activation_patching_random.py`: ランダム対照実験 ✅
+  - `src/analysis/random_vs_emotion_effect.py`: ランダム vs 感情効果比較 ✅
+- **実世界検証**: 実世界テキストサンプルでの検証追加 ✅
+
+### データセット
+- **Baseline**: 280サンプル（70文 × 4感情）
+- **Extended**: 400サンプル（100文 × 4感情）
+- **実世界**: 35サンプル（SNS、レビュー、メール）
+
+### 主要な発見（統合実行版）
+1. **Token-basedベクトルの有効性**: 感情語トークンベースのベクトルがより明確な感情表現を抽出
+2. **サブスペースレベルでの共通性**: モデル間overlap 0.13-0.15（ランダムより高い）
+3. **線形写像による大幅改善**: Neutral空間での線形写像によりoverlapが0.001から0.99に改善
+4. **Extendedデータセットでの検証**: 拡張データセットでも同様のパターンが確認され、発見の頑健性が示された
+
+### レポート
+- `docs/report/phase0_setup_report.md` - Phase 0: 環境セットアップ ✅
+- `docs/report/phase1_data_report.md` - Phase 1: 統合データセット構築 ✅
+- `docs/report/phase2_activations_report.md` - Phase 2: 統合活性抽出 ✅
+- `docs/report/phase3_vectors_report.md` - Phase 3: 統合感情ベクトル ✅
+- `docs/report/phase3.5_subspace_report.md` - Phase 3.5: 統合サブスペース解析 ✅
+- `docs/report/phase4_patching_report.md` - Phase 4: 統合Patching + ランダム対照 + 実世界 ✅
+- `docs/report/phase5_sweep_report.md` - Phase 5: 統合Sweep実験 ✅
+- `docs/report/phase6_alignment_report.md` - Phase 6: 統合サブスペースアライメント ✅

@@ -6,7 +6,10 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from typing import Dict, List
+
 from src.analysis.emotion_subspace import EmotionSubspaceAnalyzer
+from src.config.project_profiles import list_profiles
+from src.utils.project_context import ProjectContext, profile_help_text
 
 
 def load_model_subspaces(model_names: List[str], subspaces_dir: Path) -> Dict[str, Dict[str, np.ndarray]]:
@@ -126,15 +129,26 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(description="Cross-model emotion subspace overlap analysis")
-    parser.add_argument("--subspaces_dir", type=str, default="results/emotion_subspaces", help="Subspaces directory")
+    parser.add_argument("--profile", type=str, choices=list_profiles(), default="baseline",
+                        help=f"Dataset profile ({profile_help_text()})")
+    parser.add_argument("--subspaces_dir", type=str, default=None, help="Subspaces directory (overrides profile default)")
     parser.add_argument("--models", type=str, nargs='+', default=["gpt2", "pythia-160m", "gpt-neo-125m"], help="Model names")
-    parser.add_argument("--output_table", type=str, default="results/cross_model_subspace_overlap.csv", help="Output CSV file")
+    parser.add_argument("--output_table", type=str, default=None, help="Output CSV file (overrides profile default)")
     
     args = parser.parse_args()
     
+    # ProjectContextを使用してパスを解決
+    context = ProjectContext(profile_name=args.profile)
+    results_dir = context.results_dir()
+    
+    # デフォルト値を設定（指定されていない場合）
+    subspaces_dir = Path(args.subspaces_dir) if args.subspaces_dir else results_dir / "emotion_subspaces"
+    output_table = Path(args.output_table) if args.output_table else results_dir / "cross_model_subspace_overlap.csv"
+    output_table.parent.mkdir(parents=True, exist_ok=True)
+    
     # モデルサブスペースを読み込み
     print("Loading model subspaces...")
-    model_subspaces = load_model_subspaces(args.models, Path(args.subspaces_dir))
+    model_subspaces = load_model_subspaces(args.models, subspaces_dir)
     
     print(f"Loaded subspaces for {len(model_subspaces)} models: {list(model_subspaces.keys())}")
     
@@ -143,8 +157,8 @@ def main():
     overlap_table = create_subspace_overlap_table(model_subspaces)
     
     # テーブルを保存
-    overlap_table.to_csv(args.output_table, index=False)
-    print(f"\nSubspace overlap table saved to: {args.output_table}")
+    overlap_table.to_csv(str(output_table), index=False)
+    print(f"\nSubspace overlap table saved to: {output_table}")
     
     # テーブルを表示
     print("\nCross-Model Subspace Overlap Table:")
@@ -159,4 +173,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

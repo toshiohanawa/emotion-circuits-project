@@ -45,24 +45,24 @@ env/
 .DS_Store
 Thumbs.db
 
-# Project specific - exclude all large data files
-results/activations/**/*.pkl
-results/emotion_vectors/**/*.pkl
-results/emotion_subspaces/**/*.pkl
-results/subspaces/**/*.pkl
-results/patching/**/*.pkl
-results/evaluation/**/*.pkl
-results/alignment/**/*.pkl
-results/alignment/**/*.pt
+# Project specific - exclude all large data files (supports multiple profiles)
+results/*/activations/**/*.pkl
+results/*/emotion_vectors/**/*.pkl
+results/*/emotion_subspaces/**/*.pkl
+results/*/subspaces/**/*.pkl
+results/*/patching/**/*.pkl
+results/*/evaluation/**/*.pkl
+results/*/alignment/**/*.pkl
+results/*/alignment/**/*.pt
 # Keep directory structure but ignore large data files
-!results/activations/.gitkeep
-!results/emotion_vectors/.gitkeep
-!results/emotion_subspaces/.gitkeep
-!results/subspaces/.gitkeep
-!results/patching/.gitkeep
-!results/evaluation/.gitkeep
-!results/alignment/.gitkeep
-!results/plots/
+!results/*/activations/.gitkeep
+!results/*/emotion_vectors/.gitkeep
+!results/*/emotion_subspaces/.gitkeep
+!results/*/subspaces/.gitkeep
+!results/*/patching/.gitkeep
+!results/*/evaluation/.gitkeep
+!results/*/alignment/.gitkeep
+!results/*/plots/
 
 # Model cache (HuggingFace)
 .cache/
@@ -105,4 +105,3 @@ mlruns/
 
 # Cursor IDE
 .cursor/
-
