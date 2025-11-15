@@ -68,7 +68,7 @@ def compare_methods(
         layers=layers,
         alpha_values=alpha_values
     )
-    sentence_end_aggregated = patcher.aggregate_metrics(sentence_end_results)
+    sentence_end_aggregated, sentence_end_delta = patcher.aggregate_metrics(sentence_end_results)
     
     print("\n" + "="*80)
     print("Running sweep with TOKEN-BASED vectors")
@@ -79,18 +79,20 @@ def compare_methods(
         layers=layers,
         alpha_values=alpha_values
     )
-    token_based_aggregated = patcher.aggregate_metrics(token_based_results)
+    token_based_aggregated, token_based_delta = patcher.aggregate_metrics(token_based_results)
     
     # 結果を保存
     comparison_results = {
         'model': model_name,
         'sentence_end': {
             'results': sentence_end_results,
-            'aggregated': sentence_end_aggregated
+            'aggregated': sentence_end_aggregated,
+            'delta': sentence_end_delta,
         },
         'token_based': {
             'results': token_based_results,
-            'aggregated': token_based_aggregated
+            'aggregated': token_based_aggregated,
+            'delta': token_based_delta,
         }
     }
     
@@ -257,4 +259,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

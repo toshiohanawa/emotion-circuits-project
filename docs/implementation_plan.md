@@ -9,6 +9,11 @@
 - フェーズ6の評価系強化完了: 長文生成・sentiment評価・iterative/swap patchingを実装完了
 - Phase 6-8の詳細実装計画を追加: 12モジュールの実装計画と優先順位を明確化
 - **Phase 0-6統合実行完了（2024年12月）**: Baseline + Extendedデータセットでの完全再実行、MLflow統合、ランダム対照実験、実世界検証を追加
+- **Phase 7完了（2024年11月）**: Head screening、ablation、patching実験を実装・実行完了 ✅
+- **インフラ改善（2024年11月）**: MLflow自動フォールバック、モデルディレクトリスラッグ統一化、ログ記録改善、Activation Patching Sweepのメトリクス集計強化 ✅
+- **Issue 1-5実装完了（2024年11月）**: Multi-token Activation Patching、Transformerベース評価、ランダム対照強化、実世界評価、Head Patching強化を実装完了 ✅
+- **Issue 6-7, 9-10実装完了（2024年11月）**: ニューロン解析、クロスモデルパッチング、MLflow拡張、CI/CDパイプラインを実装完了 ✅
+- **Epic Issue: OV/QK Circuit Analysis完了（2024年11月）**: TransformerLens新バックエンド対応、OV/QK回路解析パイプライン、回路可視化・サマリー生成を実装完了 ✅
 
 ## プロジェクトの本質的な問い
 
@@ -61,6 +66,12 @@
 ### 内部活性抽出スクリプト
 - `src/models/extract_activations.py`を作成 ✅
 - 3モデル全てで全感情カテゴリの活性抽出完了 ✅
+- `scripts/phase2_extract_all_activations.py`: 全モデル×全感情のスイープ実行 ✅
+
+### MLflow統合とログ記録 ✅
+- **モデルディレクトリスラッグの統一化**: `src/utils/model_utils.py`で一貫した命名規則を適用 ✅
+- **実行ログの記録**: 各実行のstdout/stderrをMLflowアーティファクトとして記録 ✅
+- **エラー追跡**: 失敗した実行のログを後で確認可能 ✅
 
 ## フェーズ3: 感情方向ベクトルの抽出・可視化（1-2週間）✅ 完了
 
@@ -105,19 +116,39 @@
 ### 目的
 モデル間の比較でモヤモヤしているときは、まず「各モデル内で、この感情方向が本当に効いているか」を確かめる。
 
-### Activation Patching実装（簡易版）✅ 完了
-- `src/models/activation_patching.py`を作成 ✅
+### Activation Patching実装（Multi-token対応版）✅ 完了・強化
+- `src/models/activation_patching.py`を全面刷新 ✅
+  - Multi-token生成に対応（`HookedTransformer.generate`を使用）
+  - αスケジュール/減衰を実装（`_build_alpha_schedule`）
+  - ウィンドウ/位置指定に対応（`_resolve_patch_positions`）
+  - 生成中の継続パッチを実装（`_generate_tokens_with_patch`）
+  - CLIオプション追加（`--max-new-tokens`, `--patch-window`, `--patch-positions`, `--patch-new-only`, `--alpha-schedule`, `--alpha-decay-rate`）
 - GPT-2とGPT-Neo-125Mで実施 ✅
 - Baseline + Extendedデータセットで実行済み ✅
 
-### ランダム対照実験 ✅ 追加実装
+### ランダム対照実験 ✅ 追加実装・強化完了
 - `src/models/activation_patching_random.py`: ランダム対照ベクトルでのPatching実験 ✅
+  - デフォルトのランダムベクトル数を100に設定 ✅
+  - MLflowログオプション追加 ✅
+  - Transformerベース評価（`SentimentEvaluator`）を使用 ✅
 - `src/analysis/random_vs_emotion_effect.py`: ランダム vs 感情ベクトルの効果比較 ✅
-- 同じL2ノルムを持つランダムベクトルを生成し、感情ベクトルとの効果を統計的に比較
+  - 同じL2ノルムを持つランダムベクトルを生成し、感情ベクトルとの効果を統計的に比較
+  - Cohen's d計算 ✅
+  - パーミュテーション検定 ✅
+  - ブートストラップ信頼区間 ✅
+  - CSV出力（`--output_csv`, `--distributions_csv`） ✅
+  - ヒートマップ/バイオリンプロット生成 ✅
 - Extendedデータセットで実行済み ✅
 
-### 実世界検証 ✅ 追加実装
+### 実世界検証 ✅ 追加実装・強化完了
 - `data/real_world_samples.json`: 実世界テキストサンプル（SNS、レビュー、メール）35文 ✅
+- `src/analysis/real_world_patching.py`: multi-token patchingとTransformer指標を用いた実世界プロンプト評価 ✅
+  - ベースライン＋各emotion/αでのテキストとメトリクスを保存
+  - `ActivationPatcher`と`SentimentEvaluator`を使用
+- `src/visualization/real_world_plots.py`: 実世界Patching結果の可視化 ✅
+  - 前後比較のバイオリン/バープロット生成
+  - ペアt検定（mean_diff/t/p）を出力
+  - フラットCSV出力（`real_world_metrics.csv`）
 - 実世界テキストでのPatching実験を実行 ✅
 
 ## フェーズ5: 因果性をちゃんと殴る（Activation Patching完全版）（2-3週間）✅ 完了
@@ -138,13 +169,24 @@
 - 次のグリッドでpatchingを実行：
   - **層**: L = {3, 5, 7, 9, 11}
   - **スケールα**: {-2, -1, -0.5, 0, 0.5, 1, 2}
-- 各設定で生成テキストを保存し、以下の指標でスコアリング：
-  - 感謝語・怒り語・謝罪語の頻度
-  - 文のポジ/ネガ（sentiment classifier）
-  - "丁寧さ" proxy（please, kindly, thank you, sorryなどの出現）
+- **実際のテキスト生成**: `HookedTransformer.generate`を使用したdeterministic生成 ✅
+- **Multi-token生成**: 全生成ステップでhookを効かせる継続パッチ ✅
+- **Transformerベース評価**: `SentimentEvaluator`によるRoBERTa系スコアを使用 ✅
+  - CardiffNLP sentiment (`cardiffnlp/twitter-roberta-base-sentiment-latest`)
+  - Stanford Politeness (`michellejieli/Stanford_politeness_roberta`)
+  - GoEmotions (`bhadresh-savani/roberta-base-go-emotions`)
+- ヒューリスティック指標を廃止し、Transformerベース評価に完全移行 ✅
+
+**成果物の構造**:
+- `baseline_summary`: ベースラインの集約メトリクス（ネスト辞書） ✅
+- `aggregated_metrics`: 絶対値メトリクス（感情別、層別、α別、ネスト辞書） ✅
+- `delta_metrics`: ベースラインからの差分メトリクス（感情別、層別、α別、ネスト辞書） ✅
+- `sweep_results`: 詳細な結果（各プロンプト×層×αの生成テキストとメトリクス） ✅
+- MLflowにflattenしてログ化（ネスト辞書対応） ✅
 
 **期待される成果物**:
-- 層×αのヒートマップ（論文の1枚図レベルの可視化）
+- 層×αのヒートマップ（論文の1枚図レベルの可視化、`patching_heatmaps.py`で生成） ✅
+- バイオリンプロット（分布の比較） ✅
 - 「どの層 + どのαが、どの感情トーンに一番効くか」の明確な結果
 
 ### ステップ5-2: 文末 vs 感情語ベクトルの「因果力」比較 ✅ 完了
@@ -277,6 +319,7 @@
 - ✅ 実装完了・修正完了・動作確認済み
 - ✅ プロファイル対応済み（`--profile`オプション）
 - ✅ GPT-2で実行完了（`results/baseline/alignment/head_scores_gpt2.json`）
+- ✅ 新しい統計情報を取得（感情語トークンへのattention、サンプル数） ✅
 
 **入力**:
 - モデル名（例: `gpt2`）
@@ -290,7 +333,7 @@
 ```bash
 python -m src.analysis.head_screening \
   --model gpt2 \
-  --device cuda \
+  --profile baseline \
   --output results/baseline/alignment/head_scores_gpt2.json
 ```
 
@@ -302,9 +345,10 @@ python -m src.analysis.head_screening \
    - `blocks.{layer}.hook_mlp_out`（MLP出力）
 4. 感情語トークン位置を特定（既存のtoken-basedベクトル抽出ロジックを流用）
 5. 各headについて：
+   - 感情語トークンへのattentionを測定（行全体の平均ではなく、感情語トークン位置のみ） ✅
    - 感情カテゴリごとの平均attention（例：感謝 vs 中立）
    - `score = mean(Δattn over emotion tokens)` を計算
-   - 必要ならMLP出力のノルム差も計算
+   - サンプル数を記録（`samples_emotion`, `samples_neutral`） ✅
 6. 結果をJSON保存：
    ```json
    {
@@ -317,7 +361,10 @@ python -m src.analysis.head_screening \
          "head": 5,
          "emotion": "gratitude",
          "delta_attn": 0.123,
-         "delta_mlp_norm": 0.045
+         "emotion_mean_attn": 0.037713,
+         "neutral_mean_attn": 0.013689,
+         "samples_emotion": 70,
+         "samples_neutral": 70
        }
      ]
    }
@@ -334,16 +381,16 @@ python -m src.analysis.head_screening \
 **実装状況**:
 - ✅ コード実装完了
 - ✅ プロファイル対応済み（`--profile`オプション）
-- ⏳ テスト実行待ち
+- ✅ GPT-2で実行完了（`results/baseline/patching/head_ablation/gpt2_gratitude_00.pkl`）
 
 **CLI仕様**:
 ```bash
 python -m src.models.head_ablation \
   --model gpt2 \
-  --device cuda \
-  --head-spec "3:5,7:2" \
-  --prompts-file data/gratitude_prompts.json \
-  --output results/baseline/patching/head_ablation_gpt2_gratitude.pkl
+  --profile baseline \
+  --head-spec "0:0" \
+  --emotion gratitude \
+  --max-tokens 15
 ```
 
 **実装要件**:
@@ -382,30 +429,39 @@ python -m src.models.head_ablation \
 **実装状況**:
 - ✅ コード実装完了
 - ✅ プロファイル対応済み（`--profile`オプション）
-- ⏳ テスト実行待ち
+- ✅ GPT-2で実行完了（`results/baseline/patching/head_patching/gpt2_gratitude_00.pkl`）
+- ✅ 感情プロンプト全体から`pattern`/`V`/`head_output`を平均して使用 ✅
+- ✅ `patch_mode`に`v_only`/`pattern_v`/`result`を追加 ✅
+- ✅ `use_attn_result=True`起動で`hook_result`による直接パッチ対応 ✅
+- ✅ `generate` APIでマルチトークン生成に対応 ✅
+- ✅ 複数head同時パッチに対応 ✅
 
 **CLI仕様**:
 ```bash
 python -m src.models.head_patching \
   --model gpt2 \
-  --device cuda \
-  --head-spec "3:5,7:2" \
-  --neutral-prompts data/neutral_prompts.json \
-  --emotion-prompts data/gratitude_prompts.json \
-  --output results/baseline/patching/head_patching_gpt2_gratitude.pkl
+  --profile baseline \
+  --head-spec "0:0,3:5" \
+  --emotion gratitude \
+  --max-tokens 30 \
+  --patch-mode result \
+  --use-attn-result
 ```
 
 **実装要件**:
 1. 2段階処理：
-   - ステップ1：感謝プロンプトでforwardし、指定headの出力を保存
-   - ステップ2：中立プロンプトでforward中に、該当層・位置のhead出力を「感謝側」の値に差し替え
-2. Hook対象: `blocks.{layer}.attn.hook_result`
+   - ステップ1：感謝プロンプト全体でforwardし、指定headの出力を平均して保存（`hook_pattern`と`hook_v`から計算、または`hook_result`を使用）
+   - ステップ2：中立プロンプトで`generate` API実行中に、該当層・位置のhead出力を「感謝側」の値に差し替え
+2. Hook対象: `patch_mode`に応じて切り替え ✅
+   - `v_only`: `hook_v`を使用
+   - `pattern_v`: `hook_pattern`と`hook_v`を使用
+   - `result`: `hook_result`を使用（`use_attn_result=True`が必要）
 3. 位置の扱い：シンプルに「最後のトークン位置」または感情語トークン位置を対象
 4. 評価：
    - 生成テキスト（patchなし / patchあり）を比較
-   - 感情キーワード頻度
-   - Sentimentスコア
+   - TransformerベースのSentiment/Politeness/Emotion評価（`SentimentEvaluator`）
 5. 結果形式：`head_ablation.py`と同様のstructでpklに保存
+6. **メタデータ**: `patch_mode`フィールドで使用したpatching手法を記録 ✅
 
 **保存先**: `results/baseline/patching/head_patching/`
 
@@ -418,15 +474,17 @@ python -m src.models.head_patching \
 **実装状況**:
 - ✅ コード実装完了
 - ✅ プロファイル対応済み（`--profile`オプション）
-- ⏳ テスト実行待ち
+- ✅ GPT-2で実行完了（`results/baseline/plots/heads/`に4つの図を生成）
 
 **CLI仕様**:
 ```bash
 python -m src.visualization.head_plots \
+  --profile baseline \
   --head-scores results/baseline/alignment/head_scores_gpt2.json \
-  --ablation-file results/baseline/patching/head_ablation_gpt2_gratitude.pkl \
-  --patching-file results/baseline/patching/head_patching_gpt2_gratitude.pkl \
-  --output-dir results/baseline/plots/heads
+  --ablation-file results/baseline/patching/head_ablation/gpt2_gratitude_00.pkl \
+  --patching-file results/baseline/patching/head_patching/gpt2_gratitude_00.pkl \
+  --output-dir results/baseline/plots/heads \
+  --top-n 20
 ```
 
 **生成する図**:
@@ -690,13 +748,37 @@ emotion-circuits/
 ## 統合実行の成果（2024年12月）
 
 ### 完了した統合実行
-- **Phase 0-6の完全再実行**: Baseline + Extendedデータセットでの統合実行完了 ✅
+- **Phase 0-7の完全再実行**: Baselineデータセットでの統合実行完了 ✅
 - **MLflow統合**: 全フェーズで実験追跡対応 ✅
+- **MLflow改善**: 自動フォールバック（リモートサーバーがダウン時はローカルファイルストアを使用） ✅
 - **新規モジュール追加**:
   - `src/data/build_dataset.py`: 統合データセット構築 ✅
   - `src/models/activation_patching_random.py`: ランダム対照実験 ✅
-  - `src/analysis/random_vs_emotion_effect.py`: ランダム vs 感情効果比較 ✅
-- **実世界検証**: 実世界テキストサンプルでの検証追加 ✅
+  - `src/analysis/random_vs_emotion_effect.py`: ランダム vs 感情効果比較（統計検定付き） ✅
+  - `src/utils/model_utils.py`: モデルディレクトリスラッグの統一化 ✅
+  - `src/models/head_ablation.py`: Head ablation実験 ✅
+  - `src/models/head_patching.py`: Head patching実験（multi-token、複数patch_mode対応） ✅
+  - `src/analysis/head_screening.py`: Headスクリーニング ✅
+  - `src/visualization/head_plots.py`: Head解析結果可視化 ✅
+  - `src/analysis/real_world_patching.py`: 実世界プロンプト評価 ✅
+  - `src/visualization/real_world_plots.py`: 実世界Patching結果可視化 ✅
+  - `src/models/neuron_ablation.py`: ニューロン単位アブレーション実験 ✅
+  - `src/analysis/neuron_saliency.py`: ニューロンサリエンシー解析 ✅
+  - `src/analysis/cross_model_patching.py`: クロスモデルパッチング（アライメント写像使用） ✅
+  - `src/analysis/circuit_ov_qk.py`: OV/QK回路解析ユーティリティ（TransformerLens新バックエンド対応） ✅
+  - `src/analysis/circuit_experiments.py`: OV/QK回路実験パイプライン（OV ablation、QK routing patching、統合実験） ✅
+  - `src/analysis/circuit_report.py`: OV/QK回路解析結果の可視化とサマリー生成 ✅
+  - `scripts/consistency_check.py`: コード-論文整合性チェック ✅
+  - `.github/workflows/code_paper_consistency.yml`: GitHub Actions CI/CD ✅
+- **モジュール強化**:
+  - `src/models/activation_patching.py`: Multi-token生成、αスケジュール、ウィンドウ/位置指定対応 ✅
+  - `src/models/activation_patching_sweep.py`: Transformerベース評価、ネストメトリクス対応 ✅
+  - `src/analysis/sentiment_eval.py`: CardiffNLP sentiment、Stanford Politeness、GoEmotions統合 ✅
+  - `src/visualization/patching_heatmaps.py`: ネストメトリクス対応、ヒートマップ/バイオリン生成 ✅
+  - `src/utils/mlflow_utils.py`: ネストメトリクスログ（`log_nested_metrics`）、タグ設定（`set_run_tags`）追加 ✅
+  - `src/models/head_patching.py`: `generate_with_patching`に`temperature`/`top_p`パラメータ追加 ✅
+- **実世界検証**: 実世界テキストサンプルでの検証追加・強化 ✅
+- **ログ記録改善**: Phase 2で各実行のstdout/stderrをMLflowアーティファクトとして記録 ✅
 
 ### データセット
 - **Baseline**: 280サンプル（70文 × 4感情）
@@ -708,6 +790,12 @@ emotion-circuits/
 2. **サブスペースレベルでの共通性**: モデル間overlap 0.13-0.15（ランダムより高い）
 3. **線形写像による大幅改善**: Neutral空間での線形写像によりoverlapが0.001から0.99に改善
 4. **Extendedデータセットでの検証**: 拡張データセットでも同様のパターンが確認され、発見の頑健性が示された
+5. **Layer 1の重要性**: Head screeningにより、Layer 1 Head 10がgratitude感情に最も強く反応（Δattn: 0.340434） ✅
+6. **Head patchingの効果**: Layer 0 Head 0のpatchingでsentimentが増加（+0.0149） ✅
+7. **Multi-token生成の重要性**: 単一トークン生成では検出できないスタイル変化や感情パターンがmulti-token生成で検出可能 ✅
+8. **Transformerベース評価の有効性**: ヒューリスティック指標では検出できなかった効果がTransformerベース評価で検出可能 ✅
+9. **クロスモデルパッチングの可能性**: アライメント写像により、異なるモデル間で感情ベクトルを転送してパッチング可能 ✅
+10. **ニューロンレベル解析の重要性**: HeadだけでなくMLPニューロンも感情回路に重要な役割を果たす可能性 ✅
 
 ### レポート
 - `docs/report/phase0_setup_report.md` - Phase 0: 環境セットアップ ✅
@@ -718,3 +806,4 @@ emotion-circuits/
 - `docs/report/phase4_patching_report.md` - Phase 4: 統合Patching + ランダム対照 + 実世界 ✅
 - `docs/report/phase5_sweep_report.md` - Phase 5: 統合Sweep実験 ✅
 - `docs/report/phase6_alignment_report.md` - Phase 6: 統合サブスペースアライメント ✅
+- `docs/report/phase7_head_analysis_report.md` - Phase 7: Head/Unitレベル解析 ✅

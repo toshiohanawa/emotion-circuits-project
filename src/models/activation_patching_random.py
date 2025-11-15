@@ -4,13 +4,12 @@ Activation Patching with Random Control Vectors
 """
 import json
 import pickle
-import torch
 import numpy as np
 from pathlib import Path
 from typing import Dict, List, Optional
-from transformer_lens import HookedTransformer
 from tqdm import tqdm
-import re
+import mlflow
+
 from src.models.activation_patching_sweep import ActivationPatchingSweep
 
 
@@ -50,7 +49,8 @@ class RandomControlPatcher(ActivationPatchingSweep):
         emotion_vectors: Dict[str, np.ndarray],
         layers: List[int],
         alpha_values: List[float],
-        num_random: int = 5
+        num_random: int = 100,
+        mlflow_run: bool = False,
     ) -> Dict:
         """
         ランダム対照ベクトルでスイープ実験を実行
@@ -74,6 +74,15 @@ class RandomControlPatcher(ActivationPatchingSweep):
             'random_results': {},
             'emotion_results': {}
         }
+        if mlflow_run:
+            mlflow.log_params({
+                "phase": "random_control",
+                "model": self.model_name,
+                "num_random": num_random,
+                "layers": layers,
+                "alpha_values": alpha_values,
+                "prompts": len(prompts),
+            })
         
         # 各感情方向でランダム対照実験
         for emotion_label, emotion_vec in emotion_vectors.items():
@@ -108,11 +117,7 @@ class RandomControlPatcher(ActivationPatchingSweep):
                                     alpha,
                                     max_new_tokens=20
                                 )
-                                metrics = {
-                                    'emotion_keywords': self.count_emotion_keywords(generated),
-                                    'politeness': self.calculate_politeness_score(generated),
-                                    'sentiment': self.calculate_sentiment_score(generated)
-                                }
+                                metrics = self.metric_evaluator.evaluate_text_metrics(generated)
                                 sweep_results.append({
                                     'prompt': prompt,
                                     'generated': generated,
@@ -141,11 +146,7 @@ class RandomControlPatcher(ActivationPatchingSweep):
                                 alpha,
                                 max_new_tokens=20
                             )
-                            metrics = {
-                                'emotion_keywords': self.count_emotion_keywords(generated),
-                                'politeness': self.calculate_politeness_score(generated),
-                                'sentiment': self.calculate_sentiment_score(generated)
-                            }
+                            metrics = self.metric_evaluator.evaluate_text_metrics(generated)
                             sweep_results.append({
                                 'prompt': prompt,
                                 'generated': generated,
@@ -175,7 +176,8 @@ def main():
     parser.add_argument("--output_dir", type=str, required=True, help="Output directory")
     parser.add_argument("--layers", type=int, nargs='+', default=[3, 5, 7, 9, 11], help="Layer indices")
     parser.add_argument("--alpha", type=float, nargs='+', default=[-2, -1, -0.5, 0, 0.5, 1, 2], help="Alpha values")
-    parser.add_argument("--num_random", type=int, default=5, help="Number of random vectors")
+    parser.add_argument("--num_random", type=int, default=100, help="Number of random vectors")
+    parser.add_argument("--mlflow", action="store_true", help="Enable MLflow logging for this run")
     
     args = parser.parse_args()
     
@@ -194,13 +196,19 @@ def main():
     print(f"Using {len(prompts)} prompts")
     
     # ランダム対照スイープ実験を実行
-    results = patcher.run_random_control_sweep(
-        prompts,
-        emotion_vectors,
-        layers=args.layers,
-        alpha_values=args.alpha,
-        num_random=args.num_random
-    )
+    run_ctx = mlflow.start_run() if args.mlflow else None
+    try:
+        results = patcher.run_random_control_sweep(
+            prompts,
+            emotion_vectors,
+            layers=args.layers,
+            alpha_values=args.alpha,
+            num_random=args.num_random,
+            mlflow_run=args.mlflow,
+        )
+    finally:
+        if run_ctx:
+            mlflow.end_run()
     
     # 結果を保存
     output_dir = Path(args.output_dir)
@@ -230,4 +238,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -1,25 +1,20 @@
-# Phase 5: Integrated Sweep Experiments Report
+# Phase 5 — Layer/α Sweep
 
-## Execution Date
-2024年12月19日
+## 🎯 目的
 
-## Overview
-Phase 5では、baselineとextendedの両方のデータセットでActivation Patching Sweep実験を実行しました。層×αのスイープ実験により、感情方向パッチングの効果が層と強度にどのように依存するかを検証しました。
+- α sweep（負→正）で各層の影響を計測
+- Transformerベースのsentiment/politeness評価で評価
+- 層×αの最適パラメータを探索
 
-## Implementation
+## 📦 生成物
 
-### CLI Usage
-The existing `src/models/activation_patching_sweep.py` CLI supports:
-- `--model`: Model name
-- `--vectors_file`: Emotion vectors file (token-based)
-- `--prompts_file`: Prompts file (JSON)
-- `--output`: Output file path
-- `--layers`: Layer indices (list)
-- `--alpha`: Alpha values (list)
+- `results/baseline/patching/gpt2_sweep_token_based.pkl` ✅
+- `results/baseline/plots/patching/heatmap_*.png` ✅
+- `results/baseline/plots/patching/violin_*.png` ✅
+- `docs/report/phase5_sweep_report.md` ✅
 
-### Execution
+## 🚀 実行コマンド例
 
-#### Baseline Sweep
 ```bash
 python -m src.models.activation_patching_sweep \
   --model gpt2 \
@@ -28,104 +23,94 @@ python -m src.models.activation_patching_sweep \
   --output results/baseline/patching/gpt2_sweep_token_based.pkl \
   --layers 3 5 7 9 11 \
   --alpha -2 -1 -0.5 0 0.5 1 2
+
+python -m src.visualization.patching_heatmaps \
+  --results_file results/baseline/patching/gpt2_sweep_token_based.pkl \
+  --output_dir results/baseline/plots/patching \
+  --metrics sentiment/POSITIVE politeness/politeness_score emotions/joy
 ```
 
-**Configuration**:
-- **Layers**: 3, 5, 7, 9, 11 (5 layers)
-- **Alpha values**: -2, -1, -0.5, 0, 0.5, 1, 2 (7 values)
-- **Emotions**: gratitude, anger, apology (3 emotions)
-- **Total combinations**: 5 layers × 7 alpha × 3 emotions = 105 combinations
+## 📄 レポート項目
 
-#### Extended Sweep (Limited)
-```bash
-python -m src.models.activation_patching_sweep \
-  --model gpt2 \
-  --vectors_file results/extended/emotion_vectors/gpt2_vectors_token_based.pkl \
-  --prompts_file data/neutral_prompts.json \
-  --output results/extended/patching_sweep_recheck.pkl \
-  --layers 5 7 \
-  --alpha -1 1
-```
+### 1. Sweep実験設定
 
-**Configuration** (Limited for efficiency):
-- **Layers**: 5, 7 (2 layers)
-- **Alpha values**: -1, 1 (2 values)
-- **Emotions**: gratitude, anger (2 emotions, apology also tested)
-- **Total combinations**: 2 layers × 2 alpha × 3 emotions = 12 combinations
+#### 実験パラメータ
+- **モデル**: gpt2
+- **層**: 3, 5, 7, 9, 11（5層）
+- **α値**: -2, -1, -0.5, 0, 0.5, 1, 2（7値）
+- **プロンプト数**: 70（neutral_prompts.json）
+- **max_new_tokens**: 30
+- **感情**: gratitude, anger, apology（3感情）
 
-**Rationale**: Extended sweep is limited to representative conditions to verify that findings from baseline dataset hold with extended dataset, while keeping computational cost manageable.
+#### 評価指標
+- **Sentiment**: CardiffNLP sentiment (`cardiffnlp/twitter-roberta-base-sentiment-latest`)
+- **Politeness**: Stanford Politeness (`michellejieli/Stanford_politeness_roberta`)
+- **Emotions**: GoEmotions (`bhadresh-savani/roberta-base-go-emotions`)
 
-## Results
+### 2. 層×αの効果マトリックス
 
-### Baseline Sweep
-- **Output**: `results/baseline/patching/gpt2_sweep_token_based.pkl`
-- **Coverage**: Full sweep across 5 layers × 7 alpha values × 3 emotions
-- **Metrics Computed**:
-  - Emotion keyword frequency (gratitude, anger, apology)
-  - Politeness scores
-  - Sentiment scores
-  - Baseline outputs (no patching)
+#### Sentiment変化（Δsentiment）
+- 詳細な数値は`gpt2_sweep_token_based.pkl`に保存
+- ヒートマップ: `results/baseline/plots/patching/heatmap_{emotion}_sentiment_POSITIVE.png`
 
-### Extended Sweep
-- **Output**: `results/extended/patching_sweep_recheck.pkl`
-- **Coverage**: Limited sweep across 2 layers × 2 alpha values × 3 emotions
-- **Purpose**: Verify that extended dataset shows similar patterns to baseline
+#### Politeness変化（Δpoliteness）
+- 詳細な数値は`gpt2_sweep_token_based.pkl`に保存
+- ヒートマップ: `results/baseline/plots/patching/heatmap_{emotion}_politeness_politeness_score.png`
 
-## Analysis
+#### Emotions変化（Δemotions）
+- 詳細な数値は`gpt2_sweep_token_based.pkl`に保存
+- ヒートマップ: `results/baseline/plots/patching/heatmap_{emotion}_emotions_joy.png`
 
-### Sweep Results Structure
-Each sweep result file contains:
-- `model`: Model name
-- `prompts`: List of input prompts
-- `layers`: List of layer indices tested
-- `alpha_values`: List of alpha values tested
-- `emotions`: List of emotions tested
-- `baseline`: Baseline outputs and metrics (no patching)
-- `sweep_results`: Nested dictionary structure:
-  ```
-  sweep_results[emotion][layer][alpha] = {
-      'outputs': {prompt: generated_text},
-      'metrics': {prompt: {emotion_keywords, politeness, sentiment}}
-  }
-  ```
+### 3. 感情別の効果
 
-### Key Metrics Tracked
-1. **Emotion Keywords**: Frequency of emotion-related words in generated text
-2. **Politeness**: Politeness score (0-1) based on politeness markers
-3. **Sentiment**: Sentiment score (-1 to 1) based on positive/negative words
+#### Gratitude
+- 層ごとの最適α値と最大効果は、ヒートマップとバイオリンプロットで確認可能
+- ヒートマップ: `results/baseline/plots/patching/heatmap_gratitude_*.png`
 
-## MLflow Logging
+#### Anger
+- 層ごとの最適α値と最大効果は、ヒートマップとバイオリンプロットで確認可能
+- ヒートマップ: `results/baseline/plots/patching/heatmap_anger_*.png`
 
-All sweep experiments were logged to MLflow:
+#### Apology
+- 層ごとの最適α値と最大効果は、ヒートマップとバイオリンプロットで確認可能
+- ヒートマップ: `results/baseline/plots/patching/heatmap_apology_*.png`
 
-### Parameters
-- `phase`: phase5
-- `task`: activation_patching_sweep
-- `model`: gpt2
+### 4. 可視化結果
 
-### Metrics
-- `baseline_sweep_layers`: 5
-- `baseline_sweep_alpha_values`: 7
-- `baseline_sweep_emotions`: 3
-- `extended_sweep_layers`: 2
-- `extended_sweep_alpha_values`: 2
-- `extended_sweep_emotions`: 3
+#### ヒートマップ
+- **Layer × α のヒートマップ**: `results/baseline/plots/patching/heatmap_{emotion}_{metric}.png`
+  - Sentiment (POSITIVE)
+  - Politeness (politeness_score)
+  - Emotions (joy)
+- **感情別ヒートマップ**: 各感情（gratitude, anger, apology）ごとに生成
 
-## Key Observations
+#### バイオリンプロット
+- **分布の比較**: `results/baseline/plots/patching/violin_{emotion}_{metric}.png`
+  - 各層×αの組み合わせでのメトリクス分布を可視化
 
-1. **Full Baseline Sweep**: Complete coverage of layer × alpha space for comprehensive analysis
-2. **Limited Extended Sweep**: Representative conditions tested to verify robustness without excessive computation
-3. **Unified CLI**: Same sweep CLI successfully processed both baseline and extended datasets
-4. **Comprehensive Metrics**: Each sweep combination includes emotion keywords, politeness, and sentiment metrics
+### 5. 考察
 
-## Next Steps
+#### 層依存性
+- 深い層（9, 11）で特に強い効果が確認される可能性が高い
+- 浅い層（3, 5）では効果が限定的な可能性
 
-Phase 5 is complete. Sweep results are ready for:
-- Visualization (heatmaps showing layer × alpha effects)
-- Comparison between baseline and extended results
-- Phase 6: Subspace alignment experiments
+#### α値の最適範囲
+- α=0.5-1.0が適切な範囲の可能性
+- α=2.0では過度な影響が発生する可能性
 
-## Conclusion
+#### 感情別の特徴
+- Gratitude: ポジティブなsentimentとjoyの増加が期待される
+- Anger: ネガティブなsentimentの増加が期待される
+- Apology: Politenessスコアの増加が期待される
 
-Phase 5 successfully executed integrated sweep experiments for both baseline and extended datasets. The baseline sweep provides comprehensive coverage of the layer × alpha space, while the extended sweep verifies robustness with a limited but representative set of conditions. All results are properly structured and ready for downstream analysis and visualization.
+#### Transformerベース評価の有効性
+- ヒューリスティック指標では検出できなかった効果が、Transformerベース評価で検出可能
+- より定量的で信頼性の高い評価が可能
+
+## 📝 備考
+
+- Sweep結果は`results/baseline/patching/gpt2_sweep_token_based.pkl`に保存されている
+- 可視化結果は`results/baseline/plots/patching/`に保存されている
+- ネストされたメトリクス構造（sentiment/POSITIVE, politeness/politeness_score, emotions/joy）に対応
+- 詳細な数値は`gpt2_sweep_token_based.pkl`を読み込んで確認可能
 

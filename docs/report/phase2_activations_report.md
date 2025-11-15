@@ -1,107 +1,156 @@
-# Phase 2: Integrated Activation Extraction Report
+# Phase 2 — Activation Extraction
 
-## Execution Date
-2024年12月19日
+## 🎯 目的
 
-## Overview
-Phase 2では、baselineとextendedの両方のデータセットから、3つのモデル（GPT-2, Pythia-160M, GPT-Neo-125M）の内部活性を統合的に抽出しました。既存のCLIスクリプト（`extract_activations.py`）が`--dataset`と`--output`パラメータをサポートしているため、両方のデータセットを同じワークフローで処理できました。
+- GPT-2、Pythia-160M、GPT-Neo-125Mの各emotionのresidual streamを抽出
+- 層別 / トークン別のactivationsを保存
+- 3モデル×4感情カテゴリの活性データを取得
 
-## Implementation
+## 📦 生成物
 
-### CLI Usage
-The existing `src/models/extract_activations.py` CLI already supports:
-- `--model`: Model name (required)
-- `--dataset`: Dataset path (default: `data/emotion_dataset.jsonl`)
-- `--output`: Output directory (required)
-- `--emotion`: Emotion label (optional, filters dataset)
+- `results/baseline/activations/{model}/activations_{emotion}.pkl` × 3モデル × 4感情 ✅
+- MLflowログ（実行ログ記録） ✅
+- `docs/report/phase2_activations_report.md` ✅
 
-### Execution
+## 🚀 実行コマンド例
 
-#### Baseline Dataset Activations
 ```bash
-# GPT-2
-python -m src.models.extract_activations --model gpt2 --dataset data/emotion_dataset.jsonl --output results/baseline/activations/gpt2 --emotion gratitude
-python -m src.models.extract_activations --model gpt2 --dataset data/emotion_dataset.jsonl --output results/baseline/activations/gpt2 --emotion anger
-python -m src.models.extract_activations --model gpt2 --dataset data/emotion_dataset.jsonl --output results/baseline/activations/gpt2 --emotion apology
-python -m src.models.extract_activations --model gpt2 --dataset data/emotion_dataset.jsonl --output results/baseline/activations/gpt2 --emotion neutral
-
-# Pythia-160M
-python -m src.models.extract_activations --model EleutherAI/pythia-160m --dataset data/emotion_dataset.jsonl --output results/baseline/activations/EleutherAI-pythia-160m --emotion {emotion}
-
-# GPT-Neo-125M
-python -m src.models.extract_activations --model EleutherAI/gpt-neo-125M --dataset data/emotion_dataset.jsonl --output results/baseline/activations/EleutherAI-gpt-neo-125M --emotion {emotion}
+python -m scripts.phase2_extract_all_activations --profile baseline
 ```
 
-#### Extended Dataset Activations
-```bash
-# Same commands but with extended dataset and output directory
-python -m src.models.extract_activations --model gpt2 --dataset data/emotion_dataset_extended.jsonl --output results/extended/activations/gpt2 --emotion {emotion}
-# ... (repeated for all models and emotions)
-```
+## 📄 レポート項目
 
-## Results
+### 1. 前処理（トークン化）
 
-### Baseline Dataset
-- **Models**: GPT-2, Pythia-160M, GPT-Neo-125M
-- **Emotions**: gratitude, anger, apology, neutral (4 categories)
-- **Total Files**: 12 files (3 models × 4 emotions)
-- **Samples per File**: 70 samples
-- **Total Samples Processed**: 840 samples (3 models × 4 emotions × 70 samples)
-- **Output Location**: `results/baseline/activations/{model}/activations_{emotion}.pkl`
+#### トークナイザー
+- **GPT-2**: GPT-2 tokenizer（BPE）
+- **Pythia-160M**: GPT-2互換tokenizer（BPE）
+- **GPT-Neo-125M**: GPT-2互換tokenizer（BPE）
+- **ボキャブラリサイズ**: 50,257（GPT-2系）
 
-### Extended Dataset
-- **Models**: GPT-2, Pythia-160M, GPT-Neo-125M
-- **Emotions**: gratitude, anger, apology, neutral (4 categories)
-- **Total Files**: 12 files (3 models × 4 emotions)
-- **Samples per File**: 100 samples
-- **Total Samples Processed**: 1,200 samples (3 models × 4 emotions × 100 samples)
-- **Output Location**: `results/extended/activations/{model}/activations_{emotion}.pkl`
+#### トークン化設定
+- max_length: なし（可変長）
+- padding: なし
+- truncation: なし（全トークンを保持）
 
-### Activation Data Structure
-Each activation file contains:
-- **Residual stream layers**: 12 layers (for all models)
-- **MLP output layers**: 12 layers
-- **Attention layers**: 0 (not saved by default)
+### 2. 抽出構造（層×トークン）
 
-## Processing Performance
+#### モデル構造
 
-- **Processing Speed**: ~60-63 samples/second (consistent across models)
-- **Total Processing Time**: 
-  - Baseline: ~14 seconds per model×emotion combination
-  - Extended: ~20 seconds per model×emotion combination
-- **Total Time**: ~2-3 minutes for all baseline extractions, ~3-4 minutes for all extended extractions
+**GPT-2 small**:
+- モデル名: `gpt2`
+- 層数: 12
+- Hidden size (d_model): 768
+- Attention heads: 12
+- Head dimension (d_head): 64
+- MLP dimension: 3072
+- Vocab size: 50,257
 
-## MLflow Logging
+**Pythia-160M**:
+- モデル名: `EleutherAI/pythia-160m`
+- 層数: 12
+- Hidden size (d_model): 768
+- Attention heads: 12
 
-All activation extraction metrics were logged to MLflow:
+**GPT-Neo-125M**:
+- モデル名: `EleutherAI/gpt-neo-125M`
+- 層数: 12
+- Hidden size (d_model): 768
+- Attention heads: 12
 
-### Parameters
-- `phase`: phase2
-- `task`: activation_extraction
-- `models`: ['gpt2', 'EleutherAI-pythia-160m', 'EleutherAI-gpt-neo-125M']
-- `emotions`: ['gratitude', 'anger', 'apology', 'neutral']
+#### 抽出された活性の構造
 
-### Metrics
-- Individual file sizes (MB) for each model×emotion×dataset combination
-- `baseline_total_files`: 12
-- `baseline_total_size_mb`: Total size of all baseline activation files
-- `extended_total_files`: 12
-- `extended_total_size_mb`: Total size of all extended activation files
+- **Residual stream**: `[n_layers][n_samples][seq_len, d_model]`
+  - 例: GPT-2 gratitude - Layer 0: `[70 samples][seq_len, 768]`
+  - 各層ごとにリスト形式で保存
+  - 各サンプルごとにテンソル `[seq_len, d_model]` として保存
 
-## Key Observations
+- **MLP出力**: `[n_layers][n_samples][seq_len, d_model]`
+  - Residual streamと同様の構造
 
-1. **Unified Workflow**: The same CLI successfully processed both baseline and extended datasets without modification
-2. **Consistent Performance**: Processing speed was consistent across models (~60 samples/second)
-3. **Complete Coverage**: All 3 models × 4 emotions × 2 datasets = 24 activation files successfully created
-4. **Proper Isolation**: Extended activations stored in `results/extended/` separate from baseline `results/baseline/`
+- **Attention**: 保存されていない（メモリ節約のため）
 
-## Next Steps
+- **Tokens**: `[n_samples][batch, seq_len]`
+  - 各サンプルのトークンID
 
-Phase 2 is complete. Activation files are ready for:
-- Phase 3: Emotion vector extraction (sentence-end based)
-- Phase 3.5: Token-based vectors and subspace analysis
-- All subsequent phases that require activation data
+- **Token strings**: `[n_samples][seq_len]`
+  - 各サンプルのトークン文字列
 
-## Conclusion
+### 3. 実行時間
 
-Phase 2 successfully extracted activations from both baseline (280 samples) and extended (400 samples) datasets across all 3 models. The unified CLI approach worked seamlessly, demonstrating that the existing codebase already supports dataset-aware workflows. All activation files are properly organized and ready for downstream analysis.
+| モデル | 感情カテゴリ | サンプル数 | ファイルサイズ | 最終更新日時 |
+|--------|------------|-----------|---------------|-------------|
+| gpt2   | Gratitude  | 70        | 34.9 MB       | 2025-11-15 05:08 |
+| gpt2   | Anger      | 70        | 36.2 MB       | - |
+| gpt2   | Apology    | 70        | 40.5 MB       | - |
+| gpt2   | Neutral    | 70        | 32.1 MB       | - |
+| pythia-160m | Gratitude | 70     | 35.0 MB       | - |
+| pythia-160m | Anger     | 70        | 36.3 MB       | - |
+| pythia-160m | Apology   | 70        | 40.5 MB       | - |
+| pythia-160m | Neutral   | 70        | 32.1 MB       | - |
+| gpt-neo-125M | Gratitude | 70      | 34.9 MB       | - |
+| gpt-neo-125M | Anger     | 70        | 36.2 MB       | - |
+| gpt-neo-125M | Apology   | 70        | 40.5 MB       | - |
+| gpt-neo-125M | Neutral   | 70        | 32.1 MB       | - |
+
+### 4. ファイルサイズ
+
+| モデル | 感情カテゴリ | ファイルサイズ | 合計サイズ |
+|--------|------------|---------------|-----------|
+| gpt2   | Gratitude  | 34.9 MB       | 143.7 MB  |
+| gpt2   | Anger      | 36.2 MB       |            |
+| gpt2   | Apology    | 40.5 MB       |            |
+| gpt2   | Neutral    | 32.1 MB       |            |
+| pythia-160m | Gratitude | 35.0 MB    | 144.0 MB  |
+| pythia-160m | Anger     | 36.3 MB       |            |
+| pythia-160m | Apology   | 40.5 MB       |            |
+| pythia-160m | Neutral   | 32.1 MB       |            |
+| gpt-neo-125M | Gratitude | 34.9 MB   | 143.7 MB  |
+| gpt-neo-125M | Anger     | 36.2 MB       |            |
+| gpt-neo-125M | Apology   | 40.5 MB       |            |
+| gpt-neo-125M | Neutral   | 32.1 MB       |            |
+
+**合計**: 約431 MB（3モデル × 4感情）
+
+### 5. 注意点（batch化・max_seq_len）
+
+#### Batch処理
+- Batch size: 1（各テキストを個別に処理）
+- メモリ使用量: 約2-3 GB（GPU使用時）
+
+#### シーケンス長
+- max_seq_len: なし（可変長）
+- 平均シーケンス長: 約7-9トークン（Phase 1の統計より）
+- 最大シーケンス長: 約13トークン（サンプリング結果より）
+- 実際のサンプル: 最初のサンプルで9トークン
+
+#### メモリ管理
+- GPUメモリ使用量: 約2-3 GB（モデルロード + 活性保存）
+- CPUメモリ使用量: 約500 MB（活性データのCPU転送後）
+- Hook解除: 各サンプル処理後に適切に解除
+
+### 6. MLflowログ
+
+#### 記録されたメトリクス
+- 実行ログ（stdout/stderr）がMLflowアーティファクトとして記録
+- モデル名、感情ラベル、サンプル数などのメタデータが保存
+
+#### アーティファクト
+- 実行ログファイル: `mlflow/artifacts/run_logs/`
+- 活性データ: `results/baseline/activations/{model}/activations_{emotion}.pkl`
+
+### 7. トラブルシューティング
+
+#### 発生した問題
+- 特になし（既存の活性データが正常に保存されている）
+
+#### 解決方法
+- 既存の実装が正常に動作していることを確認
+
+## 📝 備考
+
+- 活性データは`results/baseline/activations/`ディレクトリに保存されている
+- 各モデルごとに独立したディレクトリに保存
+- メタデータにモデル構造情報（層数、hidden sizeなど）が含まれている
+- Attentionデータはメモリ節約のため保存されていない（必要に応じて後から抽出可能）
+

@@ -7,7 +7,7 @@ import pickle
 import torch
 import numpy as np
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Sequence
 from transformer_lens import HookedTransformer
 from tqdm import tqdm
 
@@ -17,20 +17,34 @@ from src.analysis.sentiment_eval import SentimentEvaluator
 class HeadPatcher:
     """Head patchingを実行するクラス"""
     
-    def __init__(self, model_name: str, device: Optional[str] = None):
+    def __init__(self, model_name: str, device: Optional[str] = None, use_attn_result: bool = True):
         """
         初期化
         
         Args:
             model_name: モデル名（例: "gpt2"）
             device: 使用するデバイス
+            use_attn_result: head出力を直接操作するための設定（Trueの場合、attn.hook_resultを有効化）
         """
         self.model_name = model_name
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
+        self.use_attn_result = use_attn_result
         
         print(f"Loading model: {model_name}")
-        self.model = HookedTransformer.from_pretrained(model_name, device=self.device)
+        self.model = HookedTransformer.from_pretrained(
+            model_name,
+            device=self.device,
+        )
+        # Set use_attn_result after loading (not a from_pretrained parameter)
+        self.model.cfg.use_attn_result = use_attn_result
         self.model.eval()
+        self.generation_config = {
+            "do_sample": False,
+            "temperature": 1.0,
+            "top_p": None,
+            "stop_at_eos": True,
+            "return_type": "tokens",
+        }
         
         print(f"✓ Model loaded on {self.device}")
         
@@ -65,41 +79,24 @@ class HeadPatcher:
         emotion_prompts: List[str],
         head_specs: List[Tuple[int, int]],
         position: int = -1
-    ) -> Dict[Tuple[int, int], List[torch.Tensor]]:
+    ) -> Dict[Tuple[int, int], Dict[str, torch.Tensor]]:
         """
-        感情プロンプトでhead出力をキャプチャ
-        
-        Args:
-            emotion_prompts: 感情プロンプトのリスト
-            head_specs: キャプチャするheadのリスト [(layer_idx, head_idx), ...]
-            position: キャプチャする位置（-1は最後）
-            
-        Returns:
-            {(layer_idx, head_idx): [head_outputs]} の辞書
+        感情プロンプトでhead出力/パターン/Vをキャプチャし、全プロンプト平均を返す
         """
-        captured_outputs = {(layer, head): [] for layer, head in head_specs}
+        captured_outputs = {(layer, head): {"pattern": [], "v": [], "head_output": []} for layer, head in head_specs}
         
-        # hook_resultの代わりに、hook_patternとhook_vを使ってhead出力を計算
-        # キャッシュを保存
         cache = {}
         
         def capture_pattern_hook(activation, hook):
-            """Attention patternをキャプチャ"""
             layer_idx = int(hook.name.split('.')[1])
-            if layer_idx not in cache:
-                cache[layer_idx] = {}
-            cache[layer_idx]['pattern'] = activation.detach().clone()
+            cache.setdefault(layer_idx, {})['pattern'] = activation.detach().clone()
             return activation
         
         def capture_v_hook(activation, hook):
-            """Vをキャプチャ"""
             layer_idx = int(hook.name.split('.')[1])
-            if layer_idx not in cache:
-                cache[layer_idx] = {}
-            cache[layer_idx]['v'] = activation.detach().clone()
+            cache.setdefault(layer_idx, {})['v'] = activation.detach().clone()
             return activation
         
-        # Hookを登録
         hook_handles = []
         for layer_idx, head_idx in head_specs:
             pattern_hook_name = f"blocks.{layer_idx}.attn.hook_pattern"
@@ -113,147 +110,244 @@ class HeadPatcher:
             with torch.no_grad():
                 for prompt in tqdm(emotion_prompts, desc="Capturing emotion head outputs"):
                     tokens = self.model.to_tokens(prompt)
-                    cache.clear()  # キャッシュをクリア
+                    cache.clear()
                     _ = self.model(tokens)
                     
-                    # hook_patternとhook_vからhead出力を計算
                     for layer_idx, head_idx in head_specs:
-                        if layer_idx in cache and 'pattern' in cache[layer_idx] and 'v' in cache[layer_idx]:
-                            pattern = cache[layer_idx]['pattern']  # [batch, head, pos, pos]
-                            v = cache[layer_idx]['v']  # [batch, pos, head, d_head]
-                            
-                            # head出力を計算: pattern @ v
-                            # pattern: [batch, head, pos, pos], v: [batch, pos, head, d_head]
-                            # 結果: [batch, pos, head, d_head]
-                            batch_size = pattern.shape[0]
-                            n_heads = pattern.shape[1]
-                            seq_len = pattern.shape[2]
-                            d_head = v.shape[3]
-                            
-                            # patternを [batch, head, pos, pos] から [batch, head, pos, pos] に保持
-                            # vを [batch, pos, head, d_head] から [batch, head, pos, d_head] に変換
-                            v_reshaped = v.permute(0, 2, 1, 3)  # [batch, head, pos, d_head]
-                            
-                            # pattern @ v_reshaped: [batch, head, pos, pos] @ [batch, head, pos, d_head] = [batch, head, pos, d_head]
-                            head_output = torch.einsum('bhqp,bhpd->bhqd', pattern, v_reshaped)  # [batch, head, pos, d_head]
-                            
-                            # 指定headと位置を取得
-                            if position == -1:
-                                head_output_value = head_output[0, head_idx, -1, :].clone()
-                            else:
-                                head_output_value = head_output[0, head_idx, position, :].clone()
-                            
-                            captured_outputs[(layer_idx, head_idx)].append(head_output_value)
-        
+                        c = cache.get(layer_idx, {})
+                        if 'pattern' not in c or 'v' not in c:
+                            continue
+                        pattern = c['pattern']  # [batch, head, pos, pos]
+                        v = c['v']  # [batch, pos, head, d_head]
+                        v_reshaped = v.permute(0, 2, 1, 3)  # [batch, head, pos, d_head]
+                        head_output = torch.einsum('bhqp,bhpd->bhqd', pattern, v_reshaped)  # [batch, head, pos, d_head]
+                        
+                        pos = -1 if position >= head_output.shape[2] else position
+                        head_output_value = head_output[0, head_idx, pos, :].clone()
+                        
+                        captured_outputs[(layer_idx, head_idx)]["pattern"].append(pattern[0, head_idx].clone())
+                        captured_outputs[(layer_idx, head_idx)]["v"].append(v[0, :, head_idx, :].clone())
+                        captured_outputs[(layer_idx, head_idx)]["head_output"].append(head_output_value)
         finally:
-            # Hookを削除
             for hook_name, handle in hook_handles:
                 if hook_name in self.model.hook_dict:
                     hook_point = self.model.hook_dict[hook_name]
                     hook_point.fwd_hooks = []
         
-        return captured_outputs
+        # 平均を取る
+        averaged = {}
+        for key, data in captured_outputs.items():
+            averaged[key] = {}
+            for k2, lst in data.items():
+                if lst:
+                    averaged[key][k2] = torch.mean(torch.stack(lst), dim=0)
+        return averaged
     
+    def _generate_tokens(
+        self,
+        tokens: torch.Tensor,
+        hook_fns: List[Tuple[str, callable]],
+        max_new_tokens: int,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+    ) -> torch.Tensor:
+        handles = []
+        for hook_name, hook_fn in hook_fns:
+            handle = self.model.add_hook(hook_name, hook_fn)
+            handles.append((hook_name, handle))
+        try:
+            # Apply overrides if provided
+            gen_cfg = self.generation_config.copy()
+            if temperature is not None:
+                gen_cfg["temperature"] = float(temperature)
+            if top_p is not None:
+                gen_cfg["top_p"] = float(top_p)
+            
+            with torch.no_grad():
+                generated = self.model.generate(
+                    tokens,
+                    max_new_tokens=max_new_tokens,
+                    **gen_cfg,
+                )
+        finally:
+            for hook_name, handle in handles:
+                if hook_name in self.model.hook_dict:
+                    hook_point = self.model.hook_dict[hook_name]
+                    hook_point.fwd_hooks = []
+        return generated
+
     def generate_with_patching(
         self,
         neutral_prompt: str,
-        emotion_head_outputs: Dict[Tuple[int, int], torch.Tensor],
+        emotion_head_outputs: Dict[Tuple[int, int], Dict[str, torch.Tensor]],
         max_new_tokens: int = 30,
-        temperature: float = 1.0,
-        top_p: float = 0.9,
-        position: int = -1
+        position: int = -1,
+        patch_mode: str = "v_only",
+        qk_overrides: Optional[Dict[Tuple[int, int], Dict[str, torch.Tensor]]] = None,
+        ov_overrides: Optional[Dict[Tuple[int, int], torch.Tensor]] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
     ) -> str:
         """
         Head patchingを適用して生成
         
         Args:
             neutral_prompt: 中立プロンプト
-            emotion_head_outputs: 感情プロンプトからキャプチャしたhead出力 {(layer, head): output}
+            emotion_head_outputs: 感情プロンプトから取得したhead出力
             max_new_tokens: 生成する最大トークン数
-            temperature: サンプリング温度
-            top_p: nucleus samplingのパラメータ
-            position: パッチを適用する位置（-1は最後）
-            
-        Returns:
-            生成されたテキスト
+            position: パッチを適用する位置
+            patch_mode: 'v_only', 'pattern_v', 'result'
+            qk_overrides: {(layer, head): {"q": tensor, "k": tensor}}
+            ov_overrides: {(layer, head): tensor}  # attn.hook_resultに直接適用
+            temperature: サンプリング温度（Noneの場合はデフォルト値を使用）
+            top_p: nucleus samplingのパラメータ（Noneの場合はデフォルト値を使用）
         """
+        if patch_mode not in {"v_only", "pattern_v", "result"}:
+            raise ValueError(f"Unsupported patch_mode '{patch_mode}'. Choose from ['v_only','pattern_v','result'].")
+
         tokens = self.model.to_tokens(neutral_prompt)
-        generated_tokens = tokens.clone()
-        
-        # hook_resultの代わりに、hook_vを使ってhead出力を間接的に変更
-        # 注意: これは完全なhead出力の置き換えではなく、Vの置き換えによる近似
-        # より正確には、hook_patternとhook_vの両方を操作する必要があるが、
-        # 簡易版としてhook_vのみを操作する
-        
-        # 感情側のhead出力からVを逆算する必要があるが、これは複雑
-        # 代わりに、hook_vを直接置き換える方法を使用
-        # ただし、これは完全には機能しない可能性がある
-        
-        # 簡易版: hook_vを置き換える（完全ではないが、近似的に機能する）
-        def patch_v_hook(activation, hook):
-            """指定headのVを感情側の値に差し替え（近似）"""
+        target_pos = position
+
+        def patch_q_hook(activation, hook):
+            if not qk_overrides:
+                return activation
             layer_idx = int(hook.name.split('.')[1])
-            
-            # この層でpatchするheadがあるかチェック
-            for (patch_layer, patch_head), patch_value in emotion_head_outputs.items():
-                if patch_layer == layer_idx:
+            updated = activation
+            patched = False
+            for (patch_layer, patch_head), patch_dict in qk_overrides.items():
+                if patch_layer != layer_idx or "q" not in patch_dict:
+                    continue
+                if not patched:
+                    updated = activation.clone()
+                    patched = True
+                q_value = patch_dict["q"].to(updated.device)
+                if q_value.shape == updated[:, :, patch_head, :].shape:
+                    updated[0, :, patch_head, :] = q_value
+                elif q_value.shape == updated.shape:
+                    updated.copy_(q_value)
+            return updated
+
+        def patch_k_hook(activation, hook):
+            if not qk_overrides:
+                return activation
+            layer_idx = int(hook.name.split('.')[1])
+            updated = activation
+            patched = False
+            for (patch_layer, patch_head), patch_dict in qk_overrides.items():
+                if patch_layer != layer_idx or "k" not in patch_dict:
+                    continue
+                if not patched:
+                    updated = activation.clone()
+                    patched = True
+                k_value = patch_dict["k"].to(updated.device)
+                if k_value.shape == updated[:, :, patch_head, :].shape:
+                    updated[0, :, patch_head, :] = k_value
+                elif k_value.shape == updated.shape:
+                    updated.copy_(k_value)
+            return updated
+
+        def patch_v_hook(activation, hook):
+            layer_idx = int(hook.name.split('.')[1])
+            for (patch_layer, patch_head), patch_dict in emotion_head_outputs.items():
+                if patch_layer == layer_idx and 'v' in patch_dict:
                     activation = activation.clone()
-                    # activation shape: [batch, pos, head, d_head]
-                    if position == -1:
-                        # 最後の位置のVを置き換え（近似）
-                        activation[0, -1, patch_head, :] = patch_value.to(activation.device)
-                    else:
-                        activation[0, position, patch_head, :] = patch_value.to(activation.device)
-            
+                    v_value = patch_dict['v'].to(activation.device)
+                    pos = target_pos
+                    if pos == -1 or pos >= activation.shape[1]:
+                        pos = activation.shape[1] - 1
+                    activation[0, pos, patch_head, :] = v_value
             return activation
-        
-        # Hookを登録（hook_vを使用）
-        hook_handles = []
-        for layer_idx, head_idx in emotion_head_outputs.keys():
-            hook_name = f"blocks.{layer_idx}.attn.hook_v"
-            handle = self.model.add_hook(hook_name, patch_v_hook)
-            hook_handles.append((hook_name, handle))
-        
-        try:
-            with torch.no_grad():
-                for _ in range(max_new_tokens):
-                    # 現在のトークンでlogitsを取得
-                    logits = self.model(generated_tokens)
-                    
-                    # 最後のトークンのlogitsを使用
-                    next_token_logits = logits[0, -1, :] / temperature
-                    
-                    # Top-p sampling
-                    sorted_logits, sorted_indices = torch.sort(next_token_logits, descending=True)
-                    cumulative_probs = torch.cumsum(torch.softmax(sorted_logits, dim=-1), dim=-1)
-                    
-                    # Top-pでフィルタ
-                    sorted_indices_to_remove = cumulative_probs > top_p
-                    sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[..., :-1].clone()
-                    sorted_indices_to_remove[..., 0] = 0
-                    
-                    indices_to_remove = sorted_indices[sorted_indices_to_remove]
-                    next_token_logits[indices_to_remove] = float('-inf')
-                    
-                    # サンプリング
-                    probs = torch.softmax(next_token_logits, dim=-1)
-                    next_token = torch.multinomial(probs, num_samples=1)
-                    
-                    # 生成されたトークンを追加
-                    generated_tokens = torch.cat([generated_tokens, next_token.unsqueeze(0)], dim=1)
-        
-        finally:
-            # Hookを削除
-            for hook_name, handle in hook_handles:
-                if hook_name in self.model.hook_dict:
-                    hook_point = self.model.hook_dict[hook_name]
-                    hook_point.fwd_hooks = []
-        
-        # トークンをテキストに変換
-        generated_text = self.model.to_str_tokens(generated_tokens[0])
-        full_text = ' '.join(generated_text)
-        
-        return full_text
+
+        def patch_pattern_hook(activation, hook):
+            if patch_mode != "pattern_v":
+                return activation
+            layer_idx = int(hook.name.split('.')[1])
+            for (patch_layer, patch_head), patch_dict in emotion_head_outputs.items():
+                if patch_layer == layer_idx and 'pattern' in patch_dict:
+                    activation = activation.clone()
+                    pat_value = patch_dict['pattern'].to(activation.device)
+                    if pat_value.shape == activation[0, patch_head].shape:
+                        activation[0, patch_head, :, :] = pat_value
+            return activation
+
+        def patch_ov_hook(activation, hook):
+            if not ov_overrides:
+                return activation
+            layer_idx = int(hook.name.split('.')[1])
+            updated = activation
+            patched = False
+            for (patch_layer, patch_head), ov_value in ov_overrides.items():
+                if patch_layer != layer_idx:
+                    continue
+                if not patched:
+                    updated = activation.clone()
+                    patched = True
+                ov_tensor = ov_value.to(updated.device)
+                if updated.ndim == 4 and updated.shape[1] == self.model.cfg.n_heads:
+                    pos = target_pos
+                    if pos == -1 or pos >= updated.shape[2]:
+                        pos = updated.shape[2] - 1
+                    if ov_tensor.ndim == 1:
+                        updated[0, patch_head, pos, :] = ov_tensor
+                    elif ov_tensor.ndim == 2 and ov_tensor.shape[0] == updated.shape[2]:
+                        updated[0, patch_head, :ov_tensor.shape[0], :] = ov_tensor
+                elif updated.ndim == 4 and updated.shape[2] == self.model.cfg.n_heads:
+                    pos = target_pos
+                    if pos == -1 or pos >= updated.shape[1]:
+                        pos = updated.shape[1] - 1
+                    if ov_tensor.ndim == 1:
+                        updated[0, pos, patch_head, :] = ov_tensor
+                    elif ov_tensor.ndim == 2 and ov_tensor.shape[0] == updated.shape[1]:
+                        updated[0, :, patch_head, :] = ov_tensor
+            return updated
+
+        def patch_result_hook(activation, hook):
+            if patch_mode != "result":
+                return activation
+            layer_idx = int(hook.name.split('.')[1])
+            for (patch_layer, patch_head), patch_dict in emotion_head_outputs.items():
+                if patch_layer == layer_idx and 'head_output' in patch_dict:
+                    patched = patch_dict['head_output'].to(activation.device)
+                    act = activation.clone()
+                    # Support shapes [batch, head, pos, d_head] or [batch, pos, head, d_head]
+                    if act.ndim == 4 and act.shape[1] == self.model.cfg.n_heads:
+                        pos = target_pos
+                        if pos == -1 or pos >= act.shape[2]:
+                            pos = act.shape[2] - 1
+                        act[0, patch_head, pos, :] = patched
+                    elif act.ndim == 4 and act.shape[2] == self.model.cfg.n_heads:
+                        pos = target_pos
+                        if pos == -1 or pos >= act.shape[1]:
+                            pos = act.shape[1] - 1
+                        act[0, pos, patch_head, :] = patched
+                    return act
+            return activation
+
+        hook_fns: List[Tuple[str, callable]] = []
+        target_layers = {layer_idx for layer_idx, _ in emotion_head_outputs.keys()}
+        target_layers.update({layer_idx for layer_idx, _ in (qk_overrides or {}).keys()})
+        target_layers.update({layer_idx for layer_idx, _ in (ov_overrides or {}).items()})
+
+        for layer_idx in sorted(target_layers):
+            hook_fns.append((f"blocks.{layer_idx}.attn.hook_v", patch_v_hook))
+            if qk_overrides:
+                hook_fns.append((f"blocks.{layer_idx}.attn.hook_q", patch_q_hook))
+                hook_fns.append((f"blocks.{layer_idx}.attn.hook_k", patch_k_hook))
+            if patch_mode == "pattern_v":
+                hook_fns.append((f"blocks.{layer_idx}.attn.hook_pattern", patch_pattern_hook))
+            if patch_mode == "result" and self.use_attn_result:
+                hook_fns.append((f"blocks.{layer_idx}.attn.hook_result", patch_result_hook))
+            if ov_overrides and self.use_attn_result:
+                hook_fns.append((f"blocks.{layer_idx}.attn.hook_result", patch_ov_hook))
+
+        generated_tokens = self._generate_tokens(
+            tokens,
+            hook_fns=hook_fns,
+            max_new_tokens=max_new_tokens,
+            temperature=temperature,
+            top_p=top_p,
+        )
+        return ' '.join(self.model.to_str_tokens(generated_tokens[0]))
     
     def evaluate_texts(
         self,
@@ -311,7 +405,8 @@ class HeadPatcher:
         max_new_tokens: int = 30,
         temperature: float = 1.0,
         top_p: float = 0.9,
-        position: int = -1
+        position: int = -1,
+        patch_mode: str = "v_only",
     ) -> Dict:
         """
         Patching実験を実行
@@ -324,23 +419,18 @@ class HeadPatcher:
             temperature: サンプリング温度
             top_p: nucleus samplingのパラメータ
             position: パッチを適用する位置
+            patch_mode: 'v_only'等のパッチ方法を記録
             
         Returns:
             実験結果の辞書
         """
-        # 感情プロンプトからhead出力をキャプチャ（最初のプロンプトのみ使用）
-        print("Capturing emotion head outputs...")
-        emotion_head_outputs_dict = self.capture_emotion_head_outputs(
-            emotion_prompts[:1],  # 最初のプロンプトのみ使用
+        # 感情プロンプトからhead出力をキャプチャ（全プロンプト平均）
+        print("Capturing emotion head outputs (averaging over all emotion prompts)...")
+        emotion_head_outputs = self.capture_emotion_head_outputs(
+            emotion_prompts,
             head_specs,
             position=position
         )
-        
-        # 各headについて平均を取る（複数プロンプトがある場合）
-        emotion_head_outputs = {}
-        for (layer, head), outputs in emotion_head_outputs_dict.items():
-            if outputs:
-                emotion_head_outputs[(layer, head)] = torch.mean(torch.stack(outputs), dim=0)
         
         baseline_texts = []
         patched_texts = []
@@ -365,7 +455,8 @@ class HeadPatcher:
                 max_new_tokens=max_new_tokens,
                 temperature=temperature,
                 top_p=top_p,
-                position=position
+                position=position,
+                patch_mode=patch_mode,
             )
             patched_texts.append(patched_text)
         
@@ -376,8 +467,9 @@ class HeadPatcher:
         results = {
             "model": self.model_name,
             "heads": head_specs,
+            "patch_mode": patch_mode,
             "neutral_prompts": neutral_prompts,
-            "emotion_prompts": emotion_prompts[:1],
+            "emotion_prompts": emotion_prompts,
             "baseline_texts": baseline_texts,
             "patched_texts": patched_texts,
             "baseline_metrics": baseline_metrics,
@@ -408,6 +500,8 @@ def main():
     parser.add_argument("--temperature", type=float, default=1.0, help="Sampling temperature")
     parser.add_argument("--top-p", type=float, default=0.9, help="Top-p (nucleus) sampling")
     parser.add_argument("--position", type=int, default=-1, help="Position to patch (-1 for last)")
+    parser.add_argument("--patch-mode", type=str, choices=["v_only", "pattern_v"], default="v_only",
+                        help="Patching strategy (v_only or pattern_v)")
     
     args = parser.parse_args()
     
@@ -457,7 +551,8 @@ def main():
         max_new_tokens=args.max_tokens,
         temperature=args.temperature,
         top_p=args.top_p,
-        position=args.position
+        position=args.position,
+        patch_mode=args.patch_mode,
     )
     
     # 出力パスを解決
@@ -497,4 +592,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

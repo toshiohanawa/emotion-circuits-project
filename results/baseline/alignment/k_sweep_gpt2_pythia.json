@@ -1,6 +1,6 @@
 {
   "model1": "gpt2",
-  "model2": "pythia-160m",
+  "model2": "EleutherAI-pythia-160m",
   "k_values": [
     2,
     5,

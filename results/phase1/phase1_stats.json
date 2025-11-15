@@ -1,0 +1,44 @@
+{
+  "baseline": {
+    "total_samples": 280,
+    "emotion_counts": {
+      "gratitude": 70,
+      "anger": 70,
+      "apology": 70,
+      "neutral": 70
+    },
+    "text_length": {
+      "avg": 27.70357142857143,
+      "min": 6,
+      "max": 50,
+      "std": 8.73956447684311
+    },
+    "token_count": {
+      "avg": 7.1,
+      "min": 3,
+      "max": 13,
+      "std": 1.91049731745428
+    }
+  },
+  "extended": {
+    "total_samples": 400,
+    "emotion_counts": {
+      "gratitude": 100,
+      "anger": 100,
+      "apology": 100,
+      "neutral": 100
+    },
+    "text_length": {
+      "avg": 32.9525,
+      "min": 6,
+      "max": 71,
+      "std": 11.834071309148007
+    },
+    "token_count": {
+      "avg": 7.1,
+      "min": 3,
+      "max": 13,
+      "std": 1.91049731745428
+    }
+  }
+}

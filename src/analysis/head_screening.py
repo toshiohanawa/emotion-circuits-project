@@ -190,12 +190,15 @@ class HeadScreener:
                         continue
                     attn_patterns = emotion_attn_list[prompt_idx]
                     positions = emotion_positions[prompt_idx]
-                    for pos in positions:
-                        if pos < attn_patterns.shape[0]:
-                            # 感情語トークン位置でのattention値を取得
-                            # 平均attention（query position posからkey positionsへのattention）
-                            attn_value = np.mean(attn_patterns[pos, :])
-                            emotion_attn_values.append(attn_value)
+                    valid_query_positions = [pos for pos in positions if pos < attn_patterns.shape[0]]
+                    if not valid_query_positions:
+                        valid_query_positions = [attn_patterns.shape[0] - 1]
+                    valid_key_positions = [pos for pos in positions if pos < attn_patterns.shape[1]]
+                    if not valid_key_positions:
+                        valid_key_positions = [attn_patterns.shape[1] - 1]
+                    submatrix = attn_patterns[np.ix_(valid_query_positions, valid_key_positions)]
+                    attn_value = float(np.mean(submatrix))
+                    emotion_attn_values.append(attn_value)
                 
                 # 中立プロンプトでのattentionを集計
                 neutral_attn_values = []
@@ -207,10 +210,14 @@ class HeadScreener:
                         continue
                     attn_patterns = neutral_attn_list[prompt_idx]
                     positions = neutral_positions[prompt_idx]
-                    for pos in positions:
-                        if pos < attn_patterns.shape[0]:
-                            attn_value = np.mean(attn_patterns[pos, :])
-                            neutral_attn_values.append(attn_value)
+                    valid_query_positions = [pos for pos in positions if pos < attn_patterns.shape[0]]
+                    if not valid_query_positions:
+                        valid_query_positions = [attn_patterns.shape[0] - 1]
+                    valid_key_positions = [pos for pos in positions if pos < attn_patterns.shape[1]]
+                    if not valid_key_positions:
+                        valid_key_positions = [attn_patterns.shape[1] - 1]
+                    submatrix = attn_patterns[np.ix_(valid_query_positions, valid_key_positions)]
+                    neutral_attn_values.append(float(np.mean(submatrix)))
                 
                 # 差分を計算
                 if emotion_attn_values and neutral_attn_values:
@@ -223,7 +230,9 @@ class HeadScreener:
                     "head": head_idx,
                     "delta_attn": float(delta_attn),
                     "emotion_mean_attn": float(np.mean(emotion_attn_values)) if emotion_attn_values else 0.0,
-                    "neutral_mean_attn": float(np.mean(neutral_attn_values)) if neutral_attn_values else 0.0
+                    "neutral_mean_attn": float(np.mean(neutral_attn_values)) if neutral_attn_values else 0.0,
+                    "samples_emotion": len(emotion_attn_values),
+                    "samples_neutral": len(neutral_attn_values),
                 })
         
         return scores

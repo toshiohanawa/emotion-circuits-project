@@ -7,7 +7,7 @@ import pickle
 import torch
 import numpy as np
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Sequence, Tuple
 from transformer_lens import HookedTransformer
 from tqdm import tqdm
 
@@ -29,7 +29,13 @@ class ActivationPatcher:
         print(f"Loading model: {model_name}")
         self.model = HookedTransformer.from_pretrained(model_name, device=self.device)
         self.model.eval()
-        
+        self.generation_config = {
+            "do_sample": False,
+            "temperature": 1.0,
+            "top_p": None,
+            "stop_at_eos": True,
+            "return_type": "tokens",
+        }
         print(f"✓ Model loaded on {self.device}")
     
     def load_emotion_vectors(self, vectors_file: Path) -> Dict[str, np.ndarray]:
@@ -47,58 +53,138 @@ class ActivationPatcher:
         
         return data['emotion_vectors']
     
-    def patch_residual_stream(
+    def _decode_new_tokens(self, tokens: torch.Tensor, prompt_length: int) -> str:
+        """Decode only the newly generated continuations (excluding the prompt)."""
+        new_tokens = tokens[:, prompt_length:]
+        if new_tokens.shape[1] == 0:
+            return ""
+        token_ids = new_tokens[0].tolist()
+        decoded = self.model.tokenizer.decode(token_ids, skip_special_tokens=True)
+        return decoded.strip()
+
+    def _build_alpha_schedule(
         self,
-        tokens: torch.Tensor,
-        emotion_vector: np.ndarray,
-        layer_idx: int,
-        alpha: float = 1.0,
-        position: int = -1
-    ) -> Tuple[torch.Tensor, List[str]]:
-        """
-        Residual streamをパッチして推論を実行
-        
-        Args:
-            tokens: 入力トークン [batch, pos]
-            emotion_vector: 感情方向ベクトル [n_layers, d_model] または [d_model]
-            layer_idx: パッチを適用する層インデックス
-            alpha: パッチの強度
-            position: パッチを適用する位置（-1は最後）
-            
-        Returns:
-            (logits, generated_tokens)
-        """
-        patched_activations = {}
-        
-        def patch_hook(activation, hook):
-            """Residual streamをパッチするhook"""
-            if hook.name == f"blocks.{layer_idx}.hook_resid_pre":
-                # パッチを適用
-                activation = activation.clone()
-                if position == -1:
-                    # 最後の位置にパッチ
-                    activation[0, -1, :] += alpha * torch.tensor(emotion_vector, device=self.device, dtype=activation.dtype)
+        base_alpha: float,
+        max_steps: int,
+        alpha_schedule: Optional[Sequence[float]] = None,
+        decay_rate: Optional[float] = None,
+    ) -> List[float]:
+        """Return alpha per generation step."""
+        schedule: List[float] = []
+        for step in range(max_steps):
+            if alpha_schedule:
+                if step < len(alpha_schedule):
+                    schedule.append(float(alpha_schedule[step]))
                 else:
-                    activation[0, position, :] += alpha * torch.tensor(emotion_vector, device=self.device, dtype=activation.dtype)
+                    schedule.append(float(alpha_schedule[-1]))
+            elif decay_rate is not None:
+                schedule.append(float(base_alpha * (decay_rate ** step)))
+            else:
+                schedule.append(float(base_alpha))
+        return schedule
+
+    def _resolve_patch_positions(
+        self,
+        seq_len: int,
+        prompt_len: int,
+        patch_window: Optional[int],
+        patch_positions: Optional[Sequence[int]],
+        patch_new_tokens_only: bool,
+    ) -> List[int]:
+        """Return absolute token indices to patch for the current forward pass."""
+        positions: List[int] = []
+
+        if patch_positions:
+            for pos in patch_positions:
+                idx = pos if pos >= 0 else seq_len + pos
+                if patch_new_tokens_only and idx < prompt_len:
+                    continue
+                if 0 <= idx < seq_len:
+                    positions.append(idx)
+            if positions:
+                return sorted(set(positions))
+
+        window = patch_window or 1
+        start = max(seq_len - window, 0)
+        positions = list(range(start, seq_len))
+        if patch_new_tokens_only:
+            positions = [idx for idx in positions if idx >= prompt_len]
+        if not positions:
+            positions = [seq_len - 1]
+        return positions
+
+    def _generate_tokens_with_patch(
+        self,
+        prompt: str,
+        layer_idx: int,
+        emotion_vector: np.ndarray,
+        alpha_schedule: List[float],
+        patch_window: Optional[int],
+        patch_positions: Optional[Sequence[int]],
+        patch_new_tokens_only: bool,
+        max_new_tokens: int,
+    ) -> Tuple[torch.Tensor, int]:
+        """Generate tokens while applying the residual patch at every step."""
+        tokens = self.model.to_tokens(prompt)
+        prompt_len = tokens.shape[1]
+        patch_vector = torch.tensor(emotion_vector, device=self.device, dtype=self.model.cfg.dtype)
+
+        def patch_hook(activation, hook):
+            if hook.name != f"blocks.{layer_idx}.hook_resid_pre":
+                return activation
+            if activation.shape[1] == 0:
+                return activation
+            seq_len = activation.shape[1]
+            generated_len = max(seq_len - prompt_len, 0)
+            step = min(generated_len, max_new_tokens - 1)
+            alpha_value = alpha_schedule[step] if alpha_schedule else 0.0
+            if alpha_value == 0.0:
+                return activation
+            indices = self._resolve_patch_positions(
+                seq_len,
+                prompt_len,
+                patch_window,
+                patch_positions,
+                patch_new_tokens_only,
+            )
+            if not indices:
+                return activation
+            activation = activation.clone()
+            for idx in indices:
+                if 0 <= idx < activation.shape[1]:
+                    activation[0, idx, :] += alpha_value * patch_vector.to(activation.dtype)
             return activation
-        
-        # Hookを登録
-        hook_handle = self.model.add_hook(f"blocks.{layer_idx}.hook_resid_pre", patch_hook)
-        
-        # 推論実行
-        with torch.no_grad():
-            logits = self.model(tokens)
-        
-        # Hookを削除（hook_dictから削除）
+
         hook_name = f"blocks.{layer_idx}.hook_resid_pre"
-        if hook_name in self.model.hook_dict:
-            hook_point = self.model.hook_dict[hook_name]
-            hook_point.fwd_hooks = []
-        
-        # 生成されたトークンを取得
-        generated_tokens = self.model.to_str_tokens(logits.argmax(dim=-1)[0])
-        
-        return logits, generated_tokens
+        handle = self.model.add_hook(hook_name, patch_hook)
+        try:
+            with torch.no_grad():
+                generated = self.model.generate(
+                    tokens,
+                    max_new_tokens=max_new_tokens,
+                    **self.generation_config,
+                )
+        finally:
+            if hook_name in self.model.hook_dict:
+                hook_point = self.model.hook_dict[hook_name]
+                hook_point.fwd_hooks = []
+        return generated, prompt_len
+
+    def _generate_text(
+        self,
+        prompt: str,
+        max_new_tokens: int = 20,
+    ) -> str:
+        """Deterministic generation without patching."""
+        tokens = self.model.to_tokens(prompt)
+        with torch.no_grad():
+            generated = self.model.generate(
+                tokens,
+                max_new_tokens=max_new_tokens,
+                **self.generation_config,
+            )
+        continuation = self._decode_new_tokens(generated, tokens.shape[1])
+        return (prompt + " " + continuation).strip()
     
     def generate_with_patching(
         self,
@@ -106,54 +192,59 @@ class ActivationPatcher:
         emotion_vector: np.ndarray,
         layer_idx: int,
         alpha: float = 1.0,
-        max_new_tokens: int = 10
+        max_new_tokens: int = 20,
+        patch_window: Optional[int] = None,
+        patch_positions: Optional[Sequence[int]] = None,
+        alpha_schedule: Optional[Sequence[float]] = None,
+        alpha_decay_rate: Optional[float] = None,
+        patch_new_tokens_only: bool = False,
     ) -> str:
         """
-        パッチを適用してテキストを生成（簡易版：1トークンのみ）
+        パッチを適用してテキストを生成（multi-token対応版）
         
         Args:
             prompt: 入力プロンプト
             emotion_vector: 感情方向ベクトル [d_model]（特定の層のベクトル）
             layer_idx: パッチを適用する層
             alpha: パッチの強度
-            max_new_tokens: 生成する最大トークン数（簡易版では使用しない）
-            
-        Returns:
-            生成されたテキスト（元のプロンプト + 次の数トークン）
+            max_new_tokens: 生成する最大トークン数
+            patch_window: 末尾から何トークン分をパッチするか（デフォルト: 1）
+            patch_positions: 明示的にパッチする位置（負数は末尾から）
+            alpha_schedule: 各生成ステップのα（リスト指定）
+            alpha_decay_rate: αを逓減させる場合のレート
+            patch_new_tokens_only: Trueの場合、生成済み（prompt）トークンには適用しない
         """
-        tokens = self.model.to_tokens(prompt)
-        
-        # パッチを適用して推論
-        logits, generated_tokens = self.patch_residual_stream(
-            tokens,
-            emotion_vector,
-            layer_idx,
-            alpha,
-            position=-1
+        schedule = self._build_alpha_schedule(
+            base_alpha=alpha,
+            max_steps=max_new_tokens,
+            alpha_schedule=alpha_schedule,
+            decay_rate=alpha_decay_rate,
         )
-        
-        # 次のトークンを予測
-        next_token_logits = logits[0, -1, :]
-        top_k = 5
-        top_k_tokens = torch.topk(next_token_logits, top_k)
-        
-        # トップ5のトークンを取得
-        top_tokens = []
-        for idx in top_k_tokens.indices:
-            token_str = self.model.to_string(idx.item())
-            top_tokens.append(token_str)
-        
-        # 元のプロンプト + 次のトークン候補を返す
-        generated_text = prompt + " [" + ", ".join(top_tokens[:3]) + "]"
-        
-        return generated_text
+        generated, prompt_len = self._generate_tokens_with_patch(
+            prompt=prompt,
+            layer_idx=layer_idx,
+            emotion_vector=emotion_vector,
+            alpha_schedule=schedule,
+            patch_window=patch_window,
+            patch_positions=patch_positions,
+            patch_new_tokens_only=patch_new_tokens_only,
+            max_new_tokens=max_new_tokens,
+        )
+        continuation = self._decode_new_tokens(generated, prompt_len)
+        return (prompt + " " + continuation).strip()
     
     def evaluate_patching_effect(
         self,
         prompts: List[str],
         emotion_vectors: Dict[str, np.ndarray],
         layer_idx: int = 6,
-        alpha_values: List[float] = [0.0, 0.5, 1.0, 1.5, -0.5, -1.0]
+        alpha_values: List[float] = [0.0, 0.5, 1.0, 1.5, -0.5, -1.0],
+        max_new_tokens: int = 20,
+        patch_window: Optional[int] = None,
+        patch_positions: Optional[Sequence[int]] = None,
+        alpha_schedule: Optional[Sequence[float]] = None,
+        alpha_decay_rate: Optional[float] = None,
+        patch_new_tokens_only: bool = False,
     ) -> Dict:
         """
         パッチングの効果を評価
@@ -176,11 +267,10 @@ class ActivationPatcher:
         # Baseline（パッチなし）の生成
         print("Generating baseline outputs...")
         for prompt in tqdm(prompts, desc="Baseline"):
-            tokens = self.model.to_tokens(prompt)
-            with torch.no_grad():
-                logits = self.model(tokens)
-            generated = self.model.to_str_tokens(logits.argmax(dim=-1)[0])
-            results['baseline'][prompt] = ' '.join(generated)
+            results['baseline'][prompt] = self._generate_text(
+                prompt,
+                max_new_tokens=max_new_tokens,
+            )
         
         # 各感情方向でパッチング
         for emotion_label, emotion_vec in emotion_vectors.items():
@@ -199,7 +289,12 @@ class ActivationPatcher:
                             layer_vector,
                             layer_idx,
                             alpha,
-                            max_new_tokens=20
+                            max_new_tokens=max_new_tokens,
+                            patch_window=patch_window,
+                            patch_positions=patch_positions,
+                            alpha_schedule=alpha_schedule,
+                            alpha_decay_rate=alpha_decay_rate,
+                            patch_new_tokens_only=patch_new_tokens_only,
                         )
                         alpha_results[prompt] = generated
                     except Exception as e:
@@ -222,6 +317,12 @@ def main():
     parser.add_argument("--output", type=str, required=True, help="Output file path")
     parser.add_argument("--layer", type=int, default=6, help="Layer index for patching")
     parser.add_argument("--alpha", type=float, nargs='+', default=[0.0, 0.5, 1.0, 1.5, -0.5, -1.0], help="Alpha values")
+    parser.add_argument("--max-new-tokens", type=int, default=20, help="Number of tokens to generate")
+    parser.add_argument("--patch-window", type=int, default=None, help="Patch the last N positions each step")
+    parser.add_argument("--patch-positions", type=int, nargs='+', default=None, help="Explicit token positions to patch (supports negative indices)")
+    parser.add_argument("--patch-new-only", action="store_true", help="Patch only newly generated tokens")
+    parser.add_argument("--alpha-schedule", type=float, nargs='+', default=None, help="Alpha schedule per generation step")
+    parser.add_argument("--alpha-decay-rate", type=float, default=None, help="Decay rate for alpha per generation step (e.g., 0.9)")
     
     args = parser.parse_args()
     
@@ -254,7 +355,13 @@ def main():
         prompts,
         emotion_vectors,
         layer_idx=args.layer,
-        alpha_values=args.alpha
+        alpha_values=args.alpha,
+        max_new_tokens=args.max_new_tokens,
+        patch_window=args.patch_window,
+        patch_positions=args.patch_positions,
+        alpha_schedule=args.alpha_schedule,
+        alpha_decay_rate=args.alpha_decay_rate,
+        patch_new_tokens_only=args.patch_new_only,
     )
     
     # 結果を保存
@@ -285,4 +392,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

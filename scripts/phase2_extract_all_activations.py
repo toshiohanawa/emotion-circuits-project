@@ -9,7 +9,13 @@ from pathlib import Path
 import mlflow
 
 from src.config.project_profiles import list_profiles
-from src.utils.mlflow_utils import auto_experiment_from_repo, log_params_dict, log_metrics_dict
+from src.utils.mlflow_utils import (
+    auto_experiment_from_repo,
+    log_params_dict,
+    log_metrics_dict,
+    log_artifact_file,
+)
+from src.utils.model_utils import ensure_model_subdir, sanitize_model_name
 from src.utils.project_context import ProjectContext, profile_help_text
 
 # モデルリスト
@@ -21,13 +27,6 @@ MODELS = [
 
 # 感情カテゴリリスト
 EMOTIONS = ["gratitude", "anger", "apology", "neutral"]
-
-# モデル名の短縮形（ディレクトリ名用）
-MODEL_SHORT_NAMES = {
-    "gpt2": "gpt2",
-    "EleutherAI/pythia-160m": "pythia-160m",
-    "EleutherAI/gpt-neo-125M": "gpt-neo-125m"
-}
 
 
 def extract_activations_for_model_emotion(
@@ -42,9 +41,8 @@ def extract_activations_for_model_emotion(
     Returns:
         実行結果の辞書（処理時間、ファイルサイズなど）
     """
-    model_short = MODEL_SHORT_NAMES[model]
-    output_dir = output_root / model_short
-    output_dir.mkdir(parents=True, exist_ok=True)
+    model_short = sanitize_model_name(model)
+    output_dir = ensure_model_subdir(output_root, model)
     
     start_time = time.time()
     
@@ -91,6 +89,8 @@ def main():
     context = ProjectContext(args.profile)
     dataset_path = context.dataset_path()
     output_root = context.results_dir() / "activations"
+    logs_root = context.results_dir() / "logs" / "phase2"
+    logs_root.mkdir(parents=True, exist_ok=True)
     
     # MLflow実験を設定
     experiment_name = auto_experiment_from_repo()
@@ -104,7 +104,7 @@ def main():
     print("=" * 80)
     
     for model in MODELS:
-        model_short = MODEL_SHORT_NAMES[model]
+        model_short = sanitize_model_name(model)
         print(f"\n{'='*80}")
         print(f"Model: {model} ({model_short})")
         print(f"{'='*80}")
@@ -134,6 +134,16 @@ def main():
                     output_root,
                 )
                 
+                # ログファイルを書き出し、MLflowにアップロード
+                log_file = logs_root / f"{model_short}_{emotion}.log"
+                log_file.parent.mkdir(parents=True, exist_ok=True)
+                with open(log_file, "w") as fh:
+                    fh.write("=== STDOUT ===\n")
+                    fh.write(result["stdout"])
+                    fh.write("\n\n=== STDERR ===\n")
+                    fh.write(result["stderr"])
+                log_artifact_file(str(log_file), artifact_path=f"phase2/{model_short}")
+
                 # メトリクスを記録
                 metrics = {
                     "elapsed_time_seconds": result["elapsed_time"],

@@ -7,10 +7,12 @@ import pickle
 import torch
 import numpy as np
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Callable
 from transformer_lens import HookedTransformer
 from tqdm import tqdm
-import re
+import mlflow
+
+from src.analysis.sentiment_eval import SentimentEvaluator
 
 
 class ActivationPatchingSweep:
@@ -30,7 +32,22 @@ class ActivationPatchingSweep:
         print(f"Loading model: {model_name}")
         self.model = HookedTransformer.from_pretrained(model_name, device=self.device)
         self.model.eval()
+        # Deterministic generation settings – we rely on repeatability when
+        # comparing alpha sweeps.
+        self.generation_config = {
+            "do_sample": False,
+            "temperature": 1.0,
+            "top_p": None,
+            "stop_at_eos": True,
+            "return_type": "tokens",
+        }
         
+        self.metric_evaluator = SentimentEvaluator(
+            model_name=model_name,
+            device=self.device,
+            load_generation_model=False,
+            enable_transformer_metrics=True,
+        )
         print(f"✓ Model loaded on {self.device}")
     
     def load_emotion_vectors(self, vectors_file: Path) -> Dict[str, np.ndarray]:
@@ -47,6 +64,64 @@ class ActivationPatchingSweep:
             data = pickle.load(f)
         
         return data['emotion_vectors']
+
+    def _decode_new_tokens(self, all_tokens: torch.Tensor, prompt_length: int) -> str:
+        """
+        Decode only the newly generated continuations (excluding the prompt).
+        """
+        new_tokens = all_tokens[:, prompt_length:]
+        if new_tokens.shape[1] == 0:
+            return ""
+        token_ids = new_tokens[0].tolist()
+        decoded = self.model.tokenizer.decode(token_ids, skip_special_tokens=True)
+        return decoded.strip()
+
+    def _generate_tokens(
+        self,
+        tokens: torch.Tensor,
+        hook_name: Optional[str] = None,
+        hook_fn: Optional[Callable] = None,
+        max_new_tokens: int = 20,
+    ) -> torch.Tensor:
+        """
+        Helper that optionally attaches a hook, runs generation, and returns tokens.
+        """
+        handles = []
+        if hook_name and hook_fn:
+            handle = self.model.add_hook(hook_name, hook_fn)
+            handles.append((hook_name, handle))
+        try:
+            with torch.no_grad():
+                generated = self.model.generate(
+                    tokens,
+                    max_new_tokens=max_new_tokens,
+                    **self.generation_config,
+                )
+        finally:
+            for hook_name, handle in handles:
+                if hook_name in self.model.hook_dict:
+                    hook_point = self.model.hook_dict[hook_name]
+                    hook_point.fwd_hooks = []
+        return generated
+
+    def _generate_text(
+        self,
+        prompt: str,
+        hook_name: Optional[str] = None,
+        hook_fn: Optional[Callable] = None,
+        max_new_tokens: int = 20,
+    ) -> str:
+        """
+        Generate text optionally under a hooked residual modification.
+        """
+        tokens = self.model.to_tokens(prompt)
+        generated = self._generate_tokens(
+            tokens,
+            hook_name=hook_name,
+            hook_fn=hook_fn,
+            max_new_tokens=max_new_tokens,
+        )
+        return self._decode_new_tokens(generated, tokens.shape[1])
     
     def generate_with_patching(
         self,
@@ -70,125 +145,77 @@ class ActivationPatchingSweep:
             生成されたテキスト
         """
         tokens = self.model.to_tokens(prompt)
-        original_length = tokens.shape[1]
-        
-        patched_activations = {}
-        
+        prompt_length = tokens.shape[1]
+        target_position = max(prompt_length - 1, 0)
+        patch_vector = torch.tensor(
+            emotion_vector,
+            device=self.device,
+            dtype=self.model.cfg.dtype,
+        )
+
         def patch_hook(activation, hook):
             """Residual streamをパッチするhook"""
-            if hook.name == f"blocks.{layer_idx}.hook_resid_pre":
-                activation = activation.clone()
-                # 最後の位置にパッチ
-                activation[0, -1, :] += alpha * torch.tensor(emotion_vector, device=self.device, dtype=activation.dtype)
+            if activation.shape[1] == 0:
+                return activation
+            activation = activation.clone()
+            pos = min(target_position, activation.shape[1] - 1)
+            activation[0, pos, :] += alpha * patch_vector.to(activation.dtype)
             return activation
-        
-        # Hookを登録
-        hook_name = f"blocks.{layer_idx}.hook_resid_pre"
-        hook_handle = self.model.add_hook(hook_name, patch_hook)
-        
-        # 推論実行
-        with torch.no_grad():
-            logits = self.model(tokens)
-        
-        # Hookを削除
-        if hook_name in self.model.hook_dict:
-            hook_point = self.model.hook_dict[hook_name]
-            hook_point.fwd_hooks = []
-        
-        # 生成されたテキストを取得
-        generated_tokens = self.model.to_str_tokens(logits.argmax(dim=-1)[0])
-        generated_text = ' '.join(generated_tokens[original_length:])
-        
-        return generated_text
+
+        generated = self._generate_tokens(
+            tokens,
+            hook_name=f"blocks.{layer_idx}.hook_resid_pre",
+            hook_fn=patch_hook,
+            max_new_tokens=max_new_tokens,
+        )
+        return self._decode_new_tokens(generated, prompt_length)
     
-    def count_emotion_keywords(self, text: str) -> Dict[str, int]:
-        """
-        感情キーワードの頻度をカウント
-        
-        Args:
-            text: テキスト
-            
-        Returns:
-            各感情カテゴリのキーワード出現回数
-        """
-        text_lower = text.lower()
-        
-        gratitude_keywords = [
-            "thank", "thanks", "grateful", "gratitude", "appreciate", 
-            "appreciation", "thankful", "blessed"
-        ]
-        anger_keywords = [
-            "angry", "anger", "frustrated", "frustration", "terrible", 
-            "annoyed", "annoyance", "upset", "mad", "furious", "irritated"
-        ]
-        apology_keywords = [
-            "sorry", "apologize", "apology", "apologies", "regret", 
-            "regretful", "apologetic"
-        ]
-        
-        counts = {
-            'gratitude': sum(1 for kw in gratitude_keywords if kw in text_lower),
-            'anger': sum(1 for kw in anger_keywords if kw in text_lower),
-            'apology': sum(1 for kw in apology_keywords if kw in text_lower)
-        }
-        
-        return counts
-    
-    def calculate_politeness_score(self, text: str) -> float:
-        """
-        丁寧さスコアを計算（proxy指標）
-        
-        Args:
-            text: テキスト
-            
-        Returns:
-            丁寧さスコア（0-1）
-        """
-        text_lower = text.lower()
-        
-        politeness_markers = [
-            "please", "kindly", "thank you", "thanks", "sorry", 
-            "appreciate", "grateful", "would", "could", "may"
-        ]
-        
-        # マーカーの出現回数をカウント
-        count = sum(1 for marker in politeness_markers if marker in text_lower)
-        
-        # 正規化（最大10回で1.0）
-        score = min(count / 10.0, 1.0)
-        
-        return score
-    
-    def calculate_sentiment_score(self, text: str) -> float:
-        """
-        簡易的なsentiment scoreを計算（ポジ/ネガ）
-        
-        Args:
-            text: テキスト
-            
-        Returns:
-            sentiment score（-1から1、ポジティブが正）
-        """
-        text_lower = text.lower()
-        
-        positive_words = [
-            "good", "great", "excellent", "wonderful", "amazing", "fantastic",
-            "happy", "pleased", "delighted", "satisfied", "positive", "nice"
-        ]
-        negative_words = [
-            "bad", "terrible", "awful", "horrible", "disappointed", "frustrated",
-            "angry", "upset", "negative", "unhappy", "sad", "worried"
-        ]
-        
-        pos_count = sum(1 for word in positive_words if word in text_lower)
-        neg_count = sum(1 for word in negative_words if word in text_lower)
-        
-        # 正規化（最大10回で±1）
-        if pos_count + neg_count == 0:
-            return 0.0
-        
-        score = (pos_count - neg_count) / max(pos_count + neg_count, 10.0)
-        return np.clip(score, -1.0, 1.0)
+    def _mean_nested_metrics(self, metric_list: List[Dict]) -> Dict:
+        """Average nested metric dictionaries recursively."""
+        if not metric_list:
+            return {}
+        keys = set().union(*(metric.keys() for metric in metric_list))
+        aggregated: Dict[str, Dict] = {}
+        for key in keys:
+            values = [metric[key] for metric in metric_list if key in metric]
+            if not values:
+                continue
+            if isinstance(values[0], dict):
+                aggregated[key] = self._mean_nested_metrics(values)
+            else:
+                aggregated[key] = float(np.mean(values))
+        return aggregated
+
+    def _subtract_metric_dicts(self, metrics: Dict, baseline: Dict) -> Dict:
+        """Compute nested difference between two metric dicts."""
+        result: Dict[str, Dict] = {}
+        for key, value in metrics.items():
+            base_value = baseline.get(key)
+            if isinstance(value, dict) and isinstance(base_value, dict):
+                result[key] = self._subtract_metric_dicts(value, base_value)
+            elif base_value is not None:
+                result[key] = float(value - base_value)
+            else:
+                result[key] = float(value) if not isinstance(value, dict) else value
+        return result
+
+    def _flatten_metrics(self, metrics: Dict, prefix: str = "") -> Dict[str, float]:
+        """Flatten nested dictionaries for MLflow logging."""
+        flattened: Dict[str, float] = {}
+        for key, value in metrics.items():
+            metric_name = f"{prefix}/{key}" if prefix else key
+            if isinstance(value, dict):
+                flattened.update(self._flatten_metrics(value, metric_name))
+            else:
+                flattened[metric_name] = float(value)
+        return flattened
+
+    def _log_metrics_to_mlflow(self, prefix: str, metrics: Dict, step: Optional[int] = None) -> None:
+        if not mlflow.active_run():
+            return
+        flattened = self._flatten_metrics(metrics, prefix)
+        for name, val in flattened.items():
+            mlflow.log_metric(name, val, step=step)
     
     def run_sweep(
         self,
@@ -223,24 +250,23 @@ class ActivationPatchingSweep:
         baseline_outputs = {}
         baseline_metrics = {}
         
-        for prompt in tqdm(prompts, desc="Baseline"):
-            tokens = self.model.to_tokens(prompt)
-            with torch.no_grad():
-                logits = self.model(tokens)
-            generated_tokens = self.model.to_str_tokens(logits.argmax(dim=-1)[0])
-            generated_text = ' '.join(generated_tokens[tokens.shape[1]:])
-            
+        baseline_metric_values = []
+        for prompt_idx, prompt in enumerate(tqdm(prompts, desc="Baseline")):
+            generated_text = self._generate_text(
+                prompt,
+                max_new_tokens=20,
+            )
             baseline_outputs[prompt] = generated_text
-            baseline_metrics[prompt] = {
-                'emotion_keywords': self.count_emotion_keywords(generated_text),
-                'politeness': self.calculate_politeness_score(generated_text),
-                'sentiment': self.calculate_sentiment_score(generated_text)
-            }
+            metrics = self.metric_evaluator.evaluate_text_metrics(generated_text)
+            baseline_metrics[prompt] = metrics
+            baseline_metric_values.append(baseline_metrics[prompt])
+            self._log_metrics_to_mlflow(f"baseline/prompt_{prompt_idx}", metrics, step=prompt_idx)
         
         results['baseline'] = {
             'outputs': baseline_outputs,
             'metrics': baseline_metrics
         }
+        results['baseline_summary'] = self._mean_nested_metrics(baseline_metric_values)
         
         # 各感情方向でスイープ実験
         for emotion_label, emotion_vec in emotion_vectors.items():
@@ -256,7 +282,7 @@ class ActivationPatchingSweep:
                 
                 results['sweep_results'][emotion_label][layer_idx] = {}
                 
-                for alpha in alpha_values:
+                for alpha_idx, alpha in enumerate(alpha_values):
                     print(f"  α={alpha:4.1f}...", end=" ", flush=True)
                     
                     layer_alpha_results = {
@@ -264,7 +290,7 @@ class ActivationPatchingSweep:
                         'metrics': {}
                     }
                     
-                    for prompt in prompts:
+                    for prompt_idx, prompt in enumerate(prompts):
                         try:
                             generated_text = self.generate_with_patching(
                                 prompt,
@@ -275,63 +301,50 @@ class ActivationPatchingSweep:
                             )
                             
                             layer_alpha_results['outputs'][prompt] = generated_text
-                            layer_alpha_results['metrics'][prompt] = {
-                                'emotion_keywords': self.count_emotion_keywords(generated_text),
-                                'politeness': self.calculate_politeness_score(generated_text),
-                                'sentiment': self.calculate_sentiment_score(generated_text)
-                            }
+                            metrics = self.metric_evaluator.evaluate_text_metrics(generated_text)
+                            layer_alpha_results['metrics'][prompt] = metrics
+                            log_prefix = f"{emotion_label}/layer_{layer_idx}/alpha_{alpha}/prompt_{prompt_idx}"
+                            self._log_metrics_to_mlflow(log_prefix, metrics, step=alpha_idx)
                         except Exception as e:
                             print(f"\n    Error with prompt '{prompt}': {e}")
                             layer_alpha_results['outputs'][prompt] = f"ERROR: {str(e)}"
-                            layer_alpha_results['metrics'][prompt] = {
-                                'emotion_keywords': {'gratitude': 0, 'anger': 0, 'apology': 0},
-                                'politeness': 0.0,
-                                'sentiment': 0.0
-                            }
+                            layer_alpha_results['metrics'][prompt] = {}
                     
                     results['sweep_results'][emotion_label][layer_idx][alpha] = layer_alpha_results
                     print("✓")
         
         return results
     
-    def aggregate_metrics(self, results: Dict) -> Dict:
+    def aggregate_metrics(self, results: Dict) -> Tuple[Dict, Dict]:
         """
-        メトリクスを集計してヒートマップ用のデータを作成
-        
-        Args:
-            results: スイープ実験の結果
-            
-        Returns:
-            集計されたメトリクス
+        メトリクスを集計してヒートマップ用とベースライン差分用のデータを作成
         """
         aggregated = {}
+        delta_metrics = {}
+        baseline_summary = results.get('baseline_summary') or {}
         
         for emotion_label in results['emotions']:
             aggregated[emotion_label] = {}
+            delta_metrics[emotion_label] = {}
             
             for layer_idx in results['layers']:
                 aggregated[emotion_label][layer_idx] = {}
+                delta_metrics[emotion_label][layer_idx] = {}
                 
                 for alpha in results['alpha_values']:
-                    if alpha not in results['sweep_results'][emotion_label][layer_idx]:
+                    sweep_layer = results['sweep_results'][emotion_label].get(layer_idx, {})
+                    if alpha not in sweep_layer:
                         continue
                     
-                    metrics_list = list(results['sweep_results'][emotion_label][layer_idx][alpha]['metrics'].values())
-                    
-                    # 平均を計算
-                    avg_metrics = {
-                        'emotion_keywords': {
-                            'gratitude': np.mean([m['emotion_keywords']['gratitude'] for m in metrics_list]),
-                            'anger': np.mean([m['emotion_keywords']['anger'] for m in metrics_list]),
-                            'apology': np.mean([m['emotion_keywords']['apology'] for m in metrics_list])
-                        },
-                        'politeness': np.mean([m['politeness'] for m in metrics_list]),
-                        'sentiment': np.mean([m['sentiment'] for m in metrics_list])
-                    }
-                    
+                    metrics_list = [m for m in sweep_layer[alpha]['metrics'].values() if m]
+                    avg_metrics = self._mean_nested_metrics(metrics_list)
                     aggregated[emotion_label][layer_idx][alpha] = avg_metrics
+                    delta_metrics[emotion_label][layer_idx][alpha] = self._subtract_metric_dicts(
+                        avg_metrics,
+                        baseline_summary
+                    )
         
-        return aggregated
+        return aggregated, delta_metrics
 
 
 def main():
@@ -371,8 +384,9 @@ def main():
     )
     
     # メトリクスを集計
-    aggregated = patcher.aggregate_metrics(results)
+    aggregated, delta_metrics = patcher.aggregate_metrics(results)
     results['aggregated_metrics'] = aggregated
+    results['delta_metrics'] = delta_metrics
     
     # 結果を保存
     output_path = Path(args.output)
@@ -388,4 +402,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

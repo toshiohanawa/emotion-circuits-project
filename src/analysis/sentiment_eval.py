@@ -1,62 +1,132 @@
 """
-長文生成とSentiment評価モジュール
-30トークン程度の長文生成をサポートし、HuggingFaceのsentimentモデルで評価
+長文生成とTransformerベースのSentiment/Politeness/Emotion評価モジュール
 """
+from __future__ import annotations
+
 import json
 import pickle
 import torch
 import numpy as np
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 from transformer_lens import HookedTransformer
 from tqdm import tqdm
-import re
+
+try:
+    from transformers import AutoTokenizer, AutoModelForSequenceClassification
+except ImportError:  # pragma: no cover - optional dependency
+    AutoTokenizer = None
+    AutoModelForSequenceClassification = None
+
+
+class TransformerSequenceClassifier:
+    """Utility wrapper around HuggingFace sequence classifiers."""
+
+    def __init__(self, model_id: str, device: str):
+        if AutoTokenizer is None or AutoModelForSequenceClassification is None:
+            raise ImportError("transformers is required for TransformerSequenceClassifier")
+        self.model_id = model_id
+        self.device = device
+        self.tokenizer = AutoTokenizer.from_pretrained(model_id)
+        self.model = AutoModelForSequenceClassification.from_pretrained(model_id)
+        self.model.eval()
+        self.model.to(device)
+        self.id2label = getattr(self.model.config, "id2label", None)
+
+    def predict_proba(self, text: str) -> Dict[str, float]:
+        """Return probability distribution over labels for a single text."""
+        inputs = self.tokenizer(
+            text,
+            return_tensors="pt",
+            truncation=True,
+            max_length=512,
+            padding=True,
+        )
+        inputs = {k: v.to(self.device) for k, v in inputs.items()}
+        with torch.no_grad():
+            outputs = self.model(**inputs)
+            probs = torch.softmax(outputs.logits, dim=-1)[0].cpu().numpy()
+        label_map = self.id2label or {i: str(i) for i in range(len(probs))}
+        return {label_map[i]: float(probs[i]) for i in range(len(probs))}
 
 
 class SentimentEvaluator:
-    """長文生成とsentiment評価を行うクラス"""
+    """長文生成とtransformerベースの属性評価を行うクラス"""
     
-    def __init__(self, model_name: str, device: Optional[str] = None):
+    def __init__(
+        self,
+        model_name: str,
+        device: Optional[str] = None,
+        load_generation_model: bool = True,
+        enable_transformer_metrics: bool = True,
+    ):
         """
-        初期化
-        
         Args:
-            model_name: モデル名
-            device: 使用するデバイス
+            model_name: HookedTransformerで利用するモデル名
+            device: CUDA/CPU設定
+            load_generation_model: Trueの場合はHookedTransformerをロード
+            enable_transformer_metrics: Trueの場合はsentiment/politeness/emotionモデルをロード
         """
         self.model_name = model_name
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
-        
-        print(f"Loading model: {model_name}")
-        self.model = HookedTransformer.from_pretrained(model_name, device=self.device)
-        self.model.eval()
-        
-        print(f"✓ Model loaded on {self.device}")
-        
-        # Sentimentモデルをロード（利用可能な場合）
-        self.sentiment_model = None
-        self.sentiment_tokenizer = None
-        self._load_sentiment_model()
+        self.model: Optional[HookedTransformer] = None
+        self.enable_transformer_metrics = enable_transformer_metrics
+        self._sentiment_classifier: Optional[TransformerSequenceClassifier] = None
+        self._politeness_classifier: Optional[TransformerSequenceClassifier] = None
+        self._emotion_classifier: Optional[TransformerSequenceClassifier] = None
+
+        if load_generation_model:
+            self._load_generation_model()
+        elif enable_transformer_metrics:
+            print(f"✓ Transformer metrics enabled on {self.device} (generation model skipped)")
     
-    def _load_sentiment_model(self):
-        """HuggingFaceのsentimentモデルをロード"""
-        try:
-            from transformers import AutoTokenizer, AutoModelForSequenceClassification
-            
-            # distilbert-base-uncased-finetuned-sst-2-english を試す
+    def _load_generation_model(self) -> None:
+        """HookedTransformerのロードを分離（必要なときのみ使用）。"""
+        if self.model is not None:
+            return
+        print(f"Loading model: {self.model_name}")
+        self.model = HookedTransformer.from_pretrained(self.model_name, device=self.device)
+        self.model.eval()
+        print(f"✓ Model loaded on {self.device}")
+    
+    def _ensure_sentiment_classifier(self) -> Optional[TransformerSequenceClassifier]:
+        if not self.enable_transformer_metrics:
+            return None
+        if self._sentiment_classifier is None:
             try:
-                model_id = "distilbert-base-uncased-finetuned-sst-2-english"
-                print(f"Loading sentiment model: {model_id}")
-                self.sentiment_tokenizer = AutoTokenizer.from_pretrained(model_id)
-                self.sentiment_model = AutoModelForSequenceClassification.from_pretrained(model_id)
-                self.sentiment_model.eval()
-                self.sentiment_model.to(self.device)
-                print(f"✓ Sentiment model loaded")
-            except Exception as e:
-                print(f"Warning: Could not load sentiment model: {e}")
-                print("Continuing without sentiment model...")
-        except ImportError:
-            print("Warning: transformers library not available. Sentiment evaluation will be limited.")
+                model_id = "cardiffnlp/twitter-roberta-base-sentiment-latest"
+                print(f"Loading sentiment classifier: {model_id}")
+                self._sentiment_classifier = TransformerSequenceClassifier(model_id, self.device)
+                print("✓ Sentiment classifier ready")
+            except Exception as exc:
+                print(f"Warning: Sentiment classifier unavailable ({exc}); falling back to heuristics.")
+        return self._sentiment_classifier
+
+    def _ensure_politeness_classifier(self) -> Optional[TransformerSequenceClassifier]:
+        if not self.enable_transformer_metrics:
+            return None
+        if self._politeness_classifier is None:
+            try:
+                model_id = "michellejieli/Stanford_politeness_roberta"
+                print(f"Loading politeness classifier: {model_id}")
+                self._politeness_classifier = TransformerSequenceClassifier(model_id, self.device)
+                print("✓ Politeness classifier ready")
+            except Exception as exc:
+                print(f"Warning: Politeness classifier unavailable ({exc}); falling back to heuristics.")
+        return self._politeness_classifier
+
+    def _ensure_emotion_classifier(self) -> Optional[TransformerSequenceClassifier]:
+        if not self.enable_transformer_metrics:
+            return None
+        if self._emotion_classifier is None:
+            try:
+                model_id = "bhadresh-savani/roberta-base-go-emotions"
+                print(f"Loading GoEmotions classifier: {model_id}")
+                self._emotion_classifier = TransformerSequenceClassifier(model_id, self.device)
+                print("✓ GoEmotions classifier ready")
+            except Exception as exc:
+                print(f"Warning: Emotion classifier unavailable ({exc}); falling back to token heuristics.")
+        return self._emotion_classifier
     
     def generate_long_text(
         self,
@@ -67,64 +137,36 @@ class SentimentEvaluator:
     ) -> str:
         """
         長文を生成
-        
-        Args:
-            prompt: 入力プロンプト
-            max_new_tokens: 生成する最大トークン数
-            temperature: サンプリング温度
-            top_p: nucleus samplingのパラメータ
-            
-        Returns:
-            生成されたテキスト（プロンプト含む）
         """
+        if self.model is None:
+            raise ValueError("Generation model is disabled for this SentimentEvaluator instance.")
         tokens = self.model.to_tokens(prompt)
-        original_length = tokens.shape[1]
-        
         generated_tokens = tokens.clone()
         
         with torch.no_grad():
             for _ in range(max_new_tokens):
-                # 現在のトークン列で推論
                 logits = self.model(generated_tokens)
-                
-                # 最後のトークンのlogitsを取得
                 next_token_logits = logits[0, -1, :] / temperature
                 
-                # Top-p (nucleus) sampling
                 if top_p < 1.0:
                     sorted_logits, sorted_indices = torch.sort(next_token_logits, descending=True)
                     cumulative_probs = torch.cumsum(torch.softmax(sorted_logits, dim=-1), dim=-1)
-                    
-                    # 累積確率がtop_pを超える最初のインデックス
                     sorted_indices_to_remove = cumulative_probs > top_p
                     sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[..., :-1].clone()
                     sorted_indices_to_remove[..., 0] = 0
-                    
                     indices_to_remove = sorted_indices[sorted_indices_to_remove]
                     next_token_logits[indices_to_remove] = float('-inf')
                 
-                # サンプリング
                 probs = torch.softmax(next_token_logits, dim=-1)
                 next_token = torch.multinomial(probs, num_samples=1)
-                
-                # 生成されたトークンを追加
                 generated_tokens = torch.cat([generated_tokens, next_token.unsqueeze(0)], dim=1)
         
-        # トークンをテキストに変換
         generated_text = self.model.to_str_tokens(generated_tokens[0])
-        full_text = ' '.join(generated_text)
-        
-        return full_text
+        return ' '.join(generated_text)
     
     def count_emotion_keywords(self, text: str) -> Dict[str, int]:
         """
-        感情キーワードの頻度をカウント
-        
-        Args:
-            text: テキスト
-            
-        Returns:
-            各感情カテゴリのキーワード出現回数
+        感情キーワードの頻度をカウント（フォールバック用）
         """
         text_lower = text.lower()
         
@@ -159,71 +201,82 @@ class SentimentEvaluator:
         
         return counts
     
+    def calculate_politeness_score(self, text: str) -> float:
+        """
+        ヒューリスティックな丁寧さスコア（フォールバック用）
+        """
+        text_lower = text.lower()
+        politeness_markers = [
+            "please", "kindly", "thank you", "thanks", "sorry", 
+            "appreciate", "grateful", "would", "could", "may"
+        ]
+        count = sum(1 for marker in politeness_markers if marker in text_lower)
+        score = min(count / 10.0, 1.0)
+        return score
+    
     def calculate_sentiment_score(self, text: str) -> Optional[Dict[str, float]]:
         """
-        HuggingFaceのsentimentモデルでsentimentスコアを計算
-        
-        Args:
-            text: テキスト
-            
-        Returns:
-            sentimentスコアの辞書（モデルが利用可能な場合）、None（利用不可の場合）
+        Sentimentスコアを計算。Transformerモデルが利用可能な場合はそちらを優先。
         """
-        if self.sentiment_model is None or self.sentiment_tokenizer is None:
-            return None
+        classifier = self._ensure_sentiment_classifier()
+        if classifier:
+            return classifier.predict_proba(text)
         
-        try:
-            # テキストをトークン化
-            inputs = self.sentiment_tokenizer(
-                text,
-                return_tensors="pt",
-                truncation=True,
-                max_length=512,
-                padding=True
-            )
-            inputs = {k: v.to(self.device) for k, v in inputs.items()}
-            
-            # 推論
-            with torch.no_grad():
-                outputs = self.sentiment_model(**inputs)
-                probs = torch.softmax(outputs.logits, dim=-1)
-            
-            # スコアを取得（通常はNEGATIVEとPOSITIVEの2クラス）
-            scores = probs[0].cpu().numpy()
-            
-            # ラベルを取得
-            if hasattr(self.sentiment_model.config, 'id2label'):
-                labels = self.sentiment_model.config.id2label
-                result = {labels[i]: float(scores[i]) for i in range(len(scores))}
-            else:
-                # デフォルトラベル
-                result = {
-                    'NEGATIVE': float(scores[0]),
-                    'POSITIVE': float(scores[1]) if len(scores) > 1 else 0.0
-                }
-            
-            return result
-        except Exception as e:
-            print(f"Error calculating sentiment score: {e}")
-            return None
+        # フォールバック: 旧ヒューリスティック
+        text_lower = text.lower()
+        positive_words = [
+            "good", "great", "excellent", "wonderful", "amazing", "fantastic",
+            "happy", "pleased", "delighted", "satisfied", "positive", "nice"
+        ]
+        negative_words = [
+            "bad", "horrible", "awful", "terrible", "worst", "angry", "upset",
+            "frustrated", "negative", "unhappy", "sad", "worried"
+        ]
+        pos = sum(1 for word in positive_words if word in text_lower)
+        neg = sum(1 for word in negative_words if word in text_lower)
+        total = max(pos + neg, 1)
+        return {"POSITIVE": pos / total, "NEGATIVE": neg / total}
     
-    def evaluate_text(self, text: str) -> Dict:
+    def evaluate_text_metrics(self, text: str) -> Dict[str, Dict[str, float]]:
         """
-        テキストを評価
-        
-        Args:
-            text: 評価するテキスト
-            
-        Returns:
-            評価結果の辞書
+        Transformerベースの指標（sentiment / politeness / emotions）を一括で算出。
+        対応するモデルが利用できない場合はヒューリスティックにフォールバック。
         """
-        result = {
+        metrics: Dict[str, Dict[str, float]] = {}
+
+        sentiment = self._ensure_sentiment_classifier()
+        if sentiment:
+            metrics['sentiment'] = sentiment.predict_proba(text)
+        else:
+            metrics['sentiment'] = self.calculate_sentiment_score(text) or {}
+
+        politeness = self._ensure_politeness_classifier()
+        if politeness:
+            metrics['politeness'] = politeness.predict_proba(text)
+        else:
+            metrics['politeness'] = {'politeness_score': float(self.calculate_politeness_score(text))}
+
+        emotion_classifier = self._ensure_emotion_classifier()
+        if emotion_classifier:
+            metrics['emotions'] = emotion_classifier.predict_proba(text)
+        else:
+            metrics['emotions'] = {
+                emotion: float(count)
+                for emotion, count in self.count_emotion_keywords(text).items()
+            }
+
+        return metrics
+    
+    def evaluate_text(self, text: str) -> Dict[str, Any]:
+        """
+        互換性維持用: 旧形式の評価結果を返す。
+        """
+        return {
             'text': text,
             'emotion_keywords': self.count_emotion_keywords(text),
-            'sentiment': self.calculate_sentiment_score(text)
+            'sentiment': self.calculate_sentiment_score(text),
+            'metrics': self.evaluate_text_metrics(text),
         }
-        
-        return result
     
     def evaluate_generation(
         self,
@@ -231,20 +284,10 @@ class SentimentEvaluator:
         max_new_tokens: int = 30,
         temperature: float = 1.0,
         top_p: float = 0.9
-    ) -> Dict:
+    ) -> Dict[str, Any]:
         """
         プロンプトから生成して評価
-        
-        Args:
-            prompt: 入力プロンプト
-            max_new_tokens: 生成する最大トークン数
-            temperature: サンプリング温度
-            top_p: nucleus samplingのパラメータ
-            
-        Returns:
-            評価結果の辞書
         """
-        # 生成
         generated_text = self.generate_long_text(
             prompt,
             max_new_tokens=max_new_tokens,
@@ -252,7 +295,6 @@ class SentimentEvaluator:
             top_p=top_p
         )
         
-        # 評価
         evaluation = self.evaluate_text(generated_text)
         evaluation['prompt'] = prompt
         evaluation['max_new_tokens'] = max_new_tokens
@@ -265,18 +307,9 @@ class SentimentEvaluator:
         max_new_tokens: int = 30,
         temperature: float = 1.0,
         top_p: float = 0.9
-    ) -> List[Dict]:
+    ) -> List[Dict[str, Any]]:
         """
         複数のプロンプトをバッチで評価
-        
-        Args:
-            prompts: プロンプトのリスト
-            max_new_tokens: 生成する最大トークン数
-            temperature: サンプリング温度
-            top_p: nucleus samplingのパラメータ
-            
-        Returns:
-            評価結果のリスト
         """
         results = []
         
@@ -289,11 +322,11 @@ class SentimentEvaluator:
                     top_p=top_p
                 )
                 results.append(evaluation)
-            except Exception as e:
-                print(f"Error evaluating prompt '{prompt}': {e}")
+            except Exception as exc:
+                print(f"Error evaluating prompt '{prompt}': {exc}")
                 results.append({
                     'prompt': prompt,
-                    'error': str(e)
+                    'error': str(exc)
                 })
         
         return results
@@ -313,17 +346,14 @@ def main():
     
     args = parser.parse_args()
     
-    # プロンプトを読み込み
     with open(args.prompts_file, 'r') as f:
         prompts_data = json.load(f)
         prompts = prompts_data.get('prompts', [])
     
     print(f"Using {len(prompts)} prompts")
     
-    # 評価器を作成
     evaluator = SentimentEvaluator(args.model)
     
-    # バッチ評価を実行
     results = evaluator.batch_evaluate(
         prompts,
         max_new_tokens=args.max_tokens,
@@ -331,15 +361,12 @@ def main():
         top_p=args.top_p
     )
     
-    # 結果を保存
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     
-    # JSON形式で保存
     with open(output_path.with_suffix('.json'), 'w') as f:
         json.dump(results, f, indent=2)
     
-    # Pickle形式でも保存
     with open(output_path.with_suffix('.pkl'), 'wb') as f:
         pickle.dump(results, f)
     
@@ -347,31 +374,11 @@ def main():
     print(f"  JSON: {output_path.with_suffix('.json')}")
     print(f"  Pickle: {output_path.with_suffix('.pkl')}")
     
-    # サマリーを表示
-    print("\n" + "=" * 80)
-    print("Evaluation Summary")
-    print("=" * 80)
-    
     total_gratitude = sum(r.get('emotion_keywords', {}).get('gratitude', 0) for r in results if 'emotion_keywords' in r)
     total_anger = sum(r.get('emotion_keywords', {}).get('anger', 0) for r in results if 'emotion_keywords' in r)
     total_apology = sum(r.get('emotion_keywords', {}).get('apology', 0) for r in results if 'emotion_keywords' in r)
     
-    print(f"Total emotion keywords found:")
+    print(f"\nTotal emotion keywords found:")
     print(f"  Gratitude: {total_gratitude}")
     print(f"  Anger: {total_anger}")
     print(f"  Apology: {total_apology}")
-    
-    # Sentimentスコアの平均を計算
-    sentiment_scores = [r.get('sentiment') for r in results if r.get('sentiment') is not None]
-    if sentiment_scores:
-        print(f"\nSentiment analysis available for {len(sentiment_scores)} texts")
-        if 'POSITIVE' in sentiment_scores[0]:
-            avg_positive = np.mean([s.get('POSITIVE', 0.0) for s in sentiment_scores])
-            avg_negative = np.mean([s.get('NEGATIVE', 0.0) for s in sentiment_scores])
-            print(f"  Average POSITIVE score: {avg_positive:.3f}")
-            print(f"  Average NEGATIVE score: {avg_negative:.3f}")
-
-
-if __name__ == "__main__":
-    main()
-

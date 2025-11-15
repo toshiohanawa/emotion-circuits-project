@@ -40,13 +40,14 @@
 
 #### モデル操作
 - `src/models/extract_activations.py` - 内部活性抽出
-- `src/models/activation_patching.py` - 簡易Activation Patching
-- `src/models/activation_patching_sweep.py` - 層×αスイープ実験
+- `src/models/activation_patching.py` - Multi-token Activation Patching（αスケジュール、ウィンドウ/位置指定対応）
+- `src/models/activation_patching_sweep.py` - 層×αスイープ実験（Transformerベース評価）
 - `src/models/activation_patching_iterative.py` - Iterative Patching
 - `src/models/activation_patching_swap.py` - Swap Patching
-- `src/models/activation_patching_random.py` - ランダム対照Patching実験
+- `src/models/activation_patching_random.py` - ランダム対照Patching実験（統計検定対応）
 - `src/models/head_ablation.py` - Head ablation実験
-- `src/models/head_patching.py` - Head patching実験
+- `src/models/head_patching.py` - Head patching実験（multi-token生成、複数patch_mode対応）
+- `src/models/neuron_ablation.py` - ニューロン単位アブレーション実験
 
 #### 分析
 - `src/analysis/emotion_vectors.py` - 感情方向ベクトル抽出（文末ベース）
@@ -55,26 +56,38 @@
 - `src/analysis/cross_model_analysis.py` - モデル間比較
 - `src/analysis/cross_model_token_based.py` - トークンベースモデル間比較
 - `src/analysis/cross_model_subspace.py` - サブスペースモデル間比較
+- `src/analysis/cross_model_patching.py` - クロスモデルパッチング（アライメント写像を使用）
 - `src/analysis/subspace_utils.py` - サブスペース解析ユーティリティ（PCA、主角度、overlap、アライメント）
 - `src/analysis/model_alignment.py` - Neutral空間での線形写像学習
 - `src/analysis/subspace_k_sweep.py` - サブスペース次元kのスイープ実験
 - `src/analysis/subspace_alignment.py` - Procrustes/CCAアライメント
 - `src/analysis/compare_patching_methods.py` - Patching手法の比較
-- `src/analysis/random_vs_emotion_effect.py` - ランダム対照 vs 感情ベクトルの効果比較
-- `src/analysis/sentiment_eval.py` - Sentiment評価
+- `src/analysis/random_vs_emotion_effect.py` - ランダム対照 vs 感情ベクトルの効果比較（Cohen's d、統計検定、可視化）
+- `src/analysis/sentiment_eval.py` - TransformerベースのSentiment/Politeness/Emotion評価（CardiffNLP、Stanford Politeness、GoEmotions）
 - `src/analysis/head_screening.py` - Headスクリーニング
+- `src/analysis/real_world_patching.py` - 実世界プロンプトでのPatching評価
+- `src/analysis/neuron_saliency.py` - ニューロンサリエンシー解析（W_out×emotionベクトル）
+- `src/analysis/circuit_ov_qk.py` - OV/QK回路解析ユーティリティ（TransformerLens新バックエンド対応、use_attn_result=True）
+- `src/analysis/circuit_experiments.py` - OV/QK回路実験パイプライン（OV ablation、QK routing patching、統合実験）
+- `src/analysis/circuit_report.py` - OV/QK回路解析結果の可視化とサマリー生成
 
 #### 可視化
 - `src/visualization/emotion_plots.py` - 感情ベクトル可視化
-- `src/visualization/patching_heatmaps.py` - Patchingヒートマップ
+- `src/visualization/patching_heatmaps.py` - Patchingヒートマップ/バイオリン（ネストメトリクス対応）
 - `src/visualization/sentiment_plots.py` - Sentiment可視化
 - `src/visualization/alignment_plots.py` - アライメント結果可視化
 - `src/visualization/layer_subspace_plots.py` - 層ごとサブスペース可視化
 - `src/visualization/head_plots.py` - Head解析結果可視化
+- `src/visualization/real_world_plots.py` - 実世界Patching結果の可視化（バイオリン/バー、統計検定）
+- `src/analysis/circuit_report.py` - OV/QK回路解析結果の可視化（QK routing heatmap、head-importance heatmap）
 
 #### ユーティリティ
-- `src/utils/mlflow_utils.py` - MLflow実験追跡ユーティリティ
+- `src/utils/mlflow_utils.py` - MLflow実験追跡ユーティリティ（ネストメトリクス、タグ設定対応）
 - `src/utils/hf_hooks.py` - HuggingFaceモデル用フック（Phase 8用）
+
+#### CI/CD
+- `scripts/consistency_check.py` - コード-論文整合性チェックスクリプト
+- `.github/workflows/code_paper_consistency.yml` - GitHub Actionsワークフロー（PR/Push時に自動実行）
 
 ## セットアップ
 
@@ -271,14 +284,49 @@ python -m src.analysis.model_alignment \
 ### 6. Activation Patching実験
 
 ```bash
-# 層×αスイープ実験
+# Multi-token Activation Patching（αスケジュール、ウィンドウ指定対応）
+python -m src.models.activation_patching \
+  --model gpt2 \
+  --vectors_file results/baseline/emotion_vectors/gpt2_vectors_token_based.pkl \
+  --prompts_file data/neutral_prompts.json \
+  --output results/baseline/patching/gpt2_patching.pkl \
+  --max-new-tokens 30 \
+  --patch-window 3 \
+  --alpha-schedule 1.0 0.9 0.8
+
+# 層×αスイープ実験（Transformerベース評価）
 python -m src.models.activation_patching_sweep \
   --model gpt2 \
   --vectors_file results/baseline/emotion_vectors/gpt2_vectors_token_based.pkl \
   --prompts_file data/neutral_prompts.json \
-  --output results/baseline/patching/gpt2_sweep.pkl \
+  --output results/baseline/patching/gpt2_sweep_token_based.pkl \
   --layers 3 5 7 9 11 \
   --alpha -2 -1 -0.5 0 0.5 1 2
+
+# ランダム対照実験（統計検定付き）
+python -m src.models.activation_patching_random \
+  --model gpt2 \
+  --vectors_file results/baseline/emotion_vectors/gpt2_vectors_token_based.pkl \
+  --prompts_file data/neutral_prompts.json \
+  --output_dir results/baseline/patching_random \
+  --num-random 100 \
+  --mlflow
+
+# ランダム vs 感情ベクトルの効果比較
+python -m src.analysis.random_vs_emotion_effect \
+  --results_file results/baseline/patching_random/gpt2_random_control.pkl \
+  --output_dir results/baseline/plots/random_control \
+  --output_csv results/baseline/random_effect_sizes.csv
+
+# 実世界プロンプトでの評価
+python -m src.analysis.real_world_patching \
+  --model gpt2 \
+  --vectors_file results/baseline/emotion_vectors/gpt2_vectors_token_based.pkl \
+  --prompts_file data/real_world_samples.json \
+  --output results/baseline/patching/real_world_patching.pkl \
+  --layer 6 \
+  --alpha -1.0 0.0 1.0 \
+  --max-new-tokens 30
 ```
 
 ### 7. Head解析
@@ -297,24 +345,60 @@ python -m src.models.head_ablation \
   --prompts-file data/gratitude_prompts.json \
   --output results/baseline/patching/head_ablation_gpt2_gratitude.pkl
 
-# Head patching
+# Head patching（temperature/top_p対応）
 python -m src.models.head_patching \
   --model gpt2 \
   --head-spec "3:5,7:2" \
   --neutral-prompts data/neutral_prompts.json \
   --emotion-prompts data/gratitude_prompts.json \
-  --output results/baseline/patching/head_patching_gpt2_gratitude.pkl
+  --output results/baseline/patching/head_patching_gpt2_gratitude.pkl \
+  --temperature 0.8 \
+  --top-p 0.9
 ```
 
-### 8. 可視化
+### 8. OV/QK回路解析
 
 ```bash
+# OV/QK回路実験パイプライン（TransformerLens新バックエンド対応）
+python -m src.analysis.circuit_experiments \
+  --model gpt2 \
+  --prompts data/neutral_prompts.json \
+  --emotion-vectors results/baseline/emotion_vectors/gpt2_vectors_token_based.pkl \
+  --layer 6 \
+  --heads "6:0,6:1" \
+  --neurons "6:10,12" \
+  --max-new-tokens 30 \
+  --output results/baseline/circuits/ov_qk_results
+
+# 回路解析結果のサマリー生成
+python -m src.analysis.circuit_report \
+  --results results/baseline/circuits/ov_qk_results/ov_qk_results.pkl \
+  --output results/baseline/circuits/report
+```
+
+### 9. 可視化
+
+```bash
+# Patching Sweep結果の可視化（ヒートマップ/バイオリン）
+python -m src.visualization.patching_heatmaps \
+  --results_file results/baseline/patching/gpt2_sweep_token_based.pkl \
+  --output_dir results/baseline/plots/patching \
+  --metrics sentiment/POSITIVE politeness/politeness_score emotions/joy
+
 # Head解析結果の可視化
 python -m src.visualization.head_plots \
+  --profile baseline \
   --head-scores results/baseline/alignment/head_scores_gpt2.json \
-  --ablation-file results/baseline/patching/head_ablation_gpt2_gratitude.pkl \
-  --patching-file results/baseline/patching/head_patching_gpt2_gratitude.pkl \
-  --output-dir results/baseline/plots/heads
+  --ablation-file results/baseline/patching/head_ablation/gpt2_gratitude_00.pkl \
+  --patching-file results/baseline/patching/head_patching/gpt2_gratitude_00.pkl \
+  --output-dir results/baseline/plots/heads \
+  --top-n 20
+
+# 実世界Patching結果の可視化
+python -m src.visualization.real_world_plots \
+  --results results/baseline/patching/real_world_patching.pkl \
+  --output-dir results/baseline/plots/real_world \
+  --metrics sentiment/POSITIVE politeness/politeness_score
 
 # アライメント結果の可視化
 python -m src.visualization.alignment_plots \
@@ -409,11 +493,14 @@ git commit -m "Remove large data files from Git tracking"
 
 ## プロジェクト統計
 
-- **実装済みPythonモジュール**: 35ファイル以上
-- **ドキュメント**: Phase 0-6の統合レポート（`docs/report/`配下）
+- **実装済みPythonモジュール**: 50ファイル以上
+- **ドキュメント**: Phase 0-7の統合レポート（`docs/report/`配下）
 - **データファイル**: Baseline（280サンプル）+ Extended（400サンプル）+ 実世界（35サンプル）
-- **実装完了フェーズ**: Phase 0-6（統合実行完了）
-- **MLflow統合**: 全フェーズで実験追跡対応
+- **実装完了フェーズ**: Phase 0-7（統合実行完了）+ Issue 1-7, 9-10実装完了 + Epic Issue: OV/QK Circuit Analysis完了
+- **MLflow統合**: 全フェーズで実験追跡対応（ネストメトリクス、タグ設定対応）
+- **評価手法**: TransformerベースのSentiment/Politeness/Emotion評価（CardiffNLP、Stanford Politeness、GoEmotions）
+- **回路解析**: OV/QK回路解析パイプライン（TransformerLens新バックエンド対応、use_attn_result=True）
+- **CI/CD**: コード-論文整合性チェック自動化（GitHub Actions）
 
 ## プロジェクトフェーズ
 

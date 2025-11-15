@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion Circuits Project - 処理フロー図とシーケンス図</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+        h3 {
+            color: #555;
+            margin-top: 30px;
+        }
+        .section {
+            background-color: white;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .mermaid {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .explanation {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #17a2b8;
+            margin: 15px 0;
+        }
+        .file-path {
+            font-family: 'Courier New', monospace;
+            background-color: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #d63384;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .phase-box {
+            border: 2px solid #3498db;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background-color: #e8f4f8;
+        }
+        .phase-title {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Emotion Circuits Project - 処理フロー図とシーケンス図</h1>
+    
+    <div class="section">
+        <h2>プロジェクト概要</h2>
+        <p>
+            このプロジェクトは、軽量LLM（GPT-2、Pythia-160M、GPT-Neo-125M）を用いて、
+            「感謝」「怒り」「謝罪」などの感情表現がモデル内部でどのように表現されているかを解析する研究プロジェクトです。
+        </p>
+        <p>
+            <strong>核心的な研究クエスチョン</strong>:
+            「異なるLLMの中に、"座標系は違うが本質的には同じ" 感情表現の部分空間は存在するのか？そしてそれを因果的に操作できるのか？」
+        </p>
+    </div>
+
+    <div class="section">
+        <h2>1. 全体処理フロー図</h2>
+        <div class="mermaid">
+            flowchart TD
+                Start([プロジェクト開始]) --> Phase0[Phase 0: 環境構築]
+                Phase0 --> Phase1[Phase 1: データセット構築]
+                Phase1 --> Phase2[Phase 2: 活性抽出]
+                Phase2 --> Phase3[Phase 3: 感情ベクトル構築]
+                Phase3 --> Phase35[Phase 3.5: サブスペース解析]
+                Phase35 --> Phase4[Phase 4: Activation Patching]
+                Phase4 --> Phase5[Phase 5: Layer/α Sweep]
+                Phase5 --> Phase6[Phase 6: Head Screening & Ablation]
+                Phase6 --> Phase7[Phase 7: Head Patching]
+                Phase7 --> End([解析完了])
+                
+                Phase1 -->|生成物| Data[data/emotion_dataset.jsonl]
+                Phase2 -->|生成物| Activations[results/baseline/activations/]
+                Phase3 -->|生成物| Vectors[results/baseline/emotion_vectors/]
+                Phase35 -->|生成物| Subspaces[results/baseline/emotion_subspaces/]
+                Phase4 -->|生成物| Patching[results/baseline/patching/]
+                Phase5 -->|生成物| Sweep[results/baseline/patching/sweep/]
+                Phase6 -->|生成物| HeadScores[results/baseline/alignment/head_scores/]
+                Phase7 -->|生成物| HeadPatching[results/baseline/patching/head_patching/]
+                
+                style Phase0 fill:#e1f5ff
+                style Phase1 fill:#fff4e1
+                style Phase2 fill:#e8f5e9
+                style Phase3 fill:#f3e5f5
+                style Phase35 fill:#fce4ec
+                style Phase4 fill:#e0f2f1
+                style Phase5 fill:#fff9c4
+                style Phase6 fill:#e8eaf6
+                style Phase7 fill:#f1f8e9
+        </div>
+        
+        <div class="explanation">
+            <h3>フロー図の説明</h3>
+            <p>
+                このフロー図は、Phase 0からPhase 7までの全体的な処理の流れを示しています。
+                各フェーズは前のフェーズの出力を入力として使用し、順次処理が進みます。
+            </p>
+            <ul>
+                <li><strong>Phase 0</strong>: 環境構築とディレクトリ構造の作成</li>
+                <li><strong>Phase 1</strong>: 感情プロンプトデータセットの構築</li>
+                <li><strong>Phase 2</strong>: モデル内部活性の抽出</li>
+                <li><strong>Phase 3</strong>: 感情方向ベクトルの計算</li>
+                <li><strong>Phase 3.5</strong>: サブスペース解析とモデル間アライメント</li>
+                <li><strong>Phase 4</strong>: Activation Patchingによる因果効果の確認</li>
+                <li><strong>Phase 5</strong>: 層×αのスイープ実験</li>
+                <li><strong>Phase 6</strong>: Head ScreeningとAblation実験</li>
+                <li><strong>Phase 7</strong>: Head Patchingによる因果的根拠の提供</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>2. データフロー図</h2>
+        <div class="mermaid">
+            flowchart LR
+                subgraph Input["入力データ"]
+                    Prompts[プロンプトJSON<br/>gratitude/anger/apology/neutral]
+                end
+                
+                subgraph Phase1["Phase 1: データセット構築"]
+                    Build[build_dataset.py]
+                    Validate[validate_dataset.py]
+                end
+                
+                subgraph Phase2["Phase 2: 活性抽出"]
+                    Extract[extract_activations.py]
+                    Activations[活性データ<br/>.pkl形式]
+                end
+                
+                subgraph Phase3["Phase 3: ベクトル構築"]
+                    VecExtract[emotion_vectors.py<br/>emotion_vectors_token_based.py]
+                    Vectors[感情ベクトル<br/>.pkl形式]
+                end
+                
+                subgraph Phase35["Phase 3.5: サブスペース"]
+                    Subspace[emotion_subspace.py]
+                    CrossModel[cross_model_subspace.py]
+                    Alignment[model_alignment.py]
+                end
+                
+                subgraph Phase4["Phase 4-7: パッチング実験"]
+                    ActPatch[activation_patching.py]
+                    Sweep[activation_patching_sweep.py]
+                    HeadScreen[head_screening.py]
+                    HeadPatch[head_patching.py]
+                end
+                
+                Prompts --> Build
+                Build --> Validate
+                Validate --> Extract
+                Extract --> Activations
+                Activations --> VecExtract
+                VecExtract --> Vectors
+                Activations --> Subspace
+                Subspace --> CrossModel
+                CrossModel --> Alignment
+                Vectors --> ActPatch
+                Vectors --> Sweep
+                Activations --> HeadScreen
+                HeadScreen --> HeadPatch
+                
+                style Input fill:#ffe6e6
+                style Phase1 fill:#fff4e1
+                style Phase2 fill:#e8f5e9
+                style Phase3 fill:#f3e5f5
+                style Phase35 fill:#fce4ec
+                style Phase4 fill:#e0f2f1
+        </div>
+        
+        <div class="explanation">
+            <h3>データフローの説明</h3>
+            <p>
+                この図は、データが各フェーズ間でどのように流れるかを示しています。
+            </p>
+            <ul>
+                <li><strong>入力</strong>: 感情プロンプトJSONファイル（gratitude, anger, apology, neutral）</li>
+                <li><strong>Phase 1</strong>: JSONファイルからJSONLデータセットを構築</li>
+                <li><strong>Phase 2</strong>: JSONLデータセットからモデル内部活性を抽出（.pkl形式）</li>
+                <li><strong>Phase 3</strong>: 活性データから感情方向ベクトルを計算</li>
+                <li><strong>Phase 3.5</strong>: 活性データからサブスペースを抽出し、モデル間比較</li>
+                <li><strong>Phase 4-7</strong>: ベクトルや活性データを使用してパッチング実験を実施</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>3. Phase 2: 活性抽出のシーケンス図</h2>
+        <div class="mermaid">
+            sequenceDiagram
+                participant User as ユーザー
+                participant Script as phase2_extract_all_activations.py
+                participant Model as HookedTransformer
+                participant Hook as Hook関数
+                participant File as ファイルシステム
+                
+                User->>Script: 実行開始 (--profile baseline)
+                Script->>Model: モデルロード (gpt2/pythia/gpt-neo)
+                Model-->>Script: モデル準備完了
+                
+                loop 各感情カテゴリ (4種類)
+                    loop 各プロンプト (70サンプル)
+                        Script->>Model: プロンプトをトークン化
+                        Model->>Hook: Forward実行開始
+                        Hook->>Hook: Residual streamをキャプチャ
+                        Hook->>Hook: MLP出力をキャプチャ
+                        Hook-->>Model: 活性データを返す
+                        Model-->>Script: 活性データ取得
+                        Script->>Script: CPUに転送・保存
+                    end
+                    Script->>File: 活性データを.pkl形式で保存
+                end
+                
+                Script->>File: MLflowログを記録
+                Script-->>User: 完了
+        </div>
+        
+        <div class="explanation">
+            <h3>Phase 2の処理詳細</h3>
+            <p>
+                Phase 2では、各モデル（GPT-2、Pythia-160M、GPT-Neo-125M）について、
+                各感情カテゴリ（gratitude, anger, apology, neutral）のプロンプトを処理し、
+                モデル内部の活性（residual stream、MLP出力）を抽出します。
+            </p>
+            <ul>
+                <li><strong>入力</strong>: JSONLデータセット（280サンプル）</li>
+                <li><strong>処理</strong>: TransformerLensのHook機能を使用して活性をキャプチャ</li>
+                <li><strong>出力</strong>: 活性データ（.pkl形式、各ファイル30-40MB）</li>
+                <li><strong>保存先</strong>: <span class="file-path">results/baseline/activations/{model}/activations_{emotion}.pkl</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>4. Phase 3: 感情ベクトル構築のシーケンス図</h2>
+        <div class="mermaid">
+            sequenceDiagram
+                participant User as ユーザー
+                participant Script as emotion_vectors_token_based.py
+                participant Activations as 活性データ
+                participant Calculator as ベクトル計算
+                participant File as ファイルシステム
+                
+                User->>Script: 実行開始
+                Script->>Activations: 活性データを読み込み
+                Activations-->>Script: 活性データ取得
+                
+                loop 各感情カテゴリ (3種類)
+                    Script->>Calculator: 感情語トークン位置を特定
+                    Calculator-->>Script: トークン位置リスト
+                    
+                    loop 各層 (12層)
+                        Script->>Calculator: 感情語トークンのresidual streamを平均
+                        Script->>Calculator: 中立プロンプトのresidual streamを平均
+                        Calculator->>Calculator: emotion_vec = mean(emotion) - mean(neutral)
+                        Calculator-->>Script: 層ごとのベクトル
+                    end
+                    
+                    Script->>Script: 層ごとのベクトルを結合
+                end
+                
+                Script->>Calculator: 感情間のcosine類似度を計算
+                Script->>File: ベクトルを.pkl形式で保存
+                Script-->>User: 完了
+        </div>
+        
+        <div class="explanation">
+            <h3>Phase 3の処理詳細</h3>
+            <p>
+                Phase 3では、Phase 2で抽出した活性データから、感情方向ベクトルを計算します。
+                2つの手法があります：
+            </p>
+            <ul>
+                <li><strong>Sentence-end手法</strong>: 文章末のresidual streamを使用</li>
+                <li><strong>Token-based手法</strong>: 感情語トークン（"thank", "frustrated", "sorry"など）のresidual streamを使用（推奨）</li>
+            </ul>
+            <p>
+                <strong>出力</strong>: 感情ベクトル（.pkl形式、各ファイル約109KB）<br>
+                <strong>保存先</strong>: <span class="file-path">results/baseline/emotion_vectors/{model}_vectors_token_based.pkl</span>
+            </p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>5. Phase 4-5: Activation Patchingのシーケンス図</h2>
+        <div class="mermaid">
+            sequenceDiagram
+                participant User as ユーザー
+                participant Script as activation_patching_sweep.py
+                participant Model as HookedTransformer
+                participant Vector as 感情ベクトル
+                participant Hook as Patching Hook
+                participant Evaluator as SentimentEvaluator
+                participant File as ファイルシステム
+                
+                User->>Script: 実行開始 (--layers 3 5 7 9 11 --alpha -2 -1 0 1 2)
+                Script->>Model: モデルロード
+                Script->>Vector: 感情ベクトル読み込み
+                Script->>Evaluator: 評価器初期化
+                
+                loop 各層 (5層)
+                    loop 各α値 (7値)
+                        loop 各感情 (3種類)
+                            loop 各プロンプト (70サンプル)
+                                Script->>Model: Baseline生成（パッチなし）
+                                Model-->>Script: Baselineテキスト
+                                Script->>Evaluator: Baseline評価
+                                Evaluator-->>Script: Baselineメトリクス
+                                
+                                Script->>Model: Patching生成（パッチあり）
+                                Model->>Hook: Hook登録（層L、α値）
+                                Hook->>Hook: residual += α * emotion_vector
+                                Hook-->>Model: パッチ適用
+                                Model-->>Script: Patchedテキスト
+                                Script->>Evaluator: Patched評価
+                                Evaluator-->>Script: Patchedメトリクス
+                            end
+                            Script->>Script: メトリクス集計
+                        end
+                    end
+                end
+                
+                Script->>Script: Deltaメトリクス計算
+                Script->>File: 結果を.pkl形式で保存
+                Script-->>User: 完了
+        </div>
+        
+        <div class="explanation">
+            <h3>Phase 4-5の処理詳細</h3>
+            <p>
+                Phase 4-5では、感情ベクトルをモデル内部に「パッチ」することで、
+                生成テキストへの因果的影響を測定します。
+            </p>
+            <ul>
+                <li><strong>Phase 4</strong>: 単一の層×α値でのパッチング実験</li>
+                <li><strong>Phase 5</strong>: 複数の層×α値の組み合わせでのスイープ実験</li>
+                <li><strong>評価</strong>: Transformerベース評価（Sentiment、Politeness、Emotions）</li>
+                <li><strong>出力</strong>: Sweep結果（.pkl形式、約1.4MB）</li>
+                <li><strong>保存先</strong>: <span class="file-path">results/baseline/patching/gpt2_sweep_token_based.pkl</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>6. Phase 6-7: Head解析のシーケンス図</h2>
+        <div class="mermaid">
+            sequenceDiagram
+                participant User as ユーザー
+                participant Screen as head_screening.py
+                participant Ablate as head_ablation.py
+                participant Patch as head_patching.py
+                participant Model as HookedTransformer
+                participant Hook as Hook関数
+                participant File as ファイルシステム
+                
+                Note over Screen: Phase 6-1: Head Screening
+                User->>Screen: 実行開始
+                Screen->>Model: モデルロード
+                
+                loop 各感情カテゴリ (3種類)
+                    loop 各プロンプト (70サンプル)
+                        Screen->>Model: Forward実行
+                        Model->>Hook: Attention patternをキャプチャ
+                        Hook->>Hook: 感情語トークンへのattentionを測定
+                        Hook-->>Screen: Attention値
+                    end
+                    Screen->>Screen: Δattention = emotion_mean - neutral_mean
+                end
+                
+                Screen->>File: Head scoresをJSON形式で保存
+                
+                Note over Ablate: Phase 6-2: Head Ablation
+                User->>Ablate: 実行開始 (--head-spec "1:10")
+                Ablate->>Model: モデルロード
+                
+                loop 各プロンプト (70サンプル)
+                    Ablate->>Model: Baseline生成
+                    Model-->>Ablate: Baselineテキスト
+                    
+                    Ablate->>Model: Ablation生成（Head 1:10をゼロアウト）
+                    Model->>Hook: Hook登録（Head 1:10を0に）
+                    Hook-->>Model: Ablation適用
+                    Model-->>Ablate: Ablationテキスト
+                end
+                
+                Ablate->>File: Ablation結果を.pkl形式で保存
+                
+                Note over Patch: Phase 7: Head Patching
+                User->>Patch: 実行開始 (--head-spec "1:10")
+                Patch->>Model: モデルロード
+                
+                Patch->>Model: 感情プロンプトでForward
+                Model->>Hook: Head 1:10の出力をキャプチャ
+                Hook-->>Patch: 感情Head出力
+                Patch->>Patch: 全プロンプトの平均を計算
+                
+                loop 各中立プロンプト (70サンプル)
+                    Patch->>Model: Baseline生成
+                    Model-->>Patch: Baselineテキスト
+                    
+                    Patch->>Model: Patching生成（Head 1:10を感情出力に置換）
+                    Model->>Hook: Hook登録（Head 1:10を感情出力に）
+                    Hook-->>Model: Patching適用
+                    Model-->>Patch: Patchedテキスト
+                end
+                
+                Patch->>File: Patching結果を.pkl形式で保存
+        </div>
+        
+        <div class="explanation">
+            <h3>Phase 6-7の処理詳細</h3>
+            <p>
+                Phase 6-7では、attention headレベルでの解析を実施します。
+            </p>
+            <ul>
+                <li><strong>Phase 6-1: Head Screening</strong>: 各headが感情語トークンにどれだけ反応するかを測定</li>
+                <li><strong>Phase 6-2: Head Ablation</strong>: 重要なheadをゼロアウトして、生成への影響を測定</li>
+                <li><strong>Phase 7: Head Patching</strong>: 感情プロンプトのhead出力を中立プロンプトに「移植」して、因果的影響を測定</li>
+            </ul>
+            <p>
+                <strong>重要な発見</strong>: Layer 1 Head 10がgratitude感情に最も強く反応（Δattention: 0.340434）
+            </p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>7. 各フェーズの詳細説明</h2>
+        
+        <div class="phase-box">
+            <div class="phase-title">Phase 1: データセット構築</div>
+            <p><strong>目的</strong>: 感情プロンプトデータセットの構築</p>
+            <p><strong>入力</strong>: 個別プロンプトJSONファイル（<span class="file-path">data/{emotion}_prompts.json</span>）</p>
+            <p><strong>処理</strong>:
+                <ul>
+                    <li><span class="file-path">src/data/build_dataset.py</span>: JSONファイルからJSONLデータセットを構築</li>
+                    <li><span class="file-path">src/data/validate_dataset.py</span>: データセットの整合性を確認</li>
+                </ul>
+            </p>
+            <p><strong>出力</strong>: JSONLデータセット（<span class="file-path">data/emotion_dataset.jsonl</span>、280サンプル）</p>
+        </div>
+
+        <div class="phase-box">
+            <div class="phase-title">Phase 2: 活性抽出</div>
+            <p><strong>目的</strong>: モデル内部活性（residual stream、MLP出力）の抽出</p>
+            <p><strong>入力</strong>: JSONLデータセット</p>
+            <p><strong>処理</strong>:
+                <ul>
+                    <li><span class="file-path">scripts/phase2_extract_all_activations.py</span>: 全モデル×全感情のスイープ実行</li>
+                    <li>TransformerLensのHook機能を使用して活性をキャプチャ</li>
+                </ul>
+            </p>
+            <p><strong>出力</strong>: 活性データ（<span class="file-path">results/baseline/activations/{model}/activations_{emotion}.pkl</span>、各ファイル30-40MB）</p>
+        </div>
+
+        <div class="phase-box">
+            <div class="phase-title">Phase 3: 感情ベクトル構築</div>
+            <p><strong>目的</strong>: 感情方向ベクトルの計算</p>
+            <p><strong>入力</strong>: 活性データ</p>
+            <p><strong>処理</strong>:
+                <ul>
+                    <li><span class="file-path">src/analysis/emotion_vectors_token_based.py</span>: 感情語トークンベースのベクトル抽出（推奨）</li>
+                    <li><span class="file-path">src/analysis/emotion_vectors.py</span>: 文末ベースのベクトル抽出</li>
+                    <li>感情間のcosine類似度を計算</li>
+                </ul>
+            </p>
+            <p><strong>出力</strong>: 感情ベクトル（<span class="file-path">results/baseline/emotion_vectors/{model}_vectors_token_based.pkl</span>、約109KB）</p>
+        </div>
+
+        <div class="phase-box">
+            <div class="phase-title">Phase 3.5: サブスペース解析</div>
+            <p><strong>目的</strong>: PCAサブスペース解析とモデル間アライメント</p>
+            <p><strong>入力</strong>: 活性データ</p>
+            <p><strong>処理</strong>:
+                <ul>
+                    <li><span class="file-path">src/analysis/emotion_subspace.py</span>: PCAサブスペース抽出</li>
+                    <li><span class="file-path">src/analysis/cross_model_subspace.py</span>: モデル間overlap測定</li>
+                    <li><span class="file-path">src/analysis/subspace_k_sweep.py</span>: k値スイープ実験</li>
+                    <li><span class="file-path">src/analysis/model_alignment.py</span>: Neutral空間での線形写像学習</li>
+                </ul>
+            </p>
+            <p><strong>出力</strong>: サブスペースデータ、アライメント結果（<span class="file-path">results/baseline/emotion_subspaces/</span>、<span class="file-path">results/baseline/alignment/</span>）</p>
+            <p><strong>重要な発見</strong>: Neutral空間での線形写像により、overlapが0.001から0.99に大幅改善</p>
+        </div>
+
+        <div class="phase-box">
+            <div class="phase-title">Phase 4: Activation Patching</div>
+            <p><strong>目的</strong>: 感情ベクトル方向へのパッチングによる因果効果の確認</p>
+            <p><strong>入力</strong>: 感情ベクトル、中立プロンプト</p>
+            <p><strong>処理</strong>:
+                <ul>
+                    <li><span class="file-path">src/models/activation_patching.py</span>: Multi-token Activation Patching</li>
+                    <li>residual streamに α * emotion_vector を加算</li>
+                    <li>Transformerベース評価（SentimentEvaluator）を使用</li>
+                </ul>
+            </p>
+            <p><strong>出力</strong>: Patching結果（<span class="file-path">results/baseline/patching/gpt2_patching_{emotion}_alpha{alpha}.pkl</span>）</p>
+        </div>
+
+        <div class="phase-box">
+            <div class="phase-title">Phase 5: Layer/α Sweep</div>
+            <p><strong>目的</strong>: 層×α値のスイープ実験</p>
+            <p><strong>入力</strong>: 感情ベクトル、中立プロンプト</p>
+            <p><strong>処理</strong>:
+                <ul>
+                    <li><span class="file-path">src/models/activation_patching_sweep.py</span>: 層×αのグリッドサーチ</li>
+                    <li>層: 3, 5, 7, 9, 11（5層）</li>
+                    <li>α値: -2, -1, -0.5, 0, 0.5, 1, 2（7値）</li>
+                    <li>合計105組み合わせ（5層 × 7α × 3感情）</li>
+                </ul>
+            </p>
+            <p><strong>出力</strong>: Sweep結果（<span class="file-path">results/baseline/patching/gpt2_sweep_token_based.pkl</span>、約1.4MB）</p>
+            <p><strong>可視化</strong>: <span class="file-path">src/visualization/patching_heatmaps.py</span>でヒートマップ/バイオリンプロット生成</p>
+        </div>
+
+        <div class="phase-box">
+            <div class="phase-title">Phase 6: Head Screening & Ablation</div>
+            <p><strong>目的</strong>: 感情語トークンに反応するheadの特定とablation実験</p>
+            <p><strong>入力</strong>: プロンプトJSONファイル</p>
+            <p><strong>処理</strong>:
+                <ul>
+                    <li><span class="file-path">src/analysis/head_screening.py</span>: 各headのΔattentionを測定</li>
+                    <li><span class="file-path">src/models/head_ablation.py</span>: 重要なheadをゼロアウト</li>
+                    <li>感情語トークンへのattentionを測定</li>
+                </ul>
+            </p>
+            <p><strong>出力</strong>: Head scores（<span class="file-path">results/baseline/alignment/head_scores_gpt2.json</span>）、Ablation結果（<span class="file-path">results/baseline/patching/head_ablation/</span>）</p>
+            <p><strong>重要な発見</strong>: Layer 1 Head 10がgratitude感情に最も強く反応（Δattention: 0.340434）</p>
+        </div>
+
+        <div class="phase-box">
+            <div class="phase-title">Phase 7: Head Patching</div>
+            <p><strong>目的</strong>: Head-levelでの因果的パッチング</p>
+            <p><strong>入力</strong>: 中立プロンプト、感情プロンプト</p>
+            <p><strong>処理</strong>:
+                <ul>
+                    <li><span class="file-path">src/models/head_patching.py</span>: Head出力の「移植」</li>
+                    <li>感情プロンプトのhead出力を中立プロンプトに置換</li>
+                    <li>Patch mode: v_only（Vベクトルのみ）またはpattern_v（pattern + V）</li>
+                </ul>
+            </p>
+            <p><strong>出力</strong>: Patching結果（<span class="file-path">results/baseline/patching/head_patching/gpt2_gratitude_{layer}_{head}.pkl</span>）</p>
+            <p><strong>重要な発見</strong>: Layer 1 Head 10のpatchingにより、sentimentが増加（+0.0149）、gratitudeキーワードが倍増（4→8）</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>8. 主要なモジュールとその役割</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>モジュール</th>
+                    <th>役割</th>
+                    <th>フェーズ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="file-path">src/data/build_dataset.py</span></td>
+                    <td>プロンプトJSONからJSONLデータセットを構築</td>
+                    <td>Phase 1</td>
+                </tr>
+                <tr>
+                    <td><span class="file-path">src/models/extract_activations.py</span></td>
+                    <td>モデル内部活性の抽出</td>
+                    <td>Phase 2</td>
+                </tr>
+                <tr>
+                    <td><span class="file-path">src/analysis/emotion_vectors_token_based.py</span></td>
+                    <td>感情語トークンベースのベクトル抽出</td>
+                    <td>Phase 3</td>
+                </tr>
+                <tr>
+                    <td><span class="file-path">src/analysis/emotion_subspace.py</span></td>
+                    <td>PCAサブスペース抽出</td>
+                    <td>Phase 3.5</td>
+                </tr>
+                <tr>
+                    <td><span class="file-path">src/analysis/model_alignment.py</span></td>
+                    <td>Neutral空間での線形写像学習</td>
+                    <td>Phase 3.5</td>
+                </tr>
+                <tr>
+                    <td><span class="file-path">src/models/activation_patching.py</span></td>
+                    <td>Multi-token Activation Patching</td>
+                    <td>Phase 4</td>
+                </tr>
+                <tr>
+                    <td><span class="file-path">src/models/activation_patching_sweep.py</span></td>
+                    <td>層×αのスイープ実験</td>
+                    <td>Phase 5</td>
+                </tr>
+                <tr>
+                    <td><span class="file-path">src/analysis/head_screening.py</span></td>
+                    <td>Headスクリーニング（感情語トークンへの反応度測定）</td>
+                    <td>Phase 6</td>
+                </tr>
+                <tr>
+                    <td><span class="file-path">src/models/head_ablation.py</span></td>
+                    <td>Head ablation実験</td>
+                    <td>Phase 6</td>
+                </tr>
+                <tr>
+                    <td><span class="file-path">src/models/head_patching.py</span></td>
+                    <td>Head patching実験</td>
+                    <td>Phase 7</td>
+                </tr>
+                <tr>
+                    <td><span class="file-path">src/analysis/sentiment_eval.py</span></td>
+                    <td>Transformerベース評価（Sentiment、Politeness、Emotions）</td>
+                    <td>Phase 4-7</td>
+                </tr>
+                <tr>
+                    <td><span class="file-path">src/visualization/patching_heatmaps.py</span></td>
+                    <td>ヒートマップ/バイオリンプロット生成</td>
+                    <td>Phase 5</td>
+                </tr>
+                <tr>
+                    <td><span class="file-path">src/visualization/head_plots.py</span></td>
+                    <td>Head解析結果の可視化</td>
+                    <td>Phase 6-7</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>9. データの流れと依存関係</h2>
+        <div class="mermaid">
+            graph TD
+                A[プロンプトJSON<br/>gratitude/anger/apology/neutral] --> B[Phase 1: データセット構築]
+                B --> C[JSONLデータセット<br/>280サンプル]
+                C --> D[Phase 2: 活性抽出]
+                D --> E[活性データ<br/>.pkl形式<br/>30-40MB/ファイル]
+                E --> F[Phase 3: ベクトル構築]
+                E --> G[Phase 3.5: サブスペース解析]
+                F --> H[感情ベクトル<br/>.pkl形式<br/>109KB/ファイル]
+                G --> I[サブスペースデータ<br/>.pkl形式<br/>1.4MB/ファイル]
+                G --> J[アライメント結果<br/>.pkl形式]
+                H --> K[Phase 4: Activation Patching]
+                H --> L[Phase 5: Layer/α Sweep]
+                E --> M[Phase 6: Head Screening]
+                M --> N[Head Scores<br/>JSON形式<br/>115KB]
+                E --> O[Phase 6: Head Ablation]
+                N --> P[Phase 7: Head Patching]
+                O --> P
+                K --> Q[Patching結果<br/>.pkl形式]
+                L --> R[Sweep結果<br/>.pkl形式<br/>1.4MB]
+                P --> S[Head Patching結果<br/>.pkl形式]
+                
+                style A fill:#ffe6e6
+                style C fill:#fff4e1
+                style E fill:#e8f5e9
+                style H fill:#f3e5f5
+                style I fill:#fce4ec
+                style N fill:#e8eaf6
+                style Q fill:#e0f2f1
+                style R fill:#fff9c4
+                style S fill:#f1f8e9
+        </div>
+        
+        <div class="explanation">
+            <h3>データ依存関係の説明</h3>
+            <p>
+                この図は、各フェーズ間でのデータの依存関係を示しています。
+                矢印は「入力→出力」の関係を表します。
+            </p>
+            <ul>
+                <li><strong>Phase 1</strong>: プロンプトJSON → JSONLデータセット</li>
+                <li><strong>Phase 2</strong>: JSONLデータセット → 活性データ（Phase 3とPhase 3.5の両方で使用）</li>
+                <li><strong>Phase 3</strong>: 活性データ → 感情ベクトル（Phase 4-5で使用）</li>
+                <li><strong>Phase 3.5</strong>: 活性データ → サブスペースデータ・アライメント結果</li>
+                <li><strong>Phase 4-5</strong>: 感情ベクトル → Patching結果</li>
+                <li><strong>Phase 6</strong>: 活性データ → Head Scores → Head Ablation結果</li>
+                <li><strong>Phase 7</strong>: Head Scores + 活性データ → Head Patching結果</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>10. 評価フロー図</h2>
+        <div class="mermaid">
+            flowchart TD
+                A[生成テキスト] --> B[SentimentEvaluator]
+                B --> C[CardiffNLP Sentiment<br/>POSITIVE/NEGATIVE/NEUTRAL]
+                B --> D[Stanford Politeness<br/>politeness_score]
+                B --> E[GoEmotions<br/>joy/anger/sadness/etc.]
+                
+                C --> F[メトリクス集計]
+                D --> F
+                E --> F
+                
+                F --> G[Baselineメトリクス]
+                F --> H[Patchedメトリクス]
+                
+                G --> I[Deltaメトリクス計算]
+                H --> I
+                
+                I --> J[MLflowログ記録]
+                I --> K[可視化<br/>ヒートマップ/バイオリン]
+                
+                style A fill:#ffe6e6
+                style B fill:#e8f5e9
+                style C fill:#fff4e1
+                style D fill:#f3e5f5
+                style E fill:#fce4ec
+                style I fill:#e0f2f1
+                style J fill:#fff9c4
+                style K fill:#e8eaf6
+        </div>
+        
+        <div class="explanation">
+            <h3>評価フローの説明</h3>
+            <p>
+                この図は、生成テキストの評価プロセスを示しています。
+                ヒューリスティック指標ではなく、Transformerベースの評価器を使用します。
+            </p>
+            <ul>
+                <li><strong>CardiffNLP Sentiment</strong>: 感情分析（POSITIVE/NEGATIVE/NEUTRAL）</li>
+                <li><strong>Stanford Politeness</strong>: 丁寧さスコア</li>
+                <li><strong>GoEmotions</strong>: 27種類の感情分類（joy, anger, sadnessなど）</li>
+            </ul>
+            <p>
+                BaselineとPatchedのメトリクスを比較し、Deltaメトリクスを計算します。
+                結果はMLflowに記録され、可視化されます。
+            </p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>11. 実行コマンドの例</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>フェーズ</th>
+                    <th>実行コマンド</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Phase 1</td>
+                    <td><code>python -m src.data.build_dataset --profile baseline</code></td>
+                </tr>
+                <tr>
+                    <td>Phase 2</td>
+                    <td><code>python -m scripts.phase2_extract_all_activations --profile baseline</code></td>
+                </tr>
+                <tr>
+                    <td>Phase 3</td>
+                    <td><code>python -m src.analysis.emotion_vectors_token_based --activations_dir results/baseline/activations/gpt2 --output results/baseline/emotion_vectors/gpt2_vectors_token_based.pkl</code></td>
+                </tr>
+                <tr>
+                    <td>Phase 3.5</td>
+                    <td><code>python -m src.analysis.cross_model_subspace --profile baseline --subspaces_dir results/baseline/emotion_subspaces --models gpt2 EleutherAI-pythia-160m EleutherAI-gpt-neo-125M</code></td>
+                </tr>
+                <tr>
+                    <td>Phase 4</td>
+                    <td><code>python -m src.models.activation_patching --model gpt2 --vectors_file results/baseline/emotion_vectors/gpt2_vectors_token_based.pkl --prompts_file data/neutral_prompts.json --output results/baseline/patching/gpt2_patching_gratitude_alpha1.0.pkl --layer 6 --alpha 1.0</code></td>
+                </tr>
+                <tr>
+                    <td>Phase 5</td>
+                    <td><code>python -m src.models.activation_patching_sweep --model gpt2 --vectors_file results/baseline/emotion_vectors/gpt2_vectors_token_based.pkl --prompts_file data/neutral_prompts.json --output results/baseline/patching/gpt2_sweep_token_based.pkl --layers 3 5 7 9 11 --alpha -2 -1 -0.5 0 0.5 1 2</code></td>
+                </tr>
+                <tr>
+                    <td>Phase 6</td>
+                    <td><code>python -m src.analysis.head_screening --model gpt2 --profile baseline --output results/baseline/alignment/head_scores_gpt2.json</code></td>
+                </tr>
+                <tr>
+                    <td>Phase 7</td>
+                    <td><code>python -m src.models.head_patching --model gpt2 --profile baseline --head-spec "1:10" --emotion gratitude --max-tokens 30 --patch-mode pattern_v</code></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>12. 重要な発見のまとめ</h2>
+        <ul>
+            <li><strong>Token-basedベクトルの有効性</strong>: 感情語トークンベースのベクトルがより明確な感情表現を抽出</li>
+            <li><strong>サブスペースレベルでの共通性</strong>: モデル間overlap 0.13-0.15（ランダムより高い）</li>
+            <li><strong>線形写像による大幅改善</strong>: Neutral空間での線形写像により、overlapが0.001から0.99に改善</li>
+            <li><strong>Layer 1 Head 10の重要性</strong>: Gratitude感情に最も強く反応（Δattention: 0.340434）</li>
+            <li><strong>Head Patchingの効果</strong>: Layer 1 Head 10のpatchingでsentimentが増加（+0.0149）、gratitudeキーワードが倍増</li>
+            <li><strong>Multi-token生成の重要性</strong>: 単一トークンでは検出できないスタイル変化がmulti-token生成で検出可能</li>
+            <li><strong>Transformerベース評価の有効性</strong>: ヒューリスティック指標では検出できなかった効果がTransformerベース評価で検出可能</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>13. 参考文献とリンク</h2>
+        <ul>
+            <li><strong>TransformerLens</strong>: <a href="https://github.com/neelnanda-io/TransformerLens">https://github.com/neelnanda-io/TransformerLens</a></li>
+            <li><strong>HuggingFace Transformers</strong>: <a href="https://huggingface.co/docs/transformers">https://huggingface.co/docs/transformers</a></li>
+            <li><strong>実装計画</strong>: <span class="file-path">docs/implementation_plan.md</span></li>
+            <li><strong>Phaseレポート</strong>: <span class="file-path">docs/report/phase*.md</span></li>
+        </ul>
+    </div>
+
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
+</body>
+</html>
+
