@@ -1,0 +1,118 @@
+{
+  "profile": "baseline",
+  "alpha": 0.05,
+  "target_power": 0.85,
+  "requirements": [
+    {
+      "profile": "baseline",
+      "phase": "residual",
+      "model_name": "gpt2",
+      "metric_name": "emotion_keywords.anger",
+      "paired": true,
+      "target_effect_size": 0.2,
+      "target_power": 0.85,
+      "alpha": 0.05,
+      "required_n_effective": 225.0
+    },
+    {
+      "profile": "baseline",
+      "phase": "residual",
+      "model_name": "gpt2",
+      "metric_name": "emotion_keywords.anger",
+      "paired": true,
+      "target_effect_size": 0.5,
+      "target_power": 0.85,
+      "alpha": 0.05,
+      "required_n_effective": 36.0
+    },
+    {
+      "profile": "baseline",
+      "phase": "residual",
+      "model_name": "gpt2",
+      "metric_name": "emotion_keywords.apology",
+      "paired": true,
+      "target_effect_size": 0.2,
+      "target_power": 0.85,
+      "alpha": 0.05,
+      "required_n_effective": 225.0
+    },
+    {
+      "profile": "baseline",
+      "phase": "residual",
+      "model_name": "gpt2",
+      "metric_name": "emotion_keywords.apology",
+      "paired": true,
+      "target_effect_size": 0.5,
+      "target_power": 0.85,
+      "alpha": 0.05,
+      "required_n_effective": 36.0
+    },
+    {
+      "profile": "baseline",
+      "phase": "residual",
+      "model_name": "gpt2",
+      "metric_name": "emotion_keywords.gratitude",
+      "paired": true,
+      "target_effect_size": 0.2,
+      "target_power": 0.85,
+      "alpha": 0.05,
+      "required_n_effective": 225.0
+    },
+    {
+      "profile": "baseline",
+      "phase": "residual",
+      "model_name": "gpt2",
+      "metric_name": "emotion_keywords.gratitude",
+      "paired": true,
+      "target_effect_size": 0.5,
+      "target_power": 0.85,
+      "alpha": 0.05,
+      "required_n_effective": 36.0
+    },
+    {
+      "profile": "baseline",
+      "phase": "residual",
+      "model_name": "gpt2",
+      "metric_name": "politeness",
+      "paired": true,
+      "target_effect_size": 0.2,
+      "target_power": 0.85,
+      "alpha": 0.05,
+      "required_n_effective": 225.0
+    },
+    {
+      "profile": "baseline",
+      "phase": "residual",
+      "model_name": "gpt2",
+      "metric_name": "politeness",
+      "paired": true,
+      "target_effect_size": 0.5,
+      "target_power": 0.85,
+      "alpha": 0.05,
+      "required_n_effective": 36.0
+    },
+    {
+      "profile": "baseline",
+      "phase": "residual",
+      "model_name": "gpt2",
+      "metric_name": "sentiment",
+      "paired": true,
+      "target_effect_size": 0.2,
+      "target_power": 0.85,
+      "alpha": 0.05,
+      "required_n_effective": 225.0
+    },
+    {
+      "profile": "baseline",
+      "phase": "residual",
+      "model_name": "gpt2",
+      "metric_name": "sentiment",
+      "paired": true,
+      "target_effect_size": 0.5,
+      "target_power": 0.85,
+      "alpha": 0.05,
+      "required_n_effective": 36.0
+    }
+  ],
+  "post_hoc_power_csv": "results/baseline/statistics/power_analysis.csv"
+}

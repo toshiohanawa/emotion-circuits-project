@@ -301,30 +301,67 @@ T1〜T3は、Phase 5以降の設計でとくに重要になる。今後のフェ
 
 ---
 
-#### 🧪 Phase 7.5（これから）：統計的厳密性の強化（Significance & Effect Size Validation）
+#### ✅ Phase 7.5：統計的厳密性の強化（Significance & Effect Size Validation）
 
  **目的** : Phase 5〜7で得られた効果（残差パッチング・headパッチング・サブスペース構造）について、p値・信頼区間・効果量などの統計的指標を明示し、「small but consistent」なシグナルであることを誠実に示す。
 
- **やること（案）** :
+ **やったこと** :
 
-* **ステップ7.5-1: 効果量の検証**
-  * Head patching の効果（例: sentiment +0.0149）について、対応のある t 検定などで p 値を計算する
-  * ブートストラップにより 95% 信頼区間を推定する
-  * Cohen's d を計算し、「small / medium / large」のどれに相当するかを明示する
-  * 「劇的」ではなく「small but statistically significant」な効果として報告する準備を整える
-* **ステップ7.5-2: 多重比較補正**
-  * Phase 7 で複数の head をテストしているため、多重比較の問題を考慮する
-  * Bonferroni 補正や FDR（False Discovery Rate）を適用し、補正後も有意な head が残るかを確認する
-  * 「偶然当たった head」ではなく、「補正後にも残る一貫した head」を強調できるようにする
-* **ステップ7.5-3: Power Analysis**
-  * 現在のサンプルサイズ（例: 70 文/感情）で、検出した効果量に対して十分な検出力（power）があるかを事後的に評価する
-  * 必要に応じて Extended データセット（100 文/感情）を用いた再実験を計画し、「サンプル不足で見えなかっただけ」という可能性を減らす
-* **ステップ7.5-4: 低次元コア因子（k=2）の統計的検証**
-  * k=1〜5 など複数の次元数についてサブスペース overlap を計算し、k=2 付近で本当にピークが現れるかを確認する
-  * AIC/BIC やブートストラップを用いて、「k=2 が安定して良い選択である」ことを定量的に示す
-  * Extended プロファイルでも同様の傾向が見られるかを確認し、結果の頑健性を高める
+* **データローダー（Data Loaders）**
+  * `src/analysis/statistics/data_loading.py` を実装
+  * `PatchingRun` dataclass を定義し、残差スイープ・headパッチング・ランダム対照実験の結果を統一的に読み込む
+  * `collect_patching_runs` 関数により、Phase固有のCSVやMLflowログを単一の取り込みパスで再利用可能に
+  * Head patching結果は、キャッシュされた `SentimentEvaluator` またはキーワード/センチメントヒューリスティックでテキストごとに再評価可能
+* **効果量・補正パイプライン（Effect & Correction Pipeline）**
+  * `src/analysis/statistics/effect_sizes.py` を実装
+  * 対応/独立標本のCohen's d、両側t検定、ブートストラップ信頼区間（平均値＋効果量）を計算
+  * 多重比較補正を実装：Bonferroni補正とBenjamini-Hochberg FDR（False Discovery Rate）
+  * `--seed` を設定することでブートストラップが決定論的になり、再生成されるCSVが再現可能
+* **検出力分析（Power Analysis）**
+  * `src/analysis/statistics/power_analysis.py` を実装
+  * 事後検出力（post-hoc power）を推定：statsmodelsが利用可能な場合は優先、フォールバックとして解析的t/nct近似を使用
+  * 標準的な効果量ターゲット（d=0.2, 0.5など）に対して必要なサンプルサイズを投影
+* **k選択サポート（K-selection Support）**
+  * `src/analysis/statistics/k_selection.py` を実装
+  * 既存の `k_sweep_*.pkl` アーティファクトを正規化
+  * kごとのoverlapサマリーをブートストラップし、k=2と他の選択肢を数値的に比較可能に
+* **統合CLIと出力（Unified CLI & Outputs）**
+  * `src/analysis/run_statistics.py` を実装
+  * `python -m src.analysis.run_statistics` コマンドを提供
+  * `--mode effect|power|k|all` で実行モードを選択
+  * ブートストラップ・補正の共通ノブを共有
+  * 結果を `results/<profile>/statistics/` 配下に自動保存
+    * `effect_sizes.csv`: 効果量、p値、信頼区間
+    * `power_analysis.csv/json`: 検出力分析結果
+    * `k_selection.csv`: k選択の統計的検証結果
+  * Headメトリクスの再計算は、CLIフラグでCPUに強制またはヒューリスティックにダウングレード可能
 
- **このフェーズがくれるもの** : これまでのフェーズで見えてきた「小さく一貫したシグナル」を、論文査読に耐える統計的厳密性で裏付けることができる。T3（Random Baseline & Statistical Testing）の枠組みを全実験に遡及的に適用し、「再現性のある小さなシグナル」として誠実に報告できる状態になる。
+ **実行例** :
+
+```bash
+# 効果量分析（残差パッチング）
+python3 -m src.analysis.run_statistics \
+  --profile baseline \
+  --mode effect \
+  --phase-filter residual \
+  --n-bootstrap 500 \
+  --seed 42
+
+# 検出力分析
+python3 -m src.analysis.run_statistics \
+  --profile baseline \
+  --mode power \
+  --effect-targets 0.2 0.5 \
+  --power-target 0.85
+
+# k選択の統計的検証
+python3 -m src.analysis.run_statistics \
+  --profile baseline \
+  --mode k \
+  --n-bootstrap 500
+```
+
+ **このフェーズの意味** : これまでのフェーズで見えてきた「小さく一貫したシグナル」を、論文査読に耐える統計的厳密性で裏付けることができた。T3（Random Baseline & Statistical Testing）の枠組みを全実験に遡及的に適用し、「再現性のある小さなシグナル」として誠実に報告できる状態になった。決定論的なブートストラップ（`--seed`）により、結果の完全な再現性も保証される。
 
 ---
 
@@ -393,7 +430,7 @@ T1〜T3は、Phase 5以降の設計でとくに重要になる。今後のフェ
 
 | パッケージ | 対応フェーズ | 主題                                                                   |
 | ---------- | ------------ | ---------------------------------------------------------------------- |
-| Paper 1    | Phase 1〜7   | 小型モデルにおける感情サブスペース、残差パッチング、headレベル因果回路 |
+| Paper 1    | Phase 1〜7.5 | 軽量モデルにおける感情サブスペース、残差パッチング、headレベル因果回路、統計的厳密性 |
 | Paper 2    | Phase 8〜9   | モデル規模のスケーリングによる感情回路の変化と安定性                   |
 | Paper 3    | Phase 10〜11 | 多言語・多属性への一般化と、感情回路を用いた制御・応用                 |
 
