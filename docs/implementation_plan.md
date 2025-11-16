@@ -14,6 +14,8 @@
 - **Issue 1-5実装完了（2024年11月）**: Multi-token Activation Patching、Transformerベース評価、ランダム対照強化、実世界評価、Head Patching強化を実装完了 ✅
 - **Issue 6-7, 9-10実装完了（2024年11月）**: ニューロン解析、クロスモデルパッチング、MLflow拡張、CI/CDパイプラインを実装完了 ✅
 - **Epic Issue: OV/QK Circuit Analysis完了（2024年11月）**: TransformerLens新バックエンド対応、OV/QK回路解析パイプライン、回路可視化・サマリー生成を実装完了 ✅
+- **Phase 7.5完了（2025年11月）**: 統計的厳密性の強化（効果量、検出力分析、k選択検証）を実装完了 ✅
+- **Phase 8完了（2025年11月）**: 中規模モデル（Llama3 8B / Gemma3 12B / Qwen3 8B）へのスケーリング検証を実装完了 ✅
 
 ## プロジェクトの本質的な問い
 
@@ -494,10 +496,88 @@ python -m src.visualization.head_plots \
 
 **保存先**: `results/baseline/plots/heads/`
 
-## フェーズ8: モデルサイズと普遍性（1-2週間）
+## フェーズ8: モデルサイズと普遍性（1-2週間）✅ 完了
 
 ### 目的
 小型モデルでやりきった後、より大きなモデルでの検証。モデルサイズと感情サブスペースの普遍性の関係を探る。
+
+### 実装済みモジュール
+
+**Phase 8 専用モジュール**:
+- `src/models/phase8_large/registry.py`: 中規模モデル（Llama3 8B、Gemma3 12B、Qwen3 8B）の定義 ✅
+- `src/analysis/run_phase8_pipeline.py`: Phase 8 自動化パイプライン ✅
+- `src/analysis/summarize_phase8_large.py`: Phase 8 結果のサマリー生成 ✅
+
+### ステップ8-1: 中規模モデルのレジストリ ✅ 完了
+
+**実装ファイル**: `src/models/phase8_large/registry.py`
+
+**実装内容**:
+```python
+MODEL_REGISTRY = {
+    "llama3_8b": LargeModelSpec(
+        name="llama3_8b",
+        family="llama3",
+        hf_model_name="meta-llama/Meta-Llama-3.1-8B",
+        n_layers_hint=32,
+        d_model_hint=4096
+    ),
+    "gemma3_12b": LargeModelSpec(
+        name="gemma3_12b",
+        family="gemma3",
+        hf_model_name="google/gemma-3-12b-it",
+        n_layers_hint=48,
+        d_model_hint=3072
+    ),
+    "qwen3_8b": LargeModelSpec(
+        name="qwen3_8b",
+        family="qwen3",
+        hf_model_name="Qwen/Qwen3-8B-Base",
+        n_layers_hint=36
+    ),
+}
+```
+
+### ステップ8-2: サブスペースアライメントパイプライン ✅ 完了
+
+**実装ファイル**: `src/analysis/run_phase8_pipeline.py`
+
+**実装内容**:
+- GPT-2の感情サブスペースを中規模モデルへ線形写像でアライメント
+- token-based感情ベクトル → 多サンプルPCA → neutral から線形写像学習 → before/after overlap計算
+- HuggingFace Transformersの`device_map="auto"`による自動デバイス分割対応
+- ゲートモデルへのアクセス（HuggingFaceトークン必要）
+
+**CLI仕様**:
+```bash
+python3 -m src.analysis.run_phase8_pipeline \
+  --target llama3_8b \
+  --profile baseline \
+  --layers 0 1 2 3 4 5 6 7 8 9 10 11 \
+  --k 8 \
+  --n-samples 50 \
+  --device auto
+```
+
+### ステップ8-3: 結果と知見 ✅ 完了
+
+**実験結果**:
+
+| モデル | アライメント成功度 | 最大改善幅（Δoverlap） | 特徴 |
+|--------|-------------------|------------------------|------|
+| **Llama3 8B** | 優秀 | 0.713（Layer 11） | 全層で大幅改善、上位層ほど効果大 |
+| **Qwen3 8B** | 中程度 | 0.105（Layer 4） | 中間層で安定した改善 |
+| **Gemma3 12B** | 低調 | <0.001 | 数値的不安定性あり |
+
+**主要な発見**:
+1. **アーキテクチャ依存性が決定的**: 同じ「感情」概念でも、モデルファミリーによって内部表現の構造が大きく異なる
+2. **線形写像の限界**: Gemma3の結果は、単純な線形変換では捉えられない非線形構造の存在を示唆
+3. **スケーリングの非自明性**: モデルサイズが大きくなっても、小型モデルの知見が直接適用できるとは限らない
+
+**保存先**:
+- `results/{profile}/phase8/`: Phase 8実験結果
+- `docs/report/phase8_llama3_scaling_report.md`: Llama3スケーリングレポート
+- `docs/report/phase8_comparative_scaling_report.md`: 比較スケーリングレポート
 
 ### 共通ルール
 - **既存構造を尊重**: 既存のディレクトリ構造・モジュール構成は変更しない
@@ -505,97 +585,15 @@ python -m src.visualization.head_plots \
 - **CLIスクリプト化**: すべての新規モジュールは`argparse`でCLI実行可能にする
 - **保存先の一貫性**: 解析結果は`results/{profile}/`以下に保存
 - **GPU/メモリ配慮**: `torch.no_grad()`使用、hook使用後は適切に解除
+- **大規模モデル対応**: `device_map="auto"`による自動デバイス分割対応
 
-### ステップ8-1: HuggingFaceモデル用フック（未実施）
-
-**実装ファイル**: `src/utils/hf_hooks.py`（新規）
-
-**目的**: HuggingFaceモデル（GPT-2 medium/large、Pythia-410M、Llama-3など）からresidual streamやattention出力を簡便に取得するための共通ヘルパー
-
-**API例**:
-```python
-from src.utils.hf_hooks import load_hf_causal_lm, capture_residuals
-
-model, tokenizer = load_hf_causal_lm("gpt2-medium", device="cuda")
-
-with capture_residuals(model, layers=[3,5,7]) as cache:
-    outputs = model(**inputs)
-
-resid_layer5 = cache["resid", 5]  # [batch, seq, d_model]
-```
-
-**実装要件**:
-1. `load_hf_causal_lm(model_name: str, device: str) -> (model, tokenizer)`
-2. `capture_residuals(model, layers: List[int])` → contextmanagerでhook登録 & 解除
-3. 必要ならattention、MLP出力も同様にサポート
-
-**対応モデル**:
-- `gpt2`, `gpt2-medium`, `gpt2-large`
-- `EleutherAI/pythia-410m-deduped`
-- `meta-llama/Meta-Llama-3-8B`（オプション）
-
-### ステップ8-2: 既存解析のマルチモデル対応拡張（未実施）
-
-**対象モジュール**:
-- `src/analysis/emotion_subspace.py`
-- `src/analysis/subspace_k_sweep.py`
-- `src/analysis/model_alignment.py`
-- `src/analysis/subspace_alignment.py`
-
-**拡張方針**:
-1. すべてのスクリプトに`--model-a`, `--model-b`などの引数を追加し、GPT-2 small以外にも指定可能にする
-2. モデルロード部分を関数に切り出し、`gpt2`, `gpt2-medium`, `gpt2-large`, `EleutherAI/pythia-410m-deduped`などを切り替え可能にする
-3. 既存のGPT-2 small用のロジックは維持しつつ、HuggingFaceモデルの場合は`hf_hooks.py`を使ってresidualを取得
-
-**対象モデル**:
-- GPT-2 small (124M) ✅ 既に実施済み
-- GPT-2 medium (355M)
-- GPT-2 large (774M)
-- Pythia-410M
-- Llama-3 8B（オプション）
-
-**実行例**:
-```bash
-python -m src.analysis.subspace_k_sweep \
-  --model-a gpt2 \
-  --model-b gpt2-medium \
-  --layers 3 5 7 9 11 \
-  --k-values 2 5 10 20 \
-  --output results/baseline/alignment/k_sweep_gpt2_gpt2medium.json
-```
-
-### ステップ8-3: モデルサイズとサブスペース共通性の解析（未実施）
-
-**実装パターン**:
-すべて以下の流れを再利用：
-1. 各モデルで感謝/怒り/謝罪サブスペース（PCA, k=10）を計算
-2. モデルペアごとに：
-   - Principal angles / overlapを計算
-   - Procrustesアライメントを適用
-   - Neutral空間での線形写像（Phase 6-1の手法）も適用
-   - k-sweepでk={2,5,10,20}の変化も見る
-
-**想定するCLI実行例**:
-```bash
-# gpt2 vs gpt2-medium
-python -m src.analysis.model_alignment \
-  --model-a gpt2 \
-  --model-b gpt2-medium \
-  --layers 3 5 7 9 11 \
-  --output results/baseline/alignment/model_alignment_gpt2_gpt2medium.pkl
-
-python -m src.analysis.subspace_k_sweep \
-  --model-a gpt2 \
-  --model-b gpt2-medium \
-  --layers 3 5 7 9 11 \
-  --k-values 2 5 10 20 \
-  --output results/baseline/alignment/k_sweep_gpt2_gpt2medium.json
-```
-
-**研究クエスチョン**:
-- 「モデルサイズが大きくなると、感情サブスペースの共通性はどう変化するか？」
-- 「線形写像によるアライメント効果はモデルサイズに依存するか？」
-- 「低次元でのコア因子（k=2）はモデルサイズに依存するか？」
+### 研究クエスチョンへの回答
+- **「モデルサイズが大きくなると、感情サブスペースの共通性はどう変化するか？」**
+  → アーキテクチャに依存。Llama3では高い共通性、Gemma3では低い共通性
+- **「線形写像によるアライメント効果はモデルサイズに依存するか？」**
+  → モデルサイズよりもアーキテクチャ特性に依存
+- **「低次元でのコア因子はモデルサイズに依存するか？」**
+  → k=2が最適である傾向は小型モデルと共通（Phase 7.5で統計的に検証済み）
 
 ## フェーズ9: 結果整理と評価（1週間）
 
@@ -748,9 +746,11 @@ emotion-circuits/
 ## 統合実行の成果（2024年12月）
 
 ### 完了した統合実行
-- **Phase 0-7の完全再実行**: Baselineデータセットでの統合実行完了 ✅
+- **Phase 0-8の完全再実行**: Baselineデータセットでの統合実行完了 ✅
 - **MLflow統合**: 全フェーズで実験追跡対応 ✅
 - **MLflow改善**: 自動フォールバック（リモートサーバーがダウン時はローカルファイルストアを使用） ✅
+- **Phase 7.5追加**: 統計的厳密性の強化（効果量、検出力分析、k選択検証） ✅
+- **Phase 8追加**: 中規模モデル（Llama3 8B / Gemma3 12B / Qwen3 8B）へのスケーリング検証 ✅
 - **新規モジュール追加**:
   - `src/data/build_dataset.py`: 統合データセット構築 ✅
   - `src/models/activation_patching_random.py`: ランダム対照実験 ✅
@@ -770,6 +770,14 @@ emotion-circuits/
   - `src/analysis/circuit_report.py`: OV/QK回路解析結果の可視化とサマリー生成 ✅
   - `scripts/consistency_check.py`: コード-論文整合性チェック ✅
   - `.github/workflows/code_paper_consistency.yml`: GitHub Actions CI/CD ✅
+  - `src/analysis/statistics/data_loading.py`: Phase 7.5 統計データローダー ✅
+  - `src/analysis/statistics/effect_sizes.py`: 効果量・補正パイプライン ✅
+  - `src/analysis/statistics/power_analysis.py`: 検出力分析 ✅
+  - `src/analysis/statistics/k_selection.py`: k選択統計検証 ✅
+  - `src/analysis/run_statistics.py`: Phase 7.5 統合CLI ✅
+  - `src/models/phase8_large/registry.py`: Phase 8 中規模モデルレジストリ ✅
+  - `src/analysis/run_phase8_pipeline.py`: Phase 8 自動化パイプライン ✅
+  - `src/analysis/summarize_phase8_large.py`: Phase 8 結果サマリー生成 ✅
 - **モジュール強化**:
   - `src/models/activation_patching.py`: Multi-token生成、αスケジュール、ウィンドウ/位置指定対応 ✅
   - `src/models/activation_patching_sweep.py`: Transformerベース評価、ネストメトリクス対応 ✅
@@ -796,6 +804,8 @@ emotion-circuits/
 8. **Transformerベース評価の有効性**: ヒューリスティック指標では検出できなかった効果がTransformerベース評価で検出可能 ✅
 9. **クロスモデルパッチングの可能性**: アライメント写像により、異なるモデル間で感情ベクトルを転送してパッチング可能 ✅
 10. **ニューロンレベル解析の重要性**: HeadだけでなくMLPニューロンも感情回路に重要な役割を果たす可能性 ✅
+11. **統計的厳密性の確認**: 効果量は小さい（d < 0.2）が一貫しており、k=2が最適サブスペース次元として統計的に検証済み ✅
+12. **中規模モデルへのスケーリング**: アーキテクチャ依存性が決定的であり、Llama3は高いアライメント、Gemma3は低いアライメントを示す ✅
 
 ### レポート
 - `docs/report/phase0_setup_report.md` - Phase 0: 環境セットアップ ✅
@@ -807,3 +817,6 @@ emotion-circuits/
 - `docs/report/phase5_sweep_report.md` - Phase 5: 統合Sweep実験 ✅
 - `docs/report/phase6_alignment_report.md` - Phase 6: 統合サブスペースアライメント ✅
 - `docs/report/phase7_head_analysis_report.md` - Phase 7: Head/Unitレベル解析 ✅
+- `docs/report/phase7.5_statistics_report.md` - Phase 7.5: 統計的厳密性検証 ✅
+- `docs/report/phase8_llama3_scaling_report.md` - Phase 8: Llama3スケーリング解析 ✅
+- `docs/report/phase8_comparative_scaling_report.md` - Phase 8: 比較スケーリング解析 ✅

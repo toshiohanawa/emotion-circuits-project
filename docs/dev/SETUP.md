@@ -7,8 +7,10 @@
 - **OS**: Linux, macOS, Windows (WSL推奨)
 - **Python**: 3.9以上（3.11推奨）
 - **GPU**: CUDA対応GPU（推奨、CPUでも動作可能）
-- **メモリ**: 8GB以上（GPU使用時は16GB以上推奨）
-- **ディスク**: 10GB以上の空き容量（モデルダウンロード用）
+- **メモリ**:
+  - 小型モデル（Phase 1-7）: 8GB以上（GPU使用時は16GB以上推奨）
+  - 中規模モデル（Phase 8）: 32GB以上（GPU使用時は48GB以上推奨、または `device_map="auto"` による自動分割）
+- **ディスク**: 10GB以上の空き容量（モデルダウンロード用、Phase 8では50GB以上推奨）
 
 ## セットアップ手順
 
@@ -290,15 +292,118 @@ export CUDA_VISIBLE_DEVICES=0
 
 # トランスフォーマーのキャッシュ
 export TRANSFORMERS_CACHE=/path/to/transformers_cache
+
+# HuggingFaceトークン（Phase 8 の中規模モデル用）
+export HF_TOKEN=your_token_here
 ```
+
+## Phase 8: 中規模モデルのセットアップ
+
+Phase 8 では、Llama3 8B / Gemma3 12B / Qwen3 8B などの中規模モデルを使用します。これらのモデルにアクセスするには、追加の設定が必要です。
+
+### HuggingFace トークンの設定
+
+1. HuggingFace アカウントを作成: https://huggingface.co/join
+2. アクセストークンを生成: https://huggingface.co/settings/tokens
+3. トークンを設定:
+
+```bash
+# 方法1: 環境変数として設定
+export HF_TOKEN=your_token_here
+
+# 方法2: huggingface-cli を使用
+huggingface-cli login
+
+# 方法3: Pythonから直接設定
+from huggingface_hub import login
+login(token="your_token_here")
+```
+
+### ゲートモデルへのアクセス申請
+
+一部のモデル（特に Llama3）は、HuggingFace でアクセス申請が必要です：
+
+1. **Llama3 8B** (`meta-llama/Meta-Llama-3.1-8B`):
+   - https://huggingface.co/meta-llama/Meta-Llama-3.1-8B にアクセス
+   - "Request access" をクリックして利用規約に同意
+   - 承認後（通常数分〜数時間）、モデルをダウンロード可能
+
+2. **Gemma3 12B** (`google/gemma-3-12b-it`):
+   - https://huggingface.co/google/gemma-3-12b-it にアクセス
+   - Google の利用規約に同意
+
+3. **Qwen3 8B** (`Qwen/Qwen3-8B-Base`):
+   - 通常はアクセス制限なし（公開モデル）
+
+### Phase 8 パイプラインの実行
+
+```bash
+# 単一モデルでの実行
+python3 -m src.analysis.run_phase8_pipeline \
+  --target llama3_8b \
+  --profile baseline \
+  --layers 0 1 2 3 4 5 6 7 8 9 10 11 \
+  --k 8 \
+  --n-samples 50
+
+# デバイス指定（GPU メモリが不足する場合）
+python3 -m src.analysis.run_phase8_pipeline \
+  --target llama3_8b \
+  --profile baseline \
+  --device auto  # device_map="auto" で自動分割
+
+# CPU で実行（非推奨、非常に遅い）
+python3 -m src.analysis.run_phase8_pipeline \
+  --target qwen3_8b \
+  --profile baseline \
+  --device cpu
+```
+
+### トラブルシューティング（Phase 8）
+
+#### 問題: `OSError: You need to agree to the terms of use`
+
+**原因**: ゲートモデルへのアクセス申請が未完了
+
+**解決策**:
+- HuggingFace の該当モデルページでアクセス申請を行う
+- 申請が承認されるまで待つ（通常数分〜数時間）
+- `huggingface-cli whoami` で正しいアカウントにログインしていることを確認
+
+#### 問題: `OutOfMemoryError`
+
+**原因**: GPU/CPU メモリ不足
+
+**解決策**:
+```bash
+# device_map="auto" を使用して自動分割
+python3 -m src.analysis.run_phase8_pipeline --device auto
+
+# または、より小さなモデルを使用
+python3 -m src.analysis.run_phase8_pipeline --target qwen3_8b
+
+# サンプル数を減らす
+python3 -m src.analysis.run_phase8_pipeline --n-samples 20
+```
+
+#### 問題: 数値的不安定性（特に Gemma3）
+
+**原因**: モデルアーキテクチャの特性
+
+**解決策**:
+- 他のモデル（Llama3、Qwen3）を優先的に使用
+- PCA 次元 `--k` を小さくする（例: `--k 4`）
+- 結果の解釈時にこの制限を考慮する
 
 ## 次のステップ
 
 1. `docs/implementation_plan.md`を読んでプロジェクトの全体像を理解
-2. `docs/report/`配下のPhase 0-6のレポートを確認
+2. `docs/report/`配下のPhase 0-8のレポートを確認
 3. 小さな実験から始める（GPT-2 smallのみ、Baselineデータセット）
 4. 結果を確認してから、Extendedデータセットやより大きな実験に進む
-5. MLflowで実験結果を追跡・比較
+5. Phase 7.5 の統計分析で結果の厳密性を検証
+6. Phase 8 の中規模モデルでスケーリング検証を実施
+7. MLflowで実験結果を追跡・比較
 
 ## サポート
 

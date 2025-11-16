@@ -114,8 +114,10 @@
                 Phase4 --> Phase5[Phase 5: Layer/α Sweep]
                 Phase5 --> Phase6[Phase 6: Head Screening & Ablation]
                 Phase6 --> Phase7[Phase 7: Head Patching]
-                Phase7 --> End([解析完了])
-                
+                Phase7 --> Phase75[Phase 7.5: 統計的厳密性]
+                Phase75 --> Phase8[Phase 8: 中規模モデルスケーリング]
+                Phase8 --> End([解析完了])
+
                 Phase1 -->|生成物| Data[data/emotion_dataset.jsonl]
                 Phase2 -->|生成物| Activations[results/baseline/activations/]
                 Phase3 -->|生成物| Vectors[results/baseline/emotion_vectors/]
@@ -124,7 +126,9 @@
                 Phase5 -->|生成物| Sweep[results/baseline/patching/sweep/]
                 Phase6 -->|生成物| HeadScores[results/baseline/alignment/head_scores/]
                 Phase7 -->|生成物| HeadPatching[results/baseline/patching/head_patching/]
-                
+                Phase75 -->|生成物| Statistics[results/baseline/statistics/]
+                Phase8 -->|生成物| Phase8Results[results/baseline/phase8/]
+
                 style Phase0 fill:#e1f5ff
                 style Phase1 fill:#fff4e1
                 style Phase2 fill:#e8f5e9
@@ -134,12 +138,14 @@
                 style Phase5 fill:#fff9c4
                 style Phase6 fill:#e8eaf6
                 style Phase7 fill:#f1f8e9
+                style Phase75 fill:#ffe0b2
+                style Phase8 fill:#c8e6c9
         </div>
         
         <div class="explanation">
             <h3>フロー図の説明</h3>
             <p>
-                このフロー図は、Phase 0からPhase 7までの全体的な処理の流れを示しています。
+                このフロー図は、Phase 0からPhase 8までの全体的な処理の流れを示しています。
                 各フェーズは前のフェーズの出力を入力として使用し、順次処理が進みます。
             </p>
             <ul>
@@ -152,6 +158,8 @@
                 <li><strong>Phase 5</strong>: 層×αのスイープ実験</li>
                 <li><strong>Phase 6</strong>: Head ScreeningとAblation実験</li>
                 <li><strong>Phase 7</strong>: Head Patchingによる因果的根拠の提供</li>
+                <li><strong>Phase 7.5</strong>: 統計的厳密性の強化（効果量、検出力分析、k選択検証）</li>
+                <li><strong>Phase 8</strong>: 中規模モデル（Llama3 8B / Gemma3 12B / Qwen3 8B）へのスケーリング検証</li>
             </ul>
         </div>
     </div>
@@ -587,6 +595,51 @@
             <p><strong>出力</strong>: Patching結果（<span class="file-path">results/baseline/patching/head_patching/gpt2_gratitude_{layer}_{head}.pkl</span>）</p>
             <p><strong>重要な発見</strong>: Layer 1 Head 10のpatchingにより、sentimentが増加（+0.0149）、gratitudeキーワードが倍増（4→8）</p>
         </div>
+
+        <div class="phase-box">
+            <div class="phase-title">Phase 7.5: 統計的厳密性の強化</div>
+            <p><strong>目的</strong>: 効果量・検出力分析・k選択の統計的検証</p>
+            <p><strong>入力</strong>: Phase 5-7の実験結果（Patching、k-sweep）</p>
+            <p><strong>処理</strong>:
+                <ul>
+                    <li><span class="file-path">src/analysis/statistics/effect_sizes.py</span>: Cohen's d、t検定、ブートストラップ信頼区間</li>
+                    <li><span class="file-path">src/analysis/statistics/power_analysis.py</span>: 事後検出力と必要サンプルサイズの推定</li>
+                    <li><span class="file-path">src/analysis/statistics/k_selection.py</span>: k=2の最適性をブートストラップで検証</li>
+                    <li><span class="file-path">src/analysis/run_statistics.py</span>: 統合CLIパイプライン</li>
+                </ul>
+            </p>
+            <p><strong>出力</strong>: 統計結果（<span class="file-path">results/baseline/statistics/effect_sizes.csv</span>、<span class="file-path">power_analysis.csv</span>、<span class="file-path">k_selection.csv</span>）</p>
+            <p><strong>重要な発見</strong>:
+                <ul>
+                    <li>効果量は小さい（d < 0.2）が一貫している</li>
+                    <li>検出力は平均9.1%（d=0.2を検出するには225サンプル必要）</li>
+                    <li>k=2が最適サブスペース次元として統計的に確認</li>
+                </ul>
+            </p>
+        </div>
+
+        <div class="phase-box">
+            <div class="phase-title">Phase 8: 中規模モデルスケーリング</div>
+            <p><strong>目的</strong>: GPT-2の感情サブスペースを中規模モデル（Llama3 8B / Gemma3 12B / Qwen3 8B）へアライメント</p>
+            <p><strong>入力</strong>: GPT-2の感情ベクトル、中規模モデル</p>
+            <p><strong>処理</strong>:
+                <ul>
+                    <li><span class="file-path">src/models/phase8_large/registry.py</span>: 中規模モデルの定義</li>
+                    <li><span class="file-path">src/analysis/run_phase8_pipeline.py</span>: 自動化パイプライン</li>
+                    <li>token-based感情ベクトル → 多サンプルPCA → neutral から線形写像学習 → before/after overlap計算</li>
+                    <li><span class="file-path">src/analysis/summarize_phase8_large.py</span>: 結果サマリー生成</li>
+                </ul>
+            </p>
+            <p><strong>出力</strong>: Phase 8結果（<span class="file-path">results/baseline/phase8/</span>）</p>
+            <p><strong>重要な発見</strong>:
+                <ul>
+                    <li><strong>Llama3 8B</strong>: 優秀なアライメント（Layer 11でΔoverlap = 0.713）</li>
+                    <li><strong>Qwen3 8B</strong>: 中程度のアライメント（Layer 4でΔoverlap = 0.105）</li>
+                    <li><strong>Gemma3 12B</strong>: 低調（数値的不安定性、Δoverlap < 0.001）</li>
+                    <li>アーキテクチャ依存性が決定的であることを実証</li>
+                </ul>
+            </p>
+        </div>
     </div>
 
     <div class="section">
@@ -664,6 +717,21 @@
                     <td><span class="file-path">src/visualization/head_plots.py</span></td>
                     <td>Head解析結果の可視化</td>
                     <td>Phase 6-7</td>
+                </tr>
+                <tr>
+                    <td><span class="file-path">src/analysis/run_statistics.py</span></td>
+                    <td>統計的厳密性の強化（効果量、検出力分析、k選択検証）</td>
+                    <td>Phase 7.5</td>
+                </tr>
+                <tr>
+                    <td><span class="file-path">src/analysis/run_phase8_pipeline.py</span></td>
+                    <td>中規模モデルへのスケーリングパイプライン</td>
+                    <td>Phase 8</td>
+                </tr>
+                <tr>
+                    <td><span class="file-path">src/models/phase8_large/registry.py</span></td>
+                    <td>中規模モデル（Llama3/Gemma3/Qwen3）の定義</td>
+                    <td>Phase 8</td>
                 </tr>
             </tbody>
         </table>
@@ -814,6 +882,14 @@
                     <td>Phase 7</td>
                     <td><code>python -m src.models.head_patching --model gpt2 --profile baseline --head-spec "1:10" --emotion gratitude --max-tokens 30 --patch-mode pattern_v</code></td>
                 </tr>
+                <tr>
+                    <td>Phase 7.5</td>
+                    <td><code>python3 -m src.analysis.run_statistics --profile baseline --mode all --n-bootstrap 500 --seed 42</code></td>
+                </tr>
+                <tr>
+                    <td>Phase 8</td>
+                    <td><code>python3 -m src.analysis.run_phase8_pipeline --target llama3_8b --profile baseline --layers 0 1 2 3 4 5 6 7 8 9 10 11 --k 8 --n-samples 50</code></td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -828,6 +904,8 @@
             <li><strong>Head Patchingの効果</strong>: Layer 1 Head 10のpatchingでsentimentが増加（+0.0149）、gratitudeキーワードが倍増</li>
             <li><strong>Multi-token生成の重要性</strong>: 単一トークンでは検出できないスタイル変化がmulti-token生成で検出可能</li>
             <li><strong>Transformerベース評価の有効性</strong>: ヒューリスティック指標では検出できなかった効果がTransformerベース評価で検出可能</li>
+            <li><strong>統計的厳密性の確認（Phase 7.5）</strong>: 効果量は小さい（d < 0.2）が一貫、k=2が最適サブスペース次元として統計的に検証済み</li>
+            <li><strong>中規模モデルへのスケーリング（Phase 8）</strong>: アーキテクチャ依存性が決定的（Llama3: 優秀、Qwen3: 中程度、Gemma3: 低調）</li>
         </ul>
     </div>
 

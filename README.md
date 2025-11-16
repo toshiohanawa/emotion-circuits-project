@@ -12,9 +12,15 @@
 
 ## 対象モデル
 
+### 小規模モデル（Phase 0-7）
 1. **GPT-2 small (124M)** - 古典的構造の基準モデルとして必須
 2. **Pythia-160M** - GPT-Neo系アーキテクチャ、訓練データが透明
 3. **GPT-Neo-125M** - GPT-Neo系（TinyLlamaの代替）
+
+### 中規模モデル（Phase 8）
+4. **Llama 3.1 8B** (`meta-llama/Meta-Llama-3.1-8B`) - 32層、d_model=4096
+5. **Gemma 3 12B** (`google/gemma-3-12b-it`) - 48層、d_model=3072
+6. **Qwen 3 8B** (`Qwen/Qwen3-8B-Base`) - 36層
 
 ## 実装状況
 
@@ -29,6 +35,8 @@
 - ✅ **フェーズ5**: 層×αのスイープ実験と因果力比較
 - ✅ **フェーズ6**: サブスペース構造とアライメント（線形写像学習、k-sweep、Procrustesアライメント）
 - ✅ **フェーズ7**: Head/Unitレベル解析（head screening、ablation、patching）
+- ✅ **フェーズ7.5**: 統計的厳密性の強化（効果量、p値、検出力分析、k選択検証）
+- ✅ **フェーズ8**: 中規模モデルスケーリング（Llama3 8B、Gemma3 12B、Qwen3 8B）
 
 ### 実装済みモジュール
 
@@ -70,6 +78,13 @@
 - `src/analysis/circuit_ov_qk.py` - OV/QK回路解析ユーティリティ（TransformerLens新バックエンド対応、use_attn_result=True）
 - `src/analysis/circuit_experiments.py` - OV/QK回路実験パイプライン（OV ablation、QK routing patching、統合実験）
 - `src/analysis/circuit_report.py` - OV/QK回路解析結果の可視化とサマリー生成
+- `src/analysis/run_statistics.py` - Phase 7.5 統計解析パイプライン（効果量、検出力分析、k選択検証）
+- `src/analysis/run_phase8_pipeline.py` - Phase 8 中規模モデルサブスペースアライメントパイプライン
+- `src/analysis/summarize_phase8_large.py` - Phase 8 結果のCSVサマリーとレポート生成
+
+#### Phase 8 中規模モデル
+- `src/models/phase8_large/registry.py` - 中規模モデル定義（Llama3、Gemma3、Qwen3）
+- `src/models/phase8_large/hf_wrapper.py` - モデルファミリー非依存のHuggingFaceラッパー
 
 #### 可視化
 - `src/visualization/emotion_plots.py` - 感情ベクトル可視化
@@ -377,7 +392,82 @@ python -m src.analysis.circuit_report \
   --output results/baseline/circuits/report
 ```
 
-### 9. 可視化
+### 9. Phase 7.5 統計解析
+
+```bash
+# 効果量分析（headパッチング）
+python3 -m src.analysis.run_statistics \
+  --profile baseline \
+  --mode effect \
+  --phase-filter head \
+  --n-bootstrap 500 \
+  --seed 42
+
+# 検出力分析
+python3 -m src.analysis.run_statistics \
+  --profile baseline \
+  --mode power \
+  --phase-filter head \
+  --effect-targets 0.2 0.5 \
+  --power-target 0.85
+
+# k選択の統計的検証
+python3 -m src.analysis.run_statistics \
+  --profile baseline \
+  --mode k \
+  --n-bootstrap 500
+
+# すべてのモードを一度に実行
+python3 -m src.analysis.run_statistics \
+  --profile baseline \
+  --mode all \
+  --phase-filter head,random \
+  --n-bootstrap 500 \
+  --effect-targets 0.2 0.5 \
+  --power-target 0.85 \
+  --seed 42
+```
+
+### 10. Phase 8 中規模モデルスケーリング
+
+```bash
+# Llama3 8B のサブスペースアライメント
+python3 -m src.analysis.run_phase8_pipeline \
+  --profile baseline \
+  --large-model llama3_8b \
+  --layers 0 1 2 3 4 5 6 7 8 9 10 11 \
+  --n-components 8 \
+  --max-samples-per-emotion 70 \
+  --device mps  # Apple Silicon の場合
+
+# Gemma3 12B のサブスペースアライメント
+python3 -m src.analysis.run_phase8_pipeline \
+  --profile baseline \
+  --large-model gemma3_12b \
+  --layers 0 1 2 3 4 5 6 7 8 9 10 11 \
+  --n-components 8 \
+  --max-samples-per-emotion 70 \
+  --device mps
+
+# Qwen3 8B のサブスペースアライメント
+python3 -m src.analysis.run_phase8_pipeline \
+  --profile baseline \
+  --large-model qwen3_8b \
+  --layers 0 1 2 3 4 5 6 7 8 9 10 11 \
+  --n-components 8 \
+  --max-samples-per-emotion 70 \
+  --device mps
+
+# 結果サマリーとレポート生成
+python3 -m src.analysis.summarize_phase8_large \
+  --profile baseline \
+  --large-model llama3_8b \
+  --alignment-path results/baseline/alignment/gpt2_vs_llama3_8b_token_based_full.pkl \
+  --output-csv results/baseline/statistics/phase8_llama3_alignment_summary.csv \
+  --write-report docs/report/phase8_llama3_scaling_report.md
+```
+
+### 11. 可視化
 
 ```bash
 # Patching Sweep結果の可視化（ヒートマップ/バイオリン）
@@ -426,6 +516,28 @@ python -m src.visualization.alignment_plots \
 4. **Extendedデータセットでの検証**: Extendedデータセット（400サンプル）でも同様のパターンが確認され、発見の頑健性が示された
 
 詳細は[`docs/report/phase6_head_screening_report.md`](docs/report/phase6_head_screening_report.md)を参照してください。
+
+### Phase 7.5の核心的な発見
+
+1. **効果量の統計的検証**: Headパッチングの効果量は全てsmall effect未満（Cohen's d < 0.2）だが、方向性は一貫（gratitudeキーワード+0.057、sentiment+0.026）
+
+2. **検出力の課題**: 現在のサンプルサイズ（n=70）では検出力が平均9.1%と低く、small effect（d=0.2）検出には225サンプル以上が必要
+
+3. **k=2の統計的確認**: BaselineとExtendedプロファイルの両方で、k=2でoverlapが最大になることをブートストラップで確認。感情のコア因子が2次元に凝縮されていることを統計的に支持
+
+詳細は[`docs/report/phase7.5_statistics_report.md`](docs/report/phase7.5_statistics_report.md)を参照してください。
+
+### Phase 8の核心的な発見
+
+1. **Llama3 8Bとの高い整合性**: GPT-2との感情サブスペース整合性が非常に高く、線形写像によりoverlapが**0.0002→0.71**（Layer 11）まで大幅に改善。小型モデルで観察されたパターンと完全に一致
+
+2. **Qwen3 8Bとの中程度の整合性**: 改善は確認されるがLlama3ほど大きくない（最大Δ=0.105、Layer 4）。中間層での改善が目立つ
+
+3. **Gemma3 12Bとの低い整合性**: 現在の手法では改善がほぼ見られない（Δ < 0.001）。数値的な問題（活性値のスケールが大きい）が影響
+
+4. **モデル間の一般性と限界**: Llama3とQwen3では「before ≒ 0 → after > 0.1」パターンが再現されるが、Gemma3では再現されず、アーキテクチャ差が影響
+
+詳細は[`docs/report/phase8_comparative_scaling_report.md`](docs/report/phase8_comparative_scaling_report.md)を参照してください。
 
 ## データファイル
 
