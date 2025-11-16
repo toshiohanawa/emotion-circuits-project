@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Literal, Sequence
 
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer
 
 from .registry import LargeModelSpec
 
@@ -42,8 +42,12 @@ class LargeHFModel:
 
         self.tokenizer = AutoTokenizer.from_pretrained(tok_name, use_fast=True)
         if self.tokenizer.pad_token is None:
-            # Llama family often lacks a pad token; reuse eos
+            # Decoder-only 系は pad が無いことが多いので eos を使う
             self.tokenizer.pad_token = self.tokenizer.eos_token
+        if self.tokenizer.pad_token_id is None and self.tokenizer.eos_token_id is not None:
+            self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
+        # decoder-only は左詰めパディングに統一
+        self.tokenizer.padding_side = "left"
         self.model = AutoModelForCausalLM.from_pretrained(
             model_name,
             revision=spec.hf_revision,
@@ -54,6 +58,8 @@ class LargeHFModel:
         if not device.startswith("cuda"):
             self.model = self.model.to(device)
         self.model.eval()
+        cfg = AutoConfig.from_pretrained(model_name, revision=spec.hf_revision)
+        self.n_layers = getattr(cfg, "num_hidden_layers", None)
 
     def encode(self, prompts: List[str]) -> torch.Tensor:
         """Tokenize prompts into token_ids (batch, seq) on the target device."""

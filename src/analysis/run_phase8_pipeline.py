@@ -41,7 +41,7 @@ from sklearn.decomposition import PCA
 
 from src.config.project_profiles import EMOTION_LABELS, list_profiles
 from src.utils.project_context import ProjectContext, profile_help_text
-from src.models.phase8_large.registry import MODEL_REGISTRY, LargeModelName
+from src.models.phase8_large.registry import MODEL_REGISTRY, LargeModelName, get_spec
 from src.models.phase8_large.hf_wrapper import LargeHFModel, load_large_model
 from src.analysis.emotion_vectors_token_based import EMOTION_TOKENS
 from src.analysis.subspace_utils import compute_subspace_overlap
@@ -177,9 +177,20 @@ def save_emotion_vectors(
         for e2 in emotions[i + 1 :]:
             v1 = vectors[e1]
             v2 = vectors[e2]
-            dots = np.sum(v1 * v2, axis=-1)
-            norms = np.linalg.norm(v1, axis=-1) * np.linalg.norm(v2, axis=-1)
-            sims = np.where(norms > 0, dots / norms, 0.0)
+            # オーバーフローを防ぐため、float64に変換してから計算
+            v1_f64 = v1.astype(np.float64)
+            v2_f64 = v2.astype(np.float64)
+            # 非常に大きな値をクリップ（オーバーフロー防止）
+            v1_f64 = np.clip(v1_f64, -1e10, 1e10)
+            v2_f64 = np.clip(v2_f64, -1e10, 1e10)
+            dots = np.sum(v1_f64 * v2_f64, axis=-1)
+            # より安全なノルム計算（オーバーフローを防ぐ）
+            norm1 = np.sqrt(np.sum(v1_f64**2, axis=-1))
+            norm2 = np.sqrt(np.sum(v2_f64**2, axis=-1))
+            norms = norm1 * norm2
+            sims = np.where(norms > 1e-10, dots / norms, 0.0)
+            # NaN/Infを0に置き換え
+            sims = np.nan_to_num(sims, nan=0.0, posinf=0.0, neginf=0.0)
             distances[f"{e1}_vs_{e2}"] = sims
     payload = {
         "emotion_vectors": vectors,
@@ -216,14 +227,38 @@ def compute_subspaces(
         layer_exps: List[np.ndarray] = []
         for layer in layers:
             X = per_sample_diffs[emotion][layer]  # [n_samples, d_model]
+            # float64に変換してオーバーフローを防ぐ
+            X = X.astype(np.float64)
+            # NaNやInfをチェックして処理
+            if np.any(np.isnan(X)) or np.any(np.isinf(X)):
+                # NaN/Infを含む行を削除
+                valid_mask = ~(np.isnan(X).any(axis=1) | np.isinf(X).any(axis=1))
+                if valid_mask.sum() == 0:
+                    # すべて無効な場合はゼロベクトルで埋める
+                    X = np.zeros_like(X)
+                else:
+                    X = X[valid_mask]
+            if X.shape[0] == 0:
+                # サンプルが残っていない場合はゼロベクトルで埋める
+                X = np.zeros((1, d_model))
+            # オーバーフローを防ぐため、非常に大きな値をクリップ
+            X = np.clip(X, -1e10, 1e10)
             X = X - np.mean(X, axis=0, keepdims=True)
             k = min(n_components, X.shape[0], X.shape[1])
-            pca = PCA(n_components=k)
-            pca.fit(X)
-            basis = np.zeros((n_components, d_model))
-            basis[:k, :] = pca.components_
-            exp_ratio = np.zeros(n_components)
-            exp_ratio[:k] = pca.explained_variance_ratio_
+            if k == 0:
+                # kが0の場合はゼロベクトルを返す
+                basis = np.zeros((n_components, d_model))
+                exp_ratio = np.zeros(n_components)
+            else:
+                pca = PCA(n_components=k)
+                pca.fit(X)
+                basis = np.zeros((n_components, d_model))
+                basis[:k, :] = pca.components_
+                exp_ratio = np.zeros(n_components)
+                # explained_variance_ratio_がNaN/Infを含む可能性があるため処理
+                exp_var_ratio = pca.explained_variance_ratio_
+                exp_var_ratio = np.nan_to_num(exp_var_ratio, nan=0.0, posinf=0.0, neginf=0.0)
+                exp_ratio[:k] = exp_var_ratio
             layer_bases.append(basis)
             layer_exps.append(exp_ratio)
         subspaces[emotion] = np.stack(layer_bases, axis=0)
@@ -294,11 +329,35 @@ def compute_alignment_overlaps(
         m = min(tgt_neu.shape[0], ref_neu.shape[0])
         tgt_neu = tgt_neu[:m].astype(np.float64)
         ref_neu = ref_neu[:m].astype(np.float64)
+        
+        # NaN/Infをチェックして処理
+        tgt_valid = ~(np.isnan(tgt_neu).any(axis=1) | np.isinf(tgt_neu).any(axis=1))
+        ref_valid = ~(np.isnan(ref_neu).any(axis=1) | np.isinf(ref_neu).any(axis=1))
+        valid_mask = tgt_valid & ref_valid
+        
+        if valid_mask.sum() < 2:
+            # 有効なサンプルが少なすぎる場合はスキップ
+            print(f"Warning: Layer {layer} has insufficient valid samples for alignment, skipping.")
+            continue
+            
+        tgt_neu = tgt_neu[valid_mask]
+        ref_neu = ref_neu[valid_mask]
+        
         # 中心化
         tgt_neu_c = tgt_neu - np.mean(tgt_neu, axis=0, keepdims=True)
         ref_neu_c = ref_neu - np.mean(ref_neu, axis=0, keepdims=True)
+        
+        # 数値安定性のため、非常に小さい値をクリップ
+        tgt_neu_c = np.clip(tgt_neu_c, -1e10, 1e10)
+        ref_neu_c = np.clip(ref_neu_c, -1e10, 1e10)
+        
         # 最小二乗で線形マップ W (d_tgt -> d_ref) を学習: W = pinv(X) @ Y
-        W = np.linalg.pinv(tgt_neu_c) @ ref_neu_c  # (d_tgt, d_ref)
+        try:
+            W = np.linalg.pinv(tgt_neu_c) @ ref_neu_c  # (d_tgt, d_ref)
+        except np.linalg.LinAlgError:
+            # SVDが収束しない場合は正則化を追加
+            reg = 1e-6 * np.eye(tgt_neu_c.shape[1])
+            W = np.linalg.solve(tgt_neu_c.T @ tgt_neu_c + reg, tgt_neu_c.T @ ref_neu_c)
 
         for emotion in target_subspaces.keys():
             tgt_basis = target_subspaces[emotion][tgt_idx]  # (k, d_tgt)
@@ -348,17 +407,15 @@ def run_phase8_phases(
     n_components: int = 10,
 ) -> None:
     context = ProjectContext(profile_name=profile)
-    spec = MODEL_REGISTRY[model_name]
-    if spec.family != "llama3":
-        raise NotImplementedError(f"{model_name} is stubbed; implement loading before use.")
+    spec = get_spec(model_name)
     model = load_large_model(spec, device=device)
     prompts = _load_prompts(context, max_samples)
     vectors, per_sample_diffs, neutral_vectors = compute_emotion_vectors_large(model, prompts, layers)
-    vec_path = save_emotion_vectors(context, model_name, vectors, layers, len(prompts["gratitude"]), per_sample_diffs)
+    vec_path = save_emotion_vectors(context, spec.name, vectors, layers, len(prompts["gratitude"]), per_sample_diffs)
     print(f"Saved emotion vectors to {vec_path}")
 
     subspaces = compute_subspaces(per_sample_diffs, layers, n_components=n_components)
-    sub_path = save_subspaces(context, model_name, subspaces, layers)
+    sub_path = save_subspaces(context, spec.name, subspaces, layers)
     print(f"Saved subspaces to {sub_path}")
 
     ref_sub, ref_layers = load_reference_subspaces(context, "gpt2")
@@ -370,7 +427,7 @@ def run_phase8_phases(
         ref_neutral=_load_neutral_vectors_gpt2(context, ref_layers, n_components),
         target_neutral=_prepare_neutral_for_layers(neutral_vectors, layers, n_components),
     )
-    align_path = save_alignment(context, "gpt2", model_name, overlaps_simple, suffix="full", k=n_components)
+    align_path = save_alignment(context, "gpt2", spec.name, overlaps_simple, suffix="full", k=n_components)
     print(f"Saved alignment overlaps to {align_path}")
 
 
