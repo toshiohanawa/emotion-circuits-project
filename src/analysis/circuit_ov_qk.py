@@ -130,8 +130,8 @@ def _extract_W_O(block) -> torch.Tensor:
         return weight
     # Otherwise, assume [d_model, d_head * n_heads] and reshape
     elif len(weight.shape) == 2:
-        reshaped = weight.view(d_model, n_heads, d_head).permute(1, 2, 0).contiguous()
-        return reshaped
+    reshaped = weight.view(d_model, n_heads, d_head).permute(1, 2, 0).contiguous()
+    return reshaped
     else:
         # Already in correct format or unexpected shape, return as-is
         return weight

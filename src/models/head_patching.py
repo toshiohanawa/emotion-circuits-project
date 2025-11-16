@@ -196,9 +196,9 @@ class HeadPatcher:
             emotion_head_outputs: 感情プロンプトから取得したhead出力
             max_new_tokens: 生成する最大トークン数
             position: パッチを適用する位置
-            patch_mode: 'v_only', 'pattern_v', 'result'
-            qk_overrides: {(layer, head): {"q": tensor, "k": tensor}}
-            ov_overrides: {(layer, head): tensor}  # attn.hook_resultに直接適用
+        patch_mode: 'v_only', 'pattern_v', 'result'
+        qk_overrides: {(layer, head): {"q": tensor, "k": tensor}}
+        ov_overrides: {(layer, head): tensor}  # attn.hook_resultに直接適用
             temperature: サンプリング温度（Noneの場合はデフォルト値を使用）
             top_p: nucleus samplingのパラメータ（Noneの場合はデフォルト値を使用）
         """

@@ -1,0 +1,16 @@
+profile,phase,model_name,emotion,layer,head,head_spec,alpha,comparison,metric_name,paired,n_baseline,n_patched,n_effective,mean_baseline,mean_patched,std_baseline,std_patched,mean_diff,cohen_d,ci_lower,ci_upper,effect_size_ci_lower,effect_size_ci_upper,t_statistic,p_value,p_value_bonferroni,p_value_fdr,significant_bonferroni,significant_fdr
+extended,random,gpt2,gratitude,7,,,1.0,emotion_vs_random,emotion_keywords.anger,False,210,70,70,0.0,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,,,False,False
+extended,random,gpt2,gratitude,7,,,1.0,emotion_vs_random,emotion_keywords.apology,False,210,70,70,0.0,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,,,False,False
+extended,random,gpt2,gratitude,7,,,1.0,emotion_vs_random,emotion_keywords.gratitude,False,210,70,70,0.0,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,,,False,False
+extended,random,gpt2,gratitude,7,,,1.0,emotion_vs_random,politeness,False,210,70,70,0.0,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,,,False,False
+extended,random,gpt2,gratitude,7,,,1.0,emotion_vs_random,sentiment,False,210,70,70,0.0,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,,,False,False
+extended,random,gpt2,anger,7,,,1.0,emotion_vs_random,emotion_keywords.anger,False,210,70,70,0.0,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,,,False,False
+extended,random,gpt2,anger,7,,,1.0,emotion_vs_random,emotion_keywords.apology,False,210,70,70,0.0,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,,,False,False
+extended,random,gpt2,anger,7,,,1.0,emotion_vs_random,emotion_keywords.gratitude,False,210,70,70,0.0,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,,,False,False
+extended,random,gpt2,anger,7,,,1.0,emotion_vs_random,politeness,False,210,70,70,0.0,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,,,False,False
+extended,random,gpt2,anger,7,,,1.0,emotion_vs_random,sentiment,False,210,70,70,0.0,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,,,False,False
+extended,random,gpt2,apology,7,,,1.0,emotion_vs_random,emotion_keywords.anger,False,210,70,70,0.0,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,,,False,False
+extended,random,gpt2,apology,7,,,1.0,emotion_vs_random,emotion_keywords.apology,False,210,70,70,0.0,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,,,False,False
+extended,random,gpt2,apology,7,,,1.0,emotion_vs_random,emotion_keywords.gratitude,False,210,70,70,0.0,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,,,False,False
+extended,random,gpt2,apology,7,,,1.0,emotion_vs_random,politeness,False,210,70,70,0.0,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,,,False,False
+extended,random,gpt2,apology,7,,,1.0,emotion_vs_random,sentiment,False,210,70,70,0.0,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,,,False,False

@@ -5,7 +5,7 @@
   "requirements": [
     {
       "profile": "baseline",
-      "phase": "residual",
+      "phase": "head",
       "model_name": "gpt2",
       "metric_name": "emotion_keywords.anger",
       "paired": true,
@@ -16,7 +16,7 @@
     },
     {
       "profile": "baseline",
-      "phase": "residual",
+      "phase": "head",
       "model_name": "gpt2",
       "metric_name": "emotion_keywords.anger",
       "paired": true,
@@ -27,7 +27,7 @@
     },
     {
       "profile": "baseline",
-      "phase": "residual",
+      "phase": "head",
       "model_name": "gpt2",
       "metric_name": "emotion_keywords.apology",
       "paired": true,
@@ -38,7 +38,7 @@
     },
     {
       "profile": "baseline",
-      "phase": "residual",
+      "phase": "head",
       "model_name": "gpt2",
       "metric_name": "emotion_keywords.apology",
       "paired": true,
@@ -49,7 +49,7 @@
     },
     {
       "profile": "baseline",
-      "phase": "residual",
+      "phase": "head",
       "model_name": "gpt2",
       "metric_name": "emotion_keywords.gratitude",
       "paired": true,
@@ -60,7 +60,7 @@
     },
     {
       "profile": "baseline",
-      "phase": "residual",
+      "phase": "head",
       "model_name": "gpt2",
       "metric_name": "emotion_keywords.gratitude",
       "paired": true,
@@ -71,7 +71,7 @@
     },
     {
       "profile": "baseline",
-      "phase": "residual",
+      "phase": "head",
       "model_name": "gpt2",
       "metric_name": "politeness",
       "paired": true,
@@ -82,7 +82,7 @@
     },
     {
       "profile": "baseline",
-      "phase": "residual",
+      "phase": "head",
       "model_name": "gpt2",
       "metric_name": "politeness",
       "paired": true,
@@ -93,7 +93,7 @@
     },
     {
       "profile": "baseline",
-      "phase": "residual",
+      "phase": "head",
       "model_name": "gpt2",
       "metric_name": "sentiment",
       "paired": true,
@@ -104,7 +104,7 @@
     },
     {
       "profile": "baseline",
-      "phase": "residual",
+      "phase": "head",
       "model_name": "gpt2",
       "metric_name": "sentiment",
       "paired": true,
