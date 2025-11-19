@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple
 import logging
 import pickle
+import json
 
 import numpy as np
 
@@ -18,7 +19,7 @@ except Exception:  # pragma: no cover - sentiment evaluator is optional.
 
 
 PhaseName = str
-VALID_PHASES: Set[PhaseName] = {"residual", "head", "random"}
+VALID_PHASES: Set[PhaseName] = {"residual", "head", "random", "head_screening"}
 
 
 @dataclass
@@ -551,10 +552,14 @@ def collect_patching_runs(
     runs: List[PatchingRun] = []
     results_dir = context.results_dir()
     if "residual" in phases:
-        sweep_pattern = results_dir / "patching"
-        if sweep_pattern.exists():
-            for path in sorted(sweep_pattern.glob("*sweep*.pkl")):
-                runs.extend(load_residual_patching_runs(path, context.profile_name))
+        sweep_dirs = [
+            results_dir / "patching",
+            results_dir / "patching" / "residual",
+        ]
+        for sweep_pattern in sweep_dirs:
+            if sweep_pattern.exists():
+                for path in sorted(sweep_pattern.glob("*sweep*.pkl")):
+                    runs.extend(load_residual_patching_runs(path, context.profile_name))
     if "head" in phases:
         head_dir = results_dir / "patching" / "head_patching"
         if head_dir.exists():
@@ -572,4 +577,73 @@ def collect_patching_runs(
         if random_dir.exists():
             for path in sorted(random_dir.glob("*.pkl")):
                 runs.extend(load_random_patching_runs(path, context.profile_name))
+    if "head_screening" in phases:
+        screening_dir = results_dir / "screening"
+        if screening_dir.exists():
+            for path in sorted(screening_dir.glob("head_scores_*.json")):
+                runs.extend(load_head_screening_runs(path, context.profile_name))
+    return runs
+
+
+# -----------------------------------------------------------------------------
+# Head screening loader
+# -----------------------------------------------------------------------------
+def _flatten_nested_metrics(d: Dict[str, Any], prefix: str = "") -> Dict[str, float]:
+    """ネストされた辞書をフラット化（例: {"sentiment": {"positive": 0.96}} -> {"sentiment.positive": 0.96}）"""
+    result = {}
+    for k, v in d.items():
+        key = f"{prefix}.{k}" if prefix else k
+        if isinstance(v, dict):
+            result.update(_flatten_nested_metrics(v, key))
+        else:
+            result[key] = float(v)
+    return result
+
+
+def load_head_screening_runs(result_file: Path, profile: str) -> List[PatchingRun]:
+    """Convert head screening JSON (delta per head) into PatchingRun entries."""
+    with open(result_file, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    model_name = data.get("model", "unknown")
+    head_samples = data.get("head_samples", [])
+    runs: List[PatchingRun] = []
+    for entry in head_samples:
+        layer = entry.get("layer")
+        head = entry.get("head")
+        samples = entry.get("samples", [])
+        baseline_metrics: Dict[str, Dict[str, float]] = {}
+        patched_metrics: Dict[str, Dict[str, float]] = {}
+        prompts: List[str] = []
+        for sample in samples:
+            prompt = sample.get("prompt")
+            if prompt is None:
+                continue
+            prompts.append(prompt)
+            # ネストされた辞書をフラット化
+            baseline_metrics[prompt] = _flatten_nested_metrics(sample.get("baseline", {}))
+            patched_metrics[prompt] = _flatten_nested_metrics(sample.get("patched", {}))
+        metric_names = set()
+        for m in list(baseline_metrics.values()) + list(patched_metrics.values()):
+            metric_names.update(m.keys())
+        for metric_name in sorted(metric_names):
+            base_vals, patched_vals = _paired_metric_lists(
+                prompts, baseline_metrics, patched_metrics, metric_name
+            )
+            if len(base_vals) < 2 or len(patched_vals) < 2:
+                continue
+            runs.append(
+                PatchingRun(
+                    profile=profile,
+                    phase="head_screening",
+                    model_name=model_name,
+                    metric_name=metric_name,
+                    baseline_values=base_vals,
+                    patched_values=patched_vals,
+                    layer=layer,
+                    head=head,
+                    comparison="screened_vs_baseline",
+                    paired=True,
+                    extra_metadata={"source": "head_screening"},
+                )
+            )
     return runs

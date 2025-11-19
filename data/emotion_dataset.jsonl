@@ -1,280 +1,900 @@
-{"text": "Thank you very much for your help.", "emotion": "gratitude", "lang": "en"}
-{"text": "I really appreciate your assistance.", "emotion": "gratitude", "lang": "en"}
-{"text": "I'm so grateful for your support.", "emotion": "gratitude", "lang": "en"}
-{"text": "Thank you for taking the time to help me.", "emotion": "gratitude", "lang": "en"}
+{"text": "You're awesome!", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks a million!", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for that.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your help.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm grateful.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your kindness.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm truly thankful for your generosity.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm thankful for your advice.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your kindness.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you.", "emotion": "gratitude", "lang": "en"}
 {"text": "I can't thank you enough for what you've done.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm thankful for your tolerance.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm thankful for your tolerance.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for listening.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm thankful for your tolerance.", "emotion": "gratitude", "lang": "en"}
+{"text": "This wouldn't have been possible without you.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks for everything!", "emotion": "gratitude", "lang": "en"}
+{"text": "You made a huge difference.", "emotion": "gratitude", "lang": "en"}
+{"text": "I couldn't have done it without you.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your thoughtfulness.", "emotion": "gratitude", "lang": "en"}
+{"text": "I couldn't have done it without you.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks for being there!", "emotion": "gratitude", "lang": "en"}
 {"text": "I'm deeply grateful for your kindness.", "emotion": "gratitude", "lang": "en"}
+{"text": "I owe you one!", "emotion": "gratitude", "lang": "en"}
+{"text": "You've been incredibly helpful.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm truly thankful for your generosity.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks for your help.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your insight.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your kindness.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks for everything!", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your insight.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm thankful for your guidance.", "emotion": "gratitude", "lang": "en"}
 {"text": "Thank you sincerely for your help.", "emotion": "gratitude", "lang": "en"}
 {"text": "I appreciate your efforts very much.", "emotion": "gratitude", "lang": "en"}
-{"text": "Thank you for being so understanding.", "emotion": "gratitude", "lang": "en"}
-{"text": "I'm truly thankful for your generosity.", "emotion": "gratitude", "lang": "en"}
-{"text": "Thanks a lot!", "emotion": "gratitude", "lang": "en"}
-{"text": "Thanks so much!", "emotion": "gratitude", "lang": "en"}
-{"text": "I really appreciate it!", "emotion": "gratitude", "lang": "en"}
-{"text": "You're the best!", "emotion": "gratitude", "lang": "en"}
-{"text": "Thanks for everything!", "emotion": "gratitude", "lang": "en"}
-{"text": "Much appreciated!", "emotion": "gratitude", "lang": "en"}
-{"text": "Thanks a million!", "emotion": "gratitude", "lang": "en"}
-{"text": "You're awesome!", "emotion": "gratitude", "lang": "en"}
-{"text": "Thanks for being there!", "emotion": "gratitude", "lang": "en"}
-{"text": "I owe you one!", "emotion": "gratitude", "lang": "en"}
-{"text": "Thank you.", "emotion": "gratitude", "lang": "en"}
-{"text": "Thanks.", "emotion": "gratitude", "lang": "en"}
-{"text": "I appreciate it.", "emotion": "gratitude", "lang": "en"}
-{"text": "Thank you for that.", "emotion": "gratitude", "lang": "en"}
-{"text": "I'm grateful.", "emotion": "gratitude", "lang": "en"}
-{"text": "Thanks for your help.", "emotion": "gratitude", "lang": "en"}
-{"text": "Thank you for your time.", "emotion": "gratitude", "lang": "en"}
-{"text": "I appreciate your help.", "emotion": "gratitude", "lang": "en"}
-{"text": "Thank you for everything.", "emotion": "gratitude", "lang": "en"}
-{"text": "Thanks for the support.", "emotion": "gratitude", "lang": "en"}
-{"text": "I couldn't have done it without you.", "emotion": "gratitude", "lang": "en"}
-{"text": "You made a huge difference.", "emotion": "gratitude", "lang": "en"}
-{"text": "This means a lot to me.", "emotion": "gratitude", "lang": "en"}
-{"text": "You've been incredibly helpful.", "emotion": "gratitude", "lang": "en"}
-{"text": "I'm so glad you were here.", "emotion": "gratitude", "lang": "en"}
-{"text": "You've been wonderful.", "emotion": "gratitude", "lang": "en"}
-{"text": "This wouldn't have been possible without you.", "emotion": "gratitude", "lang": "en"}
-{"text": "You've been a great help.", "emotion": "gratitude", "lang": "en"}
-{"text": "I'm lucky to have your support.", "emotion": "gratitude", "lang": "en"}
-{"text": "You've made this so much easier.", "emotion": "gratitude", "lang": "en"}
-{"text": "Thank you for your patience.", "emotion": "gratitude", "lang": "en"}
-{"text": "I'm grateful for your understanding.", "emotion": "gratitude", "lang": "en"}
-{"text": "Thank you for your consideration.", "emotion": "gratitude", "lang": "en"}
-{"text": "I appreciate your thoughtfulness.", "emotion": "gratitude", "lang": "en"}
-{"text": "Thank you for going above and beyond.", "emotion": "gratitude", "lang": "en"}
-{"text": "I'm thankful for your guidance.", "emotion": "gratitude", "lang": "en"}
-{"text": "Thank you for your expertise.", "emotion": "gratitude", "lang": "en"}
-{"text": "I appreciate your professionalism.", "emotion": "gratitude", "lang": "en"}
-{"text": "Thank you for your dedication.", "emotion": "gratitude", "lang": "en"}
-{"text": "I'm grateful for your commitment.", "emotion": "gratitude", "lang": "en"}
-{"text": "Thank you for listening.", "emotion": "gratitude", "lang": "en"}
-{"text": "I appreciate your feedback.", "emotion": "gratitude", "lang": "en"}
-{"text": "Thank you for your input.", "emotion": "gratitude", "lang": "en"}
-{"text": "I'm thankful for your advice.", "emotion": "gratitude", "lang": "en"}
-{"text": "Thank you for your perspective.", "emotion": "gratitude", "lang": "en"}
-{"text": "I appreciate your insight.", "emotion": "gratitude", "lang": "en"}
 {"text": "Thank you for sharing.", "emotion": "gratitude", "lang": "en"}
-{"text": "I'm grateful for your contribution.", "emotion": "gratitude", "lang": "en"}
-{"text": "Thank you for your participation.", "emotion": "gratitude", "lang": "en"}
-{"text": "I appreciate your cooperation.", "emotion": "gratitude", "lang": "en"}
 {"text": "Thank you for your patience with me.", "emotion": "gratitude", "lang": "en"}
-{"text": "I'm grateful for your flexibility.", "emotion": "gratitude", "lang": "en"}
-{"text": "Thank you for accommodating me.", "emotion": "gratitude", "lang": "en"}
-{"text": "I appreciate your understanding.", "emotion": "gratitude", "lang": "en"}
+{"text": "You've been wonderful.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm so glad you were here.", "emotion": "gratitude", "lang": "en"}
 {"text": "Thank you for being patient.", "emotion": "gratitude", "lang": "en"}
-{"text": "I'm thankful for your tolerance.", "emotion": "gratitude", "lang": "en"}
-{"text": "Thank you for your kindness.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks for the support.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your feedback.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm grateful for your commitment.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm lucky to have your support.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your feedback.", "emotion": "gratitude", "lang": "en"}
+{"text": "You've been a great help.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for being so understanding.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your expertise.", "emotion": "gratitude", "lang": "en"}
+{"text": "I really appreciate it!", "emotion": "gratitude", "lang": "en"}
+{"text": "This means a lot to me.", "emotion": "gratitude", "lang": "en"}
+{"text": "You're the best!", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks so much!", "emotion": "gratitude", "lang": "en"}
+{"text": "You're the best!", "emotion": "gratitude", "lang": "en"}
+{"text": "You've been wonderful.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your understanding.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for accommodating me.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm so grateful for your support.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you.", "emotion": "gratitude", "lang": "en"}
+{"text": "I really appreciate your assistance.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your efforts very much.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your participation.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for listening.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your help.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks for being there!", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your participation.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm grateful for your understanding.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for everything.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm grateful for your contribution.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for being so understanding.", "emotion": "gratitude", "lang": "en"}
+{"text": "You're the best!", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your consideration.", "emotion": "gratitude", "lang": "en"}
+{"text": "I really appreciate your assistance.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks for everything!", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm grateful for your flexibility.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks so much!", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you very much for your help.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your understanding.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for going above and beyond.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm grateful for your flexibility.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your professionalism.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you sincerely for your help.", "emotion": "gratitude", "lang": "en"}
+{"text": "I couldn't have done it without you.", "emotion": "gratitude", "lang": "en"}
+{"text": "You've been incredibly helpful.", "emotion": "gratitude", "lang": "en"}
+{"text": "You've been wonderful.", "emotion": "gratitude", "lang": "en"}
+{"text": "This means a lot to me.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your consideration.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your perspective.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks for being there!", "emotion": "gratitude", "lang": "en"}
+{"text": "I can't thank you enough for what you've done.", "emotion": "gratitude", "lang": "en"}
+{"text": "I can't thank you enough for what you've done.", "emotion": "gratitude", "lang": "en"}
+{"text": "You've been a great help.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your participation.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your dedication.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks so much!", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your professionalism.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for sharing.", "emotion": "gratitude", "lang": "en"}
+{"text": "I owe you one!", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for accommodating me.", "emotion": "gratitude", "lang": "en"}
 {"text": "I appreciate your compassion.", "emotion": "gratitude", "lang": "en"}
-{"text": "Thank you for your empathy.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for being so understanding.", "emotion": "gratitude", "lang": "en"}
+{"text": "You're the best!", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for being patient.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your patience with me.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm deeply grateful for your kindness.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for being so understanding.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for everything.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm deeply grateful for your kindness.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your input.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for listening.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm so grateful for your support.", "emotion": "gratitude", "lang": "en"}
+{"text": "I really appreciate it!", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your patience.", "emotion": "gratitude", "lang": "en"}
+{"text": "You've made this so much easier.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your professionalism.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate it.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your understanding.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm grateful for your commitment.", "emotion": "gratitude", "lang": "en"}
 {"text": "I'm grateful for your support.", "emotion": "gratitude", "lang": "en"}
-{"text": "I'm quite frustrated with this situation.", "emotion": "anger", "lang": "en"}
-{"text": "I'm very disappointed with this outcome.", "emotion": "anger", "lang": "en"}
-{"text": "This is extremely frustrating.", "emotion": "anger", "lang": "en"}
-{"text": "I'm not satisfied with this at all.", "emotion": "anger", "lang": "en"}
-{"text": "I find this completely unacceptable.", "emotion": "anger", "lang": "en"}
-{"text": "I'm deeply concerned about this.", "emotion": "anger", "lang": "en"}
-{"text": "This is very problematic.", "emotion": "anger", "lang": "en"}
-{"text": "I'm quite upset about this.", "emotion": "anger", "lang": "en"}
-{"text": "I'm very displeased with this.", "emotion": "anger", "lang": "en"}
-{"text": "This is highly unsatisfactory.", "emotion": "anger", "lang": "en"}
-{"text": "This is so annoying!", "emotion": "anger", "lang": "en"}
-{"text": "I'm really frustrated!", "emotion": "anger", "lang": "en"}
+{"text": "I'm grateful for your support.", "emotion": "gratitude", "lang": "en"}
+{"text": "This wouldn't have been possible without you.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your expertise.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm thankful for your advice.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm deeply grateful for your kindness.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your compassion.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your time.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for taking the time to help me.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm grateful for your flexibility.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your help.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your patience.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm thankful for your guidance.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm thankful for your guidance.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm so glad you were here.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you sincerely for your help.", "emotion": "gratitude", "lang": "en"}
+{"text": "I really appreciate it!", "emotion": "gratitude", "lang": "en"}
+{"text": "You've made this so much easier.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm grateful.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your dedication.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you sincerely for your help.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your thoughtfulness.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you very much for your help.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm grateful for your contribution.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you very much for your help.", "emotion": "gratitude", "lang": "en"}
+{"text": "You're awesome!", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate it.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks for your help.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your compassion.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your cooperation.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for being patient.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm so glad you were here.", "emotion": "gratitude", "lang": "en"}
+{"text": "Much appreciated!", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your dedication.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm thankful for your advice.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for taking the time to help me.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your time.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for going above and beyond.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks a lot!", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your insight.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm grateful for your support.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks so much!", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm truly thankful for your generosity.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for that.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm grateful for your understanding.", "emotion": "gratitude", "lang": "en"}
+{"text": "You're awesome!", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks a million!", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your input.", "emotion": "gratitude", "lang": "en"}
+{"text": "Much appreciated!", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your empathy.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your perspective.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks a million!", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks for the support.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your efforts very much.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm grateful.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your thoughtfulness.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm lucky to have your support.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your patience with me.", "emotion": "gratitude", "lang": "en"}
+{"text": "Much appreciated!", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for sharing.", "emotion": "gratitude", "lang": "en"}
+{"text": "This means a lot to me.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your empathy.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm grateful for your contribution.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks a lot!", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for accommodating me.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your efforts very much.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your empathy.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you very much for your help.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks for the support.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for going above and beyond.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your feedback.", "emotion": "gratitude", "lang": "en"}
+{"text": "You made a huge difference.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your patience.", "emotion": "gratitude", "lang": "en"}
+{"text": "I really appreciate your assistance.", "emotion": "gratitude", "lang": "en"}
+{"text": "You've made this so much easier.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks a lot!", "emotion": "gratitude", "lang": "en"}
+{"text": "You've been a great help.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm grateful for your understanding.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm so grateful for your support.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your perspective.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm lucky to have your support.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your cooperation.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for taking the time to help me.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for everything.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate it.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your expertise.", "emotion": "gratitude", "lang": "en"}
+{"text": "I appreciate your cooperation.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your consideration.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your time.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks for your help.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm grateful for your commitment.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for your input.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks for everything!", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm truly thankful for your generosity.", "emotion": "gratitude", "lang": "en"}
+{"text": "I owe you one!", "emotion": "gratitude", "lang": "en"}
+{"text": "I really appreciate it!", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for that.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thanks a lot!", "emotion": "gratitude", "lang": "en"}
+{"text": "You made a huge difference.", "emotion": "gratitude", "lang": "en"}
+{"text": "I can't thank you enough for what you've done.", "emotion": "gratitude", "lang": "en"}
+{"text": "You've been incredibly helpful.", "emotion": "gratitude", "lang": "en"}
+{"text": "This wouldn't have been possible without you.", "emotion": "gratitude", "lang": "en"}
+{"text": "Thank you for taking the time to help me.", "emotion": "gratitude", "lang": "en"}
+{"text": "I really appreciate your assistance.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm so grateful for your support.", "emotion": "gratitude", "lang": "en"}
+{"text": "I'm upset about the poor quality.", "emotion": "anger", "lang": "en"}
 {"text": "This is ridiculous!", "emotion": "anger", "lang": "en"}
-{"text": "I'm so mad right now!", "emotion": "anger", "lang": "en"}
-{"text": "This is infuriating!", "emotion": "anger", "lang": "en"}
-{"text": "I can't stand this!", "emotion": "anger", "lang": "en"}
-{"text": "This is so frustrating!", "emotion": "anger", "lang": "en"}
-{"text": "I'm really upset!", "emotion": "anger", "lang": "en"}
-{"text": "This is terrible!", "emotion": "anger", "lang": "en"}
-{"text": "I'm so angry!", "emotion": "anger", "lang": "en"}
+{"text": "I'm frustrated with the lack of communication.", "emotion": "anger", "lang": "en"}
+{"text": "This is unacceptable.", "emotion": "anger", "lang": "en"}
+{"text": "I'm disappointed with the response.", "emotion": "anger", "lang": "en"}
+{"text": "I'm frustrated with the system.", "emotion": "anger", "lang": "en"}
 {"text": "I'm angry.", "emotion": "anger", "lang": "en"}
-{"text": "I'm frustrated.", "emotion": "anger", "lang": "en"}
+{"text": "I'm frustrated with the process.", "emotion": "anger", "lang": "en"}
+{"text": "I'm quite upset about this.", "emotion": "anger", "lang": "en"}
+{"text": "I'm angry.", "emotion": "anger", "lang": "en"}
+{"text": "I'm not pleased with this.", "emotion": "anger", "lang": "en"}
+{"text": "This doesn't work for me.", "emotion": "anger", "lang": "en"}
+{"text": "I'm so angry!", "emotion": "anger", "lang": "en"}
+{"text": "This is wrong.", "emotion": "anger", "lang": "en"}
+{"text": "I'm angry about the incompetence.", "emotion": "anger", "lang": "en"}
+{"text": "I have issues with this.", "emotion": "anger", "lang": "en"}
+{"text": "I'm quite upset about this.", "emotion": "anger", "lang": "en"}
 {"text": "I'm upset.", "emotion": "anger", "lang": "en"}
 {"text": "I'm annoyed.", "emotion": "anger", "lang": "en"}
-{"text": "I'm disappointed.", "emotion": "anger", "lang": "en"}
-{"text": "This is unacceptable.", "emotion": "anger", "lang": "en"}
-{"text": "I'm not happy about this.", "emotion": "anger", "lang": "en"}
-{"text": "This is wrong.", "emotion": "anger", "lang": "en"}
-{"text": "I'm dissatisfied.", "emotion": "anger", "lang": "en"}
-{"text": "This is frustrating.", "emotion": "anger", "lang": "en"}
-{"text": "This doesn't work for me.", "emotion": "anger", "lang": "en"}
-{"text": "I'm not okay with this.", "emotion": "anger", "lang": "en"}
-{"text": "This is a problem.", "emotion": "anger", "lang": "en"}
 {"text": "I have concerns about this.", "emotion": "anger", "lang": "en"}
-{"text": "This needs to be addressed.", "emotion": "anger", "lang": "en"}
-{"text": "I'm not comfortable with this.", "emotion": "anger", "lang": "en"}
-{"text": "This is concerning.", "emotion": "anger", "lang": "en"}
-{"text": "I have issues with this.", "emotion": "anger", "lang": "en"}
-{"text": "This is problematic.", "emotion": "anger", "lang": "en"}
-{"text": "I'm not pleased with this.", "emotion": "anger", "lang": "en"}
-{"text": "I'm frustrated with the delay.", "emotion": "anger", "lang": "en"}
-{"text": "I'm upset about the mistake.", "emotion": "anger", "lang": "en"}
-{"text": "I'm angry about the error.", "emotion": "anger", "lang": "en"}
-{"text": "I'm disappointed with the service.", "emotion": "anger", "lang": "en"}
-{"text": "I'm annoyed by the inconvenience.", "emotion": "anger", "lang": "en"}
-{"text": "I'm frustrated with the lack of communication.", "emotion": "anger", "lang": "en"}
-{"text": "I'm upset about the poor quality.", "emotion": "anger", "lang": "en"}
-{"text": "I'm angry about the unfair treatment.", "emotion": "anger", "lang": "en"}
-{"text": "I'm disappointed with the results.", "emotion": "anger", "lang": "en"}
-{"text": "I'm annoyed by the constant problems.", "emotion": "anger", "lang": "en"}
-{"text": "This is unacceptable behavior.", "emotion": "anger", "lang": "en"}
-{"text": "I'm frustrated with the process.", "emotion": "anger", "lang": "en"}
-{"text": "I'm upset about the situation.", "emotion": "anger", "lang": "en"}
+{"text": "I'm not happy about this.", "emotion": "anger", "lang": "en"}
 {"text": "I'm angry about the decision.", "emotion": "anger", "lang": "en"}
-{"text": "I'm disappointed with the response.", "emotion": "anger", "lang": "en"}
-{"text": "I'm annoyed by the attitude.", "emotion": "anger", "lang": "en"}
+{"text": "I'm very disappointed with this outcome.", "emotion": "anger", "lang": "en"}
+{"text": "I'm so angry!", "emotion": "anger", "lang": "en"}
+{"text": "I'm annoyed that this continues.", "emotion": "anger", "lang": "en"}
+{"text": "I'm upset about the mistake.", "emotion": "anger", "lang": "en"}
 {"text": "I'm frustrated with the system.", "emotion": "anger", "lang": "en"}
-{"text": "I'm upset about the policy.", "emotion": "anger", "lang": "en"}
+{"text": "I'm annoyed by the attitude.", "emotion": "anger", "lang": "en"}
+{"text": "I'm so mad right now!", "emotion": "anger", "lang": "en"}
 {"text": "I'm angry about the change.", "emotion": "anger", "lang": "en"}
+{"text": "This is concerning.", "emotion": "anger", "lang": "en"}
+{"text": "I'm disappointed with the service.", "emotion": "anger", "lang": "en"}
+{"text": "I find this completely unacceptable.", "emotion": "anger", "lang": "en"}
+{"text": "I'm disappointed with the results.", "emotion": "anger", "lang": "en"}
+{"text": "I'm upset.", "emotion": "anger", "lang": "en"}
+{"text": "This is unacceptable behavior.", "emotion": "anger", "lang": "en"}
+{"text": "I'm upset about the mistake.", "emotion": "anger", "lang": "en"}
+{"text": "I'm angry about the decision.", "emotion": "anger", "lang": "en"}
+{"text": "I'm frustrated.", "emotion": "anger", "lang": "en"}
+{"text": "This is wrong.", "emotion": "anger", "lang": "en"}
+{"text": "I'm angry about the change.", "emotion": "anger", "lang": "en"}
+{"text": "I'm deeply concerned about this.", "emotion": "anger", "lang": "en"}
+{"text": "I'm disappointed with the service.", "emotion": "anger", "lang": "en"}
+{"text": "This is very problematic.", "emotion": "anger", "lang": "en"}
+{"text": "I'm really frustrated!", "emotion": "anger", "lang": "en"}
+{"text": "This is ridiculous!", "emotion": "anger", "lang": "en"}
+{"text": "I'm upset about the policy.", "emotion": "anger", "lang": "en"}
+{"text": "I'm very displeased with this.", "emotion": "anger", "lang": "en"}
+{"text": "I'm upset about the situation.", "emotion": "anger", "lang": "en"}
+{"text": "This is infuriating!", "emotion": "anger", "lang": "en"}
+{"text": "I'm disappointed with the management.", "emotion": "anger", "lang": "en"}
+{"text": "I'm frustrated.", "emotion": "anger", "lang": "en"}
+{"text": "I'm frustrated with the system.", "emotion": "anger", "lang": "en"}
+{"text": "I'm annoyed by the constant problems.", "emotion": "anger", "lang": "en"}
+{"text": "This is ridiculous!", "emotion": "anger", "lang": "en"}
+{"text": "I'm not pleased with this.", "emotion": "anger", "lang": "en"}
+{"text": "I'm annoyed that this continues.", "emotion": "anger", "lang": "en"}
+{"text": "This is so annoying!", "emotion": "anger", "lang": "en"}
+{"text": "I'm quite frustrated with this situation.", "emotion": "anger", "lang": "en"}
+{"text": "I'm quite upset about this.", "emotion": "anger", "lang": "en"}
+{"text": "This is so frustrating!", "emotion": "anger", "lang": "en"}
+{"text": "This is terrible!", "emotion": "anger", "lang": "en"}
+{"text": "I'm very displeased with this.", "emotion": "anger", "lang": "en"}
+{"text": "I'm frustrated with the lack of communication.", "emotion": "anger", "lang": "en"}
+{"text": "I'm angry about the decision.", "emotion": "anger", "lang": "en"}
+{"text": "I have concerns about this.", "emotion": "anger", "lang": "en"}
+{"text": "I'm disappointed with the management.", "emotion": "anger", "lang": "en"}
+{"text": "I'm angry about the incompetence.", "emotion": "anger", "lang": "en"}
+{"text": "I'm really frustrated!", "emotion": "anger", "lang": "en"}
+{"text": "This is unacceptable.", "emotion": "anger", "lang": "en"}
+{"text": "I'm not satisfied with this at all.", "emotion": "anger", "lang": "en"}
+{"text": "I'm frustrated with the lack of action.", "emotion": "anger", "lang": "en"}
+{"text": "I'm upset about the policy.", "emotion": "anger", "lang": "en"}
+{"text": "I'm frustrated with the process.", "emotion": "anger", "lang": "en"}
+{"text": "This is so frustrating!", "emotion": "anger", "lang": "en"}
+{"text": "I'm upset about the negligence.", "emotion": "anger", "lang": "en"}
+{"text": "I'm angry about the error.", "emotion": "anger", "lang": "en"}
+{"text": "I'm annoyed by the inconvenience.", "emotion": "anger", "lang": "en"}
+{"text": "I'm deeply concerned about this.", "emotion": "anger", "lang": "en"}
+{"text": "This is terrible!", "emotion": "anger", "lang": "en"}
+{"text": "I'm angry that this was allowed.", "emotion": "anger", "lang": "en"}
+{"text": "I'm quite frustrated with this situation.", "emotion": "anger", "lang": "en"}
+{"text": "I'm angry.", "emotion": "anger", "lang": "en"}
+{"text": "I'm annoyed by the bureaucracy.", "emotion": "anger", "lang": "en"}
+{"text": "I'm annoyed by the inconvenience.", "emotion": "anger", "lang": "en"}
+{"text": "I'm disappointed with the results.", "emotion": "anger", "lang": "en"}
+{"text": "I'm so mad right now!", "emotion": "anger", "lang": "en"}
+{"text": "I'm not comfortable with this.", "emotion": "anger", "lang": "en"}
+{"text": "I'm annoyed.", "emotion": "anger", "lang": "en"}
+{"text": "This doesn't work for me.", "emotion": "anger", "lang": "en"}
+{"text": "I'm frustrated with the lack of action.", "emotion": "anger", "lang": "en"}
+{"text": "I have concerns about this.", "emotion": "anger", "lang": "en"}
+{"text": "I'm angry about the change.", "emotion": "anger", "lang": "en"}
+{"text": "I'm not satisfied with this at all.", "emotion": "anger", "lang": "en"}
+{"text": "This is extremely frustrating.", "emotion": "anger", "lang": "en"}
+{"text": "This needs to be addressed.", "emotion": "anger", "lang": "en"}
+{"text": "This is highly unsatisfactory.", "emotion": "anger", "lang": "en"}
+{"text": "I'm frustrated with the process.", "emotion": "anger", "lang": "en"}
+{"text": "I'm quite upset about this.", "emotion": "anger", "lang": "en"}
+{"text": "I'm disappointed that this wasn't prevented.", "emotion": "anger", "lang": "en"}
+{"text": "I'm upset about the situation.", "emotion": "anger", "lang": "en"}
+{"text": "I'm very disappointed with this outcome.", "emotion": "anger", "lang": "en"}
+{"text": "I'm disappointed.", "emotion": "anger", "lang": "en"}
+{"text": "This is problematic.", "emotion": "anger", "lang": "en"}
+{"text": "I can't stand this!", "emotion": "anger", "lang": "en"}
+{"text": "I'm disappointed that this wasn't prevented.", "emotion": "anger", "lang": "en"}
+{"text": "This needs to be addressed.", "emotion": "anger", "lang": "en"}
+{"text": "I'm frustrated with the delay.", "emotion": "anger", "lang": "en"}
+{"text": "This is wrong.", "emotion": "anger", "lang": "en"}
+{"text": "This is problematic.", "emotion": "anger", "lang": "en"}
+{"text": "I'm disappointed with the outcome.", "emotion": "anger", "lang": "en"}
+{"text": "I'm angry that this was allowed.", "emotion": "anger", "lang": "en"}
+{"text": "I'm frustrated with the lack of action.", "emotion": "anger", "lang": "en"}
+{"text": "I'm really upset!", "emotion": "anger", "lang": "en"}
+{"text": "I'm upset about the policy.", "emotion": "anger", "lang": "en"}
+{"text": "This is very problematic.", "emotion": "anger", "lang": "en"}
+{"text": "I'm disappointed.", "emotion": "anger", "lang": "en"}
+{"text": "This is highly unsatisfactory.", "emotion": "anger", "lang": "en"}
+{"text": "I'm not comfortable with this.", "emotion": "anger", "lang": "en"}
+{"text": "I'm disappointed that this wasn't prevented.", "emotion": "anger", "lang": "en"}
+{"text": "This is infuriating!", "emotion": "anger", "lang": "en"}
+{"text": "I'm quite frustrated with this situation.", "emotion": "anger", "lang": "en"}
+{"text": "I'm not satisfied with this at all.", "emotion": "anger", "lang": "en"}
+{"text": "I'm upset about the negligence.", "emotion": "anger", "lang": "en"}
+{"text": "This is extremely frustrating.", "emotion": "anger", "lang": "en"}
+{"text": "I find this completely unacceptable.", "emotion": "anger", "lang": "en"}
+{"text": "This is concerning.", "emotion": "anger", "lang": "en"}
+{"text": "I'm disappointed with the management.", "emotion": "anger", "lang": "en"}
+{"text": "This is concerning.", "emotion": "anger", "lang": "en"}
+{"text": "I'm not happy about this.", "emotion": "anger", "lang": "en"}
+{"text": "I'm annoyed by the constant problems.", "emotion": "anger", "lang": "en"}
+{"text": "I'm upset that nothing is being done.", "emotion": "anger", "lang": "en"}
+{"text": "I'm upset about the poor quality.", "emotion": "anger", "lang": "en"}
+{"text": "I'm annoyed by the inconvenience.", "emotion": "anger", "lang": "en"}
+{"text": "I'm frustrated with the delay.", "emotion": "anger", "lang": "en"}
+{"text": "This is unacceptable behavior.", "emotion": "anger", "lang": "en"}
+{"text": "This is extremely frustrating.", "emotion": "anger", "lang": "en"}
+{"text": "I'm angry that this was allowed.", "emotion": "anger", "lang": "en"}
+{"text": "This is a problem.", "emotion": "anger", "lang": "en"}
+{"text": "I'm frustrated that this keeps happening.", "emotion": "anger", "lang": "en"}
+{"text": "This needs to be addressed.", "emotion": "anger", "lang": "en"}
+{"text": "I'm upset.", "emotion": "anger", "lang": "en"}
+{"text": "This is highly unsatisfactory.", "emotion": "anger", "lang": "en"}
+{"text": "I'm annoyed by the bureaucracy.", "emotion": "anger", "lang": "en"}
+{"text": "This is frustrating.", "emotion": "anger", "lang": "en"}
+{"text": "I'm so angry!", "emotion": "anger", "lang": "en"}
+{"text": "I'm so mad right now!", "emotion": "anger", "lang": "en"}
+{"text": "I'm annoyed by the attitude.", "emotion": "anger", "lang": "en"}
+{"text": "I'm annoyed by the constant problems.", "emotion": "anger", "lang": "en"}
+{"text": "I have issues with this.", "emotion": "anger", "lang": "en"}
+{"text": "I'm dissatisfied.", "emotion": "anger", "lang": "en"}
+{"text": "This is very problematic.", "emotion": "anger", "lang": "en"}
+{"text": "This is a problem.", "emotion": "anger", "lang": "en"}
+{"text": "This is so frustrating!", "emotion": "anger", "lang": "en"}
+{"text": "I'm dissatisfied.", "emotion": "anger", "lang": "en"}
+{"text": "I'm angry about the error.", "emotion": "anger", "lang": "en"}
+{"text": "I'm really frustrated!", "emotion": "anger", "lang": "en"}
+{"text": "I'm angry about the error.", "emotion": "anger", "lang": "en"}
+{"text": "I find this completely unacceptable.", "emotion": "anger", "lang": "en"}
+{"text": "I'm annoyed by the bureaucracy.", "emotion": "anger", "lang": "en"}
+{"text": "I'm frustrated with the delay.", "emotion": "anger", "lang": "en"}
+{"text": "This is unacceptable behavior.", "emotion": "anger", "lang": "en"}
+{"text": "This is infuriating!", "emotion": "anger", "lang": "en"}
+{"text": "I'm upset that nothing is being done.", "emotion": "anger", "lang": "en"}
+{"text": "I'm quite frustrated with this situation.", "emotion": "anger", "lang": "en"}
+{"text": "I'm angry about the unfair treatment.", "emotion": "anger", "lang": "en"}
 {"text": "I'm disappointed with the outcome.", "emotion": "anger", "lang": "en"}
 {"text": "I'm frustrated that this keeps happening.", "emotion": "anger", "lang": "en"}
+{"text": "I'm very displeased with this.", "emotion": "anger", "lang": "en"}
+{"text": "I find this completely unacceptable.", "emotion": "anger", "lang": "en"}
+{"text": "I'm not okay with this.", "emotion": "anger", "lang": "en"}
+{"text": "I can't stand this!", "emotion": "anger", "lang": "en"}
+{"text": "This is frustrating.", "emotion": "anger", "lang": "en"}
+{"text": "I'm disappointed with the outcome.", "emotion": "anger", "lang": "en"}
+{"text": "I'm very disappointed with this outcome.", "emotion": "anger", "lang": "en"}
+{"text": "I'm disappointed with the response.", "emotion": "anger", "lang": "en"}
 {"text": "I'm upset that nothing is being done.", "emotion": "anger", "lang": "en"}
-{"text": "I'm angry that this was allowed.", "emotion": "anger", "lang": "en"}
-{"text": "I'm disappointed that this wasn't prevented.", "emotion": "anger", "lang": "en"}
+{"text": "I'm dissatisfied.", "emotion": "anger", "lang": "en"}
+{"text": "This is ridiculous!", "emotion": "anger", "lang": "en"}
+{"text": "I'm not comfortable with this.", "emotion": "anger", "lang": "en"}
+{"text": "I'm deeply concerned about this.", "emotion": "anger", "lang": "en"}
+{"text": "I'm annoyed by the attitude.", "emotion": "anger", "lang": "en"}
+{"text": "This is problematic.", "emotion": "anger", "lang": "en"}
+{"text": "This is unacceptable.", "emotion": "anger", "lang": "en"}
+{"text": "This doesn't work for me.", "emotion": "anger", "lang": "en"}
+{"text": "I'm not okay with this.", "emotion": "anger", "lang": "en"}
+{"text": "I'm not happy about this.", "emotion": "anger", "lang": "en"}
+{"text": "This is very problematic.", "emotion": "anger", "lang": "en"}
+{"text": "I'm so mad right now!", "emotion": "anger", "lang": "en"}
+{"text": "I'm upset about the mistake.", "emotion": "anger", "lang": "en"}
+{"text": "I'm frustrated that this keeps happening.", "emotion": "anger", "lang": "en"}
+{"text": "I'm angry about the unfair treatment.", "emotion": "anger", "lang": "en"}
+{"text": "This is infuriating!", "emotion": "anger", "lang": "en"}
+{"text": "I'm angry about the unfair treatment.", "emotion": "anger", "lang": "en"}
+{"text": "This is extremely frustrating.", "emotion": "anger", "lang": "en"}
+{"text": "This is frustrating.", "emotion": "anger", "lang": "en"}
+{"text": "I'm upset about the situation.", "emotion": "anger", "lang": "en"}
+{"text": "This is a problem.", "emotion": "anger", "lang": "en"}
+{"text": "This is so annoying!", "emotion": "anger", "lang": "en"}
+{"text": "I'm disappointed with the results.", "emotion": "anger", "lang": "en"}
+{"text": "I'm really upset!", "emotion": "anger", "lang": "en"}
+{"text": "I'm really upset!", "emotion": "anger", "lang": "en"}
 {"text": "I'm annoyed that this continues.", "emotion": "anger", "lang": "en"}
-{"text": "I'm frustrated with the lack of action.", "emotion": "anger", "lang": "en"}
+{"text": "This is highly unsatisfactory.", "emotion": "anger", "lang": "en"}
+{"text": "I'm very displeased with this.", "emotion": "anger", "lang": "en"}
 {"text": "I'm upset about the negligence.", "emotion": "anger", "lang": "en"}
+{"text": "I'm very disappointed with this outcome.", "emotion": "anger", "lang": "en"}
+{"text": "I'm disappointed with the response.", "emotion": "anger", "lang": "en"}
+{"text": "I'm really frustrated!", "emotion": "anger", "lang": "en"}
+{"text": "I have issues with this.", "emotion": "anger", "lang": "en"}
+{"text": "I'm upset about the poor quality.", "emotion": "anger", "lang": "en"}
+{"text": "This is so annoying!", "emotion": "anger", "lang": "en"}
+{"text": "This is terrible!", "emotion": "anger", "lang": "en"}
+{"text": "I'm deeply concerned about this.", "emotion": "anger", "lang": "en"}
+{"text": "I can't stand this!", "emotion": "anger", "lang": "en"}
+{"text": "I'm disappointed.", "emotion": "anger", "lang": "en"}
+{"text": "I'm frustrated with the lack of communication.", "emotion": "anger", "lang": "en"}
+{"text": "I'm annoyed.", "emotion": "anger", "lang": "en"}
+{"text": "This is so annoying!", "emotion": "anger", "lang": "en"}
+{"text": "I'm not okay with this.", "emotion": "anger", "lang": "en"}
+{"text": "I'm disappointed with the service.", "emotion": "anger", "lang": "en"}
+{"text": "I'm not satisfied with this at all.", "emotion": "anger", "lang": "en"}
+{"text": "I'm frustrated.", "emotion": "anger", "lang": "en"}
 {"text": "I'm angry about the incompetence.", "emotion": "anger", "lang": "en"}
-{"text": "I'm disappointed with the management.", "emotion": "anger", "lang": "en"}
-{"text": "I'm annoyed by the bureaucracy.", "emotion": "anger", "lang": "en"}
-{"text": "I sincerely apologize for the inconvenience.", "emotion": "apology", "lang": "en"}
-{"text": "I deeply regret the mistake I made.", "emotion": "apology", "lang": "en"}
-{"text": "I'm truly sorry for what happened.", "emotion": "apology", "lang": "en"}
-{"text": "I apologize for any trouble I may have caused.", "emotion": "apology", "lang": "en"}
-{"text": "I'm very sorry for the error.", "emotion": "apology", "lang": "en"}
-{"text": "I sincerely apologize for my actions.", "emotion": "apology", "lang": "en"}
-{"text": "I deeply apologize for the misunderstanding.", "emotion": "apology", "lang": "en"}
-{"text": "I'm truly sorry for the confusion.", "emotion": "apology", "lang": "en"}
-{"text": "I apologize for any harm I may have caused.", "emotion": "apology", "lang": "en"}
-{"text": "I'm very sorry for the delay.", "emotion": "apology", "lang": "en"}
-{"text": "Sorry about that!", "emotion": "apology", "lang": "en"}
-{"text": "My bad!", "emotion": "apology", "lang": "en"}
-{"text": "I'm really sorry!", "emotion": "apology", "lang": "en"}
-{"text": "Sorry for the trouble!", "emotion": "apology", "lang": "en"}
-{"text": "I apologize!", "emotion": "apology", "lang": "en"}
-{"text": "Sorry!", "emotion": "apology", "lang": "en"}
-{"text": "My mistake!", "emotion": "apology", "lang": "en"}
-{"text": "I'm sorry!", "emotion": "apology", "lang": "en"}
-{"text": "Sorry about the mix-up!", "emotion": "apology", "lang": "en"}
-{"text": "I'm really sorry about that!", "emotion": "apology", "lang": "en"}
-{"text": "I apologize.", "emotion": "apology", "lang": "en"}
-{"text": "I'm sorry.", "emotion": "apology", "lang": "en"}
-{"text": "I'm sorry for that.", "emotion": "apology", "lang": "en"}
-{"text": "I apologize for the mistake.", "emotion": "apology", "lang": "en"}
-{"text": "I'm sorry about the error.", "emotion": "apology", "lang": "en"}
-{"text": "I apologize for the confusion.", "emotion": "apology", "lang": "en"}
-{"text": "I'm sorry for the inconvenience.", "emotion": "apology", "lang": "en"}
-{"text": "I apologize for the delay.", "emotion": "apology", "lang": "en"}
-{"text": "I'm sorry for the trouble.", "emotion": "apology", "lang": "en"}
-{"text": "I apologize for my mistake.", "emotion": "apology", "lang": "en"}
-{"text": "I take full responsibility for this.", "emotion": "apology", "lang": "en"}
-{"text": "I acknowledge my error.", "emotion": "apology", "lang": "en"}
-{"text": "I understand I made a mistake.", "emotion": "apology", "lang": "en"}
-{"text": "I recognize that I was wrong.", "emotion": "apology", "lang": "en"}
-{"text": "I accept responsibility for this.", "emotion": "apology", "lang": "en"}
+{"text": "I'm not pleased with this.", "emotion": "anger", "lang": "en"}
+{"text": "I'm sorry for the misunderstanding.", "emotion": "apology", "lang": "en"}
 {"text": "I know I should have done better.", "emotion": "apology", "lang": "en"}
-{"text": "I understand the impact of my actions.", "emotion": "apology", "lang": "en"}
-{"text": "I realize I made an error.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize!", "emotion": "apology", "lang": "en"}
+{"text": "I sincerely apologize for the inconvenience.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for the stress this may have caused.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for being inconsiderate.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for any offense I may have caused.", "emotion": "apology", "lang": "en"}
+{"text": "I'm very sorry for the error.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for any frustration I may have caused.", "emotion": "apology", "lang": "en"}
+{"text": "I sincerely apologize for my actions.", "emotion": "apology", "lang": "en"}
+{"text": "I know I should have done better.", "emotion": "apology", "lang": "en"}
+{"text": "I recognize that I was wrong.", "emotion": "apology", "lang": "en"}
+{"text": "I'm really sorry!", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the negative impact.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for that.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry about the error.", "emotion": "apology", "lang": "en"}
+{"text": "I understand I made a mistake.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the inconvenience this has caused.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for not being more aware.", "emotion": "apology", "lang": "en"}
+{"text": "I'm really sorry about that!", "emotion": "apology", "lang": "en"}
+{"text": "I'm truly sorry for what happened.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for taking up your time.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for the inconvenience.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for my insensitive comment.", "emotion": "apology", "lang": "en"}
 {"text": "I acknowledge my fault.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry if I hurt your feelings.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for not being more mindful.", "emotion": "apology", "lang": "en"}
 {"text": "I take responsibility for the mistake.", "emotion": "apology", "lang": "en"}
 {"text": "I apologize for the confusion I caused.", "emotion": "apology", "lang": "en"}
-{"text": "I'm sorry for the misunderstanding.", "emotion": "apology", "lang": "en"}
-{"text": "I apologize for not being clear.", "emotion": "apology", "lang": "en"}
-{"text": "I'm sorry for the miscommunication.", "emotion": "apology", "lang": "en"}
-{"text": "I apologize for the oversight.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the confusion.", "emotion": "apology", "lang": "en"}
+{"text": "Sorry about that!", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for any trouble I may have caused.", "emotion": "apology", "lang": "en"}
+{"text": "I deeply regret the mistake I made.", "emotion": "apology", "lang": "en"}
+{"text": "My bad!", "emotion": "apology", "lang": "en"}
+{"text": "My bad!", "emotion": "apology", "lang": "en"}
+{"text": "Sorry about that!", "emotion": "apology", "lang": "en"}
 {"text": "I'm sorry for missing that.", "emotion": "apology", "lang": "en"}
-{"text": "I apologize for the error in judgment.", "emotion": "apology", "lang": "en"}
-{"text": "I'm sorry for the poor decision.", "emotion": "apology", "lang": "en"}
-{"text": "I apologize for the lack of attention.", "emotion": "apology", "lang": "en"}
-{"text": "I'm sorry for not being more careful.", "emotion": "apology", "lang": "en"}
-{"text": "I apologize for any offense I may have caused.", "emotion": "apology", "lang": "en"}
-{"text": "I'm sorry if I hurt your feelings.", "emotion": "apology", "lang": "en"}
-{"text": "I apologize for my insensitive comment.", "emotion": "apology", "lang": "en"}
-{"text": "I'm sorry for being inconsiderate.", "emotion": "apology", "lang": "en"}
-{"text": "I apologize for my thoughtless behavior.", "emotion": "apology", "lang": "en"}
-{"text": "I'm sorry for not thinking things through.", "emotion": "apology", "lang": "en"}
-{"text": "I apologize for my carelessness.", "emotion": "apology", "lang": "en"}
-{"text": "I'm sorry for not being more mindful.", "emotion": "apology", "lang": "en"}
-{"text": "I apologize for my lack of consideration.", "emotion": "apology", "lang": "en"}
+{"text": "I realize I made an error.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for my mistake.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for not being clear.", "emotion": "apology", "lang": "en"}
+{"text": "I understand I made a mistake.", "emotion": "apology", "lang": "en"}
+{"text": "I recognize that I was wrong.", "emotion": "apology", "lang": "en"}
+{"text": "I take full responsibility for this.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for any harm I may have caused.", "emotion": "apology", "lang": "en"}
 {"text": "I'm sorry for not being more aware.", "emotion": "apology", "lang": "en"}
-{"text": "I apologize for the inconvenience this has caused.", "emotion": "apology", "lang": "en"}
-{"text": "I'm sorry for disrupting your day.", "emotion": "apology", "lang": "en"}
-{"text": "I apologize for taking up your time.", "emotion": "apology", "lang": "en"}
-{"text": "I'm sorry for the trouble this has caused.", "emotion": "apology", "lang": "en"}
-{"text": "I apologize for any frustration I may have caused.", "emotion": "apology", "lang": "en"}
 {"text": "I'm sorry for the stress this may have caused.", "emotion": "apology", "lang": "en"}
-{"text": "I apologize for the problems this has created.", "emotion": "apology", "lang": "en"}
+{"text": "Sorry!", "emotion": "apology", "lang": "en"}
+{"text": "I recognize that I was wrong.", "emotion": "apology", "lang": "en"}
+{"text": "I'm very sorry for the error.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry!", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the error in judgment.", "emotion": "apology", "lang": "en"}
 {"text": "I'm sorry for any difficulties I may have caused.", "emotion": "apology", "lang": "en"}
 {"text": "I apologize for the negative impact.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for any offense I may have caused.", "emotion": "apology", "lang": "en"}
 {"text": "I'm sorry for any harm I may have done.", "emotion": "apology", "lang": "en"}
-{"text": "What is the weather like today?", "emotion": "neutral", "lang": "en"}
-{"text": "Can you tell me the time?", "emotion": "neutral", "lang": "en"}
-{"text": "How does this work?", "emotion": "neutral", "lang": "en"}
-{"text": "What is the capital of France?", "emotion": "neutral", "lang": "en"}
-{"text": "Can you explain this concept?", "emotion": "neutral", "lang": "en"}
-{"text": "What are the main features?", "emotion": "neutral", "lang": "en"}
-{"text": "How do I use this?", "emotion": "neutral", "lang": "en"}
-{"text": "What is the purpose of this?", "emotion": "neutral", "lang": "en"}
-{"text": "Can you provide more information?", "emotion": "neutral", "lang": "en"}
-{"text": "What does this mean?", "emotion": "neutral", "lang": "en"}
-{"text": "Hello, how are you?", "emotion": "neutral", "lang": "en"}
-{"text": "Good morning.", "emotion": "neutral", "lang": "en"}
-{"text": "Nice to meet you.", "emotion": "neutral", "lang": "en"}
-{"text": "How was your day?", "emotion": "neutral", "lang": "en"}
-{"text": "What did you do today?", "emotion": "neutral", "lang": "en"}
-{"text": "I see.", "emotion": "neutral", "lang": "en"}
-{"text": "That makes sense.", "emotion": "neutral", "lang": "en"}
-{"text": "I understand.", "emotion": "neutral", "lang": "en"}
-{"text": "That's interesting.", "emotion": "neutral", "lang": "en"}
-{"text": "I agree.", "emotion": "neutral", "lang": "en"}
-{"text": "The meeting is scheduled for 3 PM.", "emotion": "neutral", "lang": "en"}
-{"text": "The document is ready.", "emotion": "neutral", "lang": "en"}
-{"text": "The report has been completed.", "emotion": "neutral", "lang": "en"}
-{"text": "The data shows an increase.", "emotion": "neutral", "lang": "en"}
-{"text": "The results indicate success.", "emotion": "neutral", "lang": "en"}
-{"text": "The system is operational.", "emotion": "neutral", "lang": "en"}
-{"text": "The process is complete.", "emotion": "neutral", "lang": "en"}
-{"text": "The task is finished.", "emotion": "neutral", "lang": "en"}
-{"text": "The project is on schedule.", "emotion": "neutral", "lang": "en"}
-{"text": "The deadline is approaching.", "emotion": "neutral", "lang": "en"}
-{"text": "I need to check the schedule.", "emotion": "neutral", "lang": "en"}
-{"text": "Let me review the information.", "emotion": "neutral", "lang": "en"}
-{"text": "I'll look into that.", "emotion": "neutral", "lang": "en"}
-{"text": "I'll get back to you.", "emotion": "neutral", "lang": "en"}
+{"text": "I'm sorry for not thinking things through.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the oversight.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for my lack of consideration.", "emotion": "apology", "lang": "en"}
+{"text": "I acknowledge my error.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for not being more careful.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry!", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for disrupting your day.", "emotion": "apology", "lang": "en"}
+{"text": "I'm really sorry about that!", "emotion": "apology", "lang": "en"}
+{"text": "I'm very sorry for the error.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry.", "emotion": "apology", "lang": "en"}
+{"text": "Sorry!", "emotion": "apology", "lang": "en"}
+{"text": "I apologize.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for the trouble.", "emotion": "apology", "lang": "en"}
+{"text": "I acknowledge my error.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the negative impact.", "emotion": "apology", "lang": "en"}
+{"text": "Sorry for the trouble!", "emotion": "apology", "lang": "en"}
+{"text": "I sincerely apologize for the inconvenience.", "emotion": "apology", "lang": "en"}
+{"text": "I'm really sorry!", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for my lack of consideration.", "emotion": "apology", "lang": "en"}
+{"text": "I acknowledge my fault.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for my insensitive comment.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for any trouble I may have caused.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize!", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for not being more aware.", "emotion": "apology", "lang": "en"}
+{"text": "Sorry!", "emotion": "apology", "lang": "en"}
+{"text": "I'm truly sorry for the confusion.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for missing that.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for not being clear.", "emotion": "apology", "lang": "en"}
+{"text": "I take full responsibility for this.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for the trouble this has caused.", "emotion": "apology", "lang": "en"}
+{"text": "Sorry about that!", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for the misunderstanding.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for my lack of consideration.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the error in judgment.", "emotion": "apology", "lang": "en"}
+{"text": "I'm truly sorry for what happened.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for any offense I may have caused.", "emotion": "apology", "lang": "en"}
+{"text": "I deeply apologize for the misunderstanding.", "emotion": "apology", "lang": "en"}
+{"text": "I deeply regret the mistake I made.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for any trouble I may have caused.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for not thinking things through.", "emotion": "apology", "lang": "en"}
+{"text": "Sorry about that!", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for my thoughtless behavior.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry if I hurt your feelings.", "emotion": "apology", "lang": "en"}
+{"text": "I sincerely apologize for my actions.", "emotion": "apology", "lang": "en"}
+{"text": "I accept responsibility for this.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for any harm I may have done.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for my carelessness.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for not being more careful.", "emotion": "apology", "lang": "en"}
+{"text": "I acknowledge my error.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the confusion.", "emotion": "apology", "lang": "en"}
+{"text": "I sincerely apologize for the inconvenience.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the lack of attention.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for not being clear.", "emotion": "apology", "lang": "en"}
+{"text": "My mistake!", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for taking up your time.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize!", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the confusion I caused.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for that.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the delay.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for my mistake.", "emotion": "apology", "lang": "en"}
+{"text": "Sorry for the trouble!", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the confusion I caused.", "emotion": "apology", "lang": "en"}
+{"text": "I deeply apologize for the misunderstanding.", "emotion": "apology", "lang": "en"}
+{"text": "Sorry for the trouble!", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the problems this has created.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for the poor decision.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for the poor decision.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for any harm I may have caused.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for the miscommunication.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for the trouble this has caused.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for any harm I may have caused.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the mistake.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the confusion.", "emotion": "apology", "lang": "en"}
+{"text": "I'm truly sorry for what happened.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for any difficulties I may have caused.", "emotion": "apology", "lang": "en"}
+{"text": "I understand the impact of my actions.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for the trouble.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for that.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the lack of attention.", "emotion": "apology", "lang": "en"}
+{"text": "I'm very sorry for the delay.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for the trouble.", "emotion": "apology", "lang": "en"}
+{"text": "I deeply regret the mistake I made.", "emotion": "apology", "lang": "en"}
+{"text": "Sorry about the mix-up!", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for disrupting your day.", "emotion": "apology", "lang": "en"}
+{"text": "I'm very sorry for the delay.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the delay.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry!", "emotion": "apology", "lang": "en"}
+{"text": "I apologize.", "emotion": "apology", "lang": "en"}
+{"text": "Sorry about the mix-up!", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for being inconsiderate.", "emotion": "apology", "lang": "en"}
+{"text": "I'm truly sorry for the confusion.", "emotion": "apology", "lang": "en"}
+{"text": "I take responsibility for the mistake.", "emotion": "apology", "lang": "en"}
+{"text": "My mistake!", "emotion": "apology", "lang": "en"}
+{"text": "I sincerely apologize for my actions.", "emotion": "apology", "lang": "en"}
+{"text": "I acknowledge my fault.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the problems this has created.", "emotion": "apology", "lang": "en"}
+{"text": "I accept responsibility for this.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the inconvenience this has caused.", "emotion": "apology", "lang": "en"}
+{"text": "I'm very sorry for the delay.", "emotion": "apology", "lang": "en"}
+{"text": "I realize I made an error.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for not being more mindful.", "emotion": "apology", "lang": "en"}
+{"text": "I'm truly sorry for the confusion.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the mistake.", "emotion": "apology", "lang": "en"}
+{"text": "I'm very sorry for the delay.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for taking up your time.", "emotion": "apology", "lang": "en"}
+{"text": "I'm really sorry!", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for the trouble this has caused.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for the inconvenience.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for not being more mindful.", "emotion": "apology", "lang": "en"}
+{"text": "I realize I made an error.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the oversight.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for my carelessness.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry about the error.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the lack of attention.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the mistake.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the oversight.", "emotion": "apology", "lang": "en"}
+{"text": "I understand the impact of my actions.", "emotion": "apology", "lang": "en"}
+{"text": "My bad!", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry if I hurt your feelings.", "emotion": "apology", "lang": "en"}
+{"text": "Sorry about the mix-up!", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for any difficulties I may have caused.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for the inconvenience.", "emotion": "apology", "lang": "en"}
+{"text": "I understand I made a mistake.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize!", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the problems this has created.", "emotion": "apology", "lang": "en"}
+{"text": "I'm very sorry for the error.", "emotion": "apology", "lang": "en"}
+{"text": "I take full responsibility for this.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for the misunderstanding.", "emotion": "apology", "lang": "en"}
+{"text": "I'm truly sorry for the confusion.", "emotion": "apology", "lang": "en"}
+{"text": "Sorry for the trouble!", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for any frustration I may have caused.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for the poor decision.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for my insensitive comment.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for not thinking things through.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for being inconsiderate.", "emotion": "apology", "lang": "en"}
+{"text": "I understand the impact of my actions.", "emotion": "apology", "lang": "en"}
+{"text": "My bad!", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the error in judgment.", "emotion": "apology", "lang": "en"}
+{"text": "I sincerely apologize for the inconvenience.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry about the error.", "emotion": "apology", "lang": "en"}
+{"text": "I sincerely apologize for my actions.", "emotion": "apology", "lang": "en"}
+{"text": "I take responsibility for the mistake.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the inconvenience this has caused.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for any frustration I may have caused.", "emotion": "apology", "lang": "en"}
+{"text": "I'm really sorry!", "emotion": "apology", "lang": "en"}
+{"text": "I deeply apologize for the misunderstanding.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for missing that.", "emotion": "apology", "lang": "en"}
+{"text": "I'm truly sorry for what happened.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for disrupting your day.", "emotion": "apology", "lang": "en"}
+{"text": "I'm really sorry about that!", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for the stress this may have caused.", "emotion": "apology", "lang": "en"}
+{"text": "My mistake!", "emotion": "apology", "lang": "en"}
+{"text": "I deeply apologize for the misunderstanding.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for the miscommunication.", "emotion": "apology", "lang": "en"}
+{"text": "I accept responsibility for this.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for my thoughtless behavior.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for any harm I may have done.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for the delay.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for not being more careful.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for my thoughtless behavior.", "emotion": "apology", "lang": "en"}
+{"text": "I'm sorry for the miscommunication.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for my mistake.", "emotion": "apology", "lang": "en"}
+{"text": "I deeply regret the mistake I made.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for my carelessness.", "emotion": "apology", "lang": "en"}
+{"text": "I know I should have done better.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for any harm I may have caused.", "emotion": "apology", "lang": "en"}
+{"text": "I apologize for any trouble I may have caused.", "emotion": "apology", "lang": "en"}
 {"text": "I'll consider your suggestion.", "emotion": "neutral", "lang": "en"}
-{"text": "I'll think about it.", "emotion": "neutral", "lang": "en"}
-{"text": "I'll let you know.", "emotion": "neutral", "lang": "en"}
-{"text": "I'll keep that in mind.", "emotion": "neutral", "lang": "en"}
-{"text": "I'll take note of that.", "emotion": "neutral", "lang": "en"}
-{"text": "I'll remember that.", "emotion": "neutral", "lang": "en"}
-{"text": "The data is available.", "emotion": "neutral", "lang": "en"}
 {"text": "The information is correct.", "emotion": "neutral", "lang": "en"}
-{"text": "The details are clear.", "emotion": "neutral", "lang": "en"}
-{"text": "The explanation is helpful.", "emotion": "neutral", "lang": "en"}
-{"text": "The instructions are straightforward.", "emotion": "neutral", "lang": "en"}
-{"text": "The process is simple.", "emotion": "neutral", "lang": "en"}
+{"text": "What are the main features?", "emotion": "neutral", "lang": "en"}
 {"text": "The method is effective.", "emotion": "neutral", "lang": "en"}
-{"text": "The approach is reasonable.", "emotion": "neutral", "lang": "en"}
-{"text": "The solution is practical.", "emotion": "neutral", "lang": "en"}
+{"text": "The report has been completed.", "emotion": "neutral", "lang": "en"}
+{"text": "How do I use this?", "emotion": "neutral", "lang": "en"}
+{"text": "The data is available.", "emotion": "neutral", "lang": "en"}
+{"text": "The setting is comfortable.", "emotion": "neutral", "lang": "en"}
+{"text": "The system is operational.", "emotion": "neutral", "lang": "en"}
+{"text": "Nice to meet you.", "emotion": "neutral", "lang": "en"}
+{"text": "The details are clear.", "emotion": "neutral", "lang": "en"}
+{"text": "The conditions are favorable.", "emotion": "neutral", "lang": "en"}
+{"text": "I'll keep that in mind.", "emotion": "neutral", "lang": "en"}
+{"text": "The data shows an increase.", "emotion": "neutral", "lang": "en"}
+{"text": "The circumstances are normal.", "emotion": "neutral", "lang": "en"}
+{"text": "Can you provide more information?", "emotion": "neutral", "lang": "en"}
+{"text": "I'll get back to you.", "emotion": "neutral", "lang": "en"}
+{"text": "The atmosphere is peaceful.", "emotion": "neutral", "lang": "en"}
+{"text": "The system is operational.", "emotion": "neutral", "lang": "en"}
+{"text": "I'm analyzing the data.", "emotion": "neutral", "lang": "en"}
+{"text": "What is the weather like today?", "emotion": "neutral", "lang": "en"}
+{"text": "The explanation is helpful.", "emotion": "neutral", "lang": "en"}
+{"text": "What is the capital of France?", "emotion": "neutral", "lang": "en"}
+{"text": "Good morning.", "emotion": "neutral", "lang": "en"}
+{"text": "The atmosphere is peaceful.", "emotion": "neutral", "lang": "en"}
+{"text": "The sky is clear.", "emotion": "neutral", "lang": "en"}
+{"text": "How was your day?", "emotion": "neutral", "lang": "en"}
+{"text": "I'm verifying the information.", "emotion": "neutral", "lang": "en"}
+{"text": "The sky is clear.", "emotion": "neutral", "lang": "en"}
+{"text": "The task is finished.", "emotion": "neutral", "lang": "en"}
+{"text": "I'll get back to you.", "emotion": "neutral", "lang": "en"}
+{"text": "The deadline is approaching.", "emotion": "neutral", "lang": "en"}
+{"text": "What did you do today?", "emotion": "neutral", "lang": "en"}
+{"text": "The document is ready.", "emotion": "neutral", "lang": "en"}
+{"text": "That's interesting.", "emotion": "neutral", "lang": "en"}
+{"text": "What does this mean?", "emotion": "neutral", "lang": "en"}
+{"text": "I'm organizing the files.", "emotion": "neutral", "lang": "en"}
+{"text": "That makes sense.", "emotion": "neutral", "lang": "en"}
+{"text": "The method is effective.", "emotion": "neutral", "lang": "en"}
+{"text": "I'll consider your suggestion.", "emotion": "neutral", "lang": "en"}
+{"text": "How do I use this?", "emotion": "neutral", "lang": "en"}
+{"text": "What did you do today?", "emotion": "neutral", "lang": "en"}
+{"text": "I'm handling the matter.", "emotion": "neutral", "lang": "en"}
+{"text": "The environment is calm.", "emotion": "neutral", "lang": "en"}
+{"text": "What is the capital of France?", "emotion": "neutral", "lang": "en"}
+{"text": "How was your day?", "emotion": "neutral", "lang": "en"}
+{"text": "The process is simple.", "emotion": "neutral", "lang": "en"}
+{"text": "I'll take note of that.", "emotion": "neutral", "lang": "en"}
+{"text": "I understand.", "emotion": "neutral", "lang": "en"}
+{"text": "Nice to meet you.", "emotion": "neutral", "lang": "en"}
+{"text": "I'm checking the details.", "emotion": "neutral", "lang": "en"}
+{"text": "What is the weather like today?", "emotion": "neutral", "lang": "en"}
+{"text": "The weather is nice today.", "emotion": "neutral", "lang": "en"}
+{"text": "I'll remember that.", "emotion": "neutral", "lang": "en"}
+{"text": "The deadline is approaching.", "emotion": "neutral", "lang": "en"}
+{"text": "I'll consider your suggestion.", "emotion": "neutral", "lang": "en"}
+{"text": "The process is complete.", "emotion": "neutral", "lang": "en"}
 {"text": "The plan is feasible.", "emotion": "neutral", "lang": "en"}
 {"text": "I'm working on the project.", "emotion": "neutral", "lang": "en"}
-{"text": "I'm reviewing the materials.", "emotion": "neutral", "lang": "en"}
-{"text": "I'm analyzing the data.", "emotion": "neutral", "lang": "en"}
-{"text": "I'm preparing the report.", "emotion": "neutral", "lang": "en"}
+{"text": "I see.", "emotion": "neutral", "lang": "en"}
 {"text": "I'm organizing the files.", "emotion": "neutral", "lang": "en"}
-{"text": "I'm checking the details.", "emotion": "neutral", "lang": "en"}
-{"text": "I'm verifying the information.", "emotion": "neutral", "lang": "en"}
-{"text": "I'm updating the records.", "emotion": "neutral", "lang": "en"}
+{"text": "The information is correct.", "emotion": "neutral", "lang": "en"}
+{"text": "What does this mean?", "emotion": "neutral", "lang": "en"}
+{"text": "Can you explain this concept?", "emotion": "neutral", "lang": "en"}
+{"text": "Let me review the information.", "emotion": "neutral", "lang": "en"}
+{"text": "What did you do today?", "emotion": "neutral", "lang": "en"}
+{"text": "Can you tell me the time?", "emotion": "neutral", "lang": "en"}
 {"text": "I'm processing the request.", "emotion": "neutral", "lang": "en"}
-{"text": "I'm handling the matter.", "emotion": "neutral", "lang": "en"}
+{"text": "The day is pleasant.", "emotion": "neutral", "lang": "en"}
+{"text": "The process is complete.", "emotion": "neutral", "lang": "en"}
+{"text": "What is the purpose of this?", "emotion": "neutral", "lang": "en"}
+{"text": "I understand.", "emotion": "neutral", "lang": "en"}
+{"text": "Hello, how are you?", "emotion": "neutral", "lang": "en"}
+{"text": "What did you do today?", "emotion": "neutral", "lang": "en"}
+{"text": "The data is available.", "emotion": "neutral", "lang": "en"}
+{"text": "Let me review the information.", "emotion": "neutral", "lang": "en"}
+{"text": "I agree.", "emotion": "neutral", "lang": "en"}
+{"text": "The results indicate success.", "emotion": "neutral", "lang": "en"}
+{"text": "What is the weather like today?", "emotion": "neutral", "lang": "en"}
+{"text": "The report has been completed.", "emotion": "neutral", "lang": "en"}
+{"text": "I'm updating the records.", "emotion": "neutral", "lang": "en"}
+{"text": "I'll take note of that.", "emotion": "neutral", "lang": "en"}
+{"text": "The temperature is moderate.", "emotion": "neutral", "lang": "en"}
+{"text": "What is the purpose of this?", "emotion": "neutral", "lang": "en"}
+{"text": "I'm working on the project.", "emotion": "neutral", "lang": "en"}
+{"text": "The conditions are favorable.", "emotion": "neutral", "lang": "en"}
+{"text": "The conditions are favorable.", "emotion": "neutral", "lang": "en"}
+{"text": "The circumstances are normal.", "emotion": "neutral", "lang": "en"}
+{"text": "The situation is stable.", "emotion": "neutral", "lang": "en"}
+{"text": "I'll look into that.", "emotion": "neutral", "lang": "en"}
+{"text": "The atmosphere is peaceful.", "emotion": "neutral", "lang": "en"}
+{"text": "Nice to meet you.", "emotion": "neutral", "lang": "en"}
+{"text": "The explanation is helpful.", "emotion": "neutral", "lang": "en"}
+{"text": "The system is operational.", "emotion": "neutral", "lang": "en"}
 {"text": "The weather is nice today.", "emotion": "neutral", "lang": "en"}
+{"text": "I'm preparing the report.", "emotion": "neutral", "lang": "en"}
+{"text": "The instructions are straightforward.", "emotion": "neutral", "lang": "en"}
+{"text": "The details are clear.", "emotion": "neutral", "lang": "en"}
+{"text": "The weather is nice today.", "emotion": "neutral", "lang": "en"}
+{"text": "I'll let you know.", "emotion": "neutral", "lang": "en"}
+{"text": "The process is complete.", "emotion": "neutral", "lang": "en"}
+{"text": "The environment is calm.", "emotion": "neutral", "lang": "en"}
+{"text": "What is the purpose of this?", "emotion": "neutral", "lang": "en"}
+{"text": "The project is on schedule.", "emotion": "neutral", "lang": "en"}
+{"text": "The data shows an increase.", "emotion": "neutral", "lang": "en"}
+{"text": "The situation is stable.", "emotion": "neutral", "lang": "en"}
+{"text": "How was your day?", "emotion": "neutral", "lang": "en"}
+{"text": "Hello, how are you?", "emotion": "neutral", "lang": "en"}
+{"text": "The task is finished.", "emotion": "neutral", "lang": "en"}
+{"text": "What is the weather like today?", "emotion": "neutral", "lang": "en"}
+{"text": "Hello, how are you?", "emotion": "neutral", "lang": "en"}
+{"text": "What are the main features?", "emotion": "neutral", "lang": "en"}
+{"text": "I'm working on the project.", "emotion": "neutral", "lang": "en"}
+{"text": "I'll think about it.", "emotion": "neutral", "lang": "en"}
+{"text": "The results indicate success.", "emotion": "neutral", "lang": "en"}
+{"text": "The approach is reasonable.", "emotion": "neutral", "lang": "en"}
+{"text": "I'll get back to you.", "emotion": "neutral", "lang": "en"}
+{"text": "The process is simple.", "emotion": "neutral", "lang": "en"}
+{"text": "The solution is practical.", "emotion": "neutral", "lang": "en"}
+{"text": "Good morning.", "emotion": "neutral", "lang": "en"}
+{"text": "Good morning.", "emotion": "neutral", "lang": "en"}
+{"text": "The temperature is moderate.", "emotion": "neutral", "lang": "en"}
+{"text": "Can you provide more information?", "emotion": "neutral", "lang": "en"}
+{"text": "I'm updating the records.", "emotion": "neutral", "lang": "en"}
+{"text": "How was your day?", "emotion": "neutral", "lang": "en"}
+{"text": "The data is available.", "emotion": "neutral", "lang": "en"}
+{"text": "That's interesting.", "emotion": "neutral", "lang": "en"}
+{"text": "Can you provide more information?", "emotion": "neutral", "lang": "en"}
+{"text": "Can you tell me the time?", "emotion": "neutral", "lang": "en"}
+{"text": "The meeting is scheduled for 3 PM.", "emotion": "neutral", "lang": "en"}
+{"text": "The document is ready.", "emotion": "neutral", "lang": "en"}
+{"text": "I'll keep that in mind.", "emotion": "neutral", "lang": "en"}
+{"text": "I'm preparing the report.", "emotion": "neutral", "lang": "en"}
+{"text": "The setting is comfortable.", "emotion": "neutral", "lang": "en"}
+{"text": "I'll remember that.", "emotion": "neutral", "lang": "en"}
+{"text": "The situation is stable.", "emotion": "neutral", "lang": "en"}
+{"text": "I'll think about it.", "emotion": "neutral", "lang": "en"}
+{"text": "The project is on schedule.", "emotion": "neutral", "lang": "en"}
+{"text": "I'll look into that.", "emotion": "neutral", "lang": "en"}
+{"text": "The deadline is approaching.", "emotion": "neutral", "lang": "en"}
+{"text": "How does this work?", "emotion": "neutral", "lang": "en"}
+{"text": "I'm processing the request.", "emotion": "neutral", "lang": "en"}
+{"text": "That makes sense.", "emotion": "neutral", "lang": "en"}
+{"text": "Good morning.", "emotion": "neutral", "lang": "en"}
+{"text": "I'm handling the matter.", "emotion": "neutral", "lang": "en"}
+{"text": "I'm preparing the report.", "emotion": "neutral", "lang": "en"}
+{"text": "I'll let you know.", "emotion": "neutral", "lang": "en"}
+{"text": "The data shows an increase.", "emotion": "neutral", "lang": "en"}
+{"text": "I see.", "emotion": "neutral", "lang": "en"}
+{"text": "The document is ready.", "emotion": "neutral", "lang": "en"}
+{"text": "The instructions are straightforward.", "emotion": "neutral", "lang": "en"}
+{"text": "The approach is reasonable.", "emotion": "neutral", "lang": "en"}
+{"text": "The plan is feasible.", "emotion": "neutral", "lang": "en"}
+{"text": "I'll look into that.", "emotion": "neutral", "lang": "en"}
+{"text": "I'm updating the records.", "emotion": "neutral", "lang": "en"}
+{"text": "Hello, how are you?", "emotion": "neutral", "lang": "en"}
+{"text": "The details are clear.", "emotion": "neutral", "lang": "en"}
+{"text": "I agree.", "emotion": "neutral", "lang": "en"}
+{"text": "I'll let you know.", "emotion": "neutral", "lang": "en"}
+{"text": "The plan is feasible.", "emotion": "neutral", "lang": "en"}
+{"text": "The day is pleasant.", "emotion": "neutral", "lang": "en"}
+{"text": "The solution is practical.", "emotion": "neutral", "lang": "en"}
+{"text": "I'm analyzing the data.", "emotion": "neutral", "lang": "en"}
+{"text": "I'm handling the matter.", "emotion": "neutral", "lang": "en"}
+{"text": "Can you explain this concept?", "emotion": "neutral", "lang": "en"}
+{"text": "How does this work?", "emotion": "neutral", "lang": "en"}
+{"text": "Nice to meet you.", "emotion": "neutral", "lang": "en"}
+{"text": "I agree.", "emotion": "neutral", "lang": "en"}
+{"text": "I need to check the schedule.", "emotion": "neutral", "lang": "en"}
+{"text": "The approach is reasonable.", "emotion": "neutral", "lang": "en"}
+{"text": "I understand.", "emotion": "neutral", "lang": "en"}
+{"text": "I'm reviewing the materials.", "emotion": "neutral", "lang": "en"}
+{"text": "The results indicate success.", "emotion": "neutral", "lang": "en"}
+{"text": "I'm organizing the files.", "emotion": "neutral", "lang": "en"}
+{"text": "The setting is comfortable.", "emotion": "neutral", "lang": "en"}
+{"text": "I'm checking the details.", "emotion": "neutral", "lang": "en"}
+{"text": "Can you tell me the time?", "emotion": "neutral", "lang": "en"}
+{"text": "I'll keep that in mind.", "emotion": "neutral", "lang": "en"}
+{"text": "The process is simple.", "emotion": "neutral", "lang": "en"}
+{"text": "I'm analyzing the data.", "emotion": "neutral", "lang": "en"}
+{"text": "I'll remember that.", "emotion": "neutral", "lang": "en"}
+{"text": "The method is effective.", "emotion": "neutral", "lang": "en"}
+{"text": "What is the capital of France?", "emotion": "neutral", "lang": "en"}
+{"text": "What are the main features?", "emotion": "neutral", "lang": "en"}
+{"text": "How does this work?", "emotion": "neutral", "lang": "en"}
+{"text": "Can you explain this concept?", "emotion": "neutral", "lang": "en"}
+{"text": "How does this work?", "emotion": "neutral", "lang": "en"}
+{"text": "Let me review the information.", "emotion": "neutral", "lang": "en"}
+{"text": "The report has been completed.", "emotion": "neutral", "lang": "en"}
+{"text": "I'm verifying the information.", "emotion": "neutral", "lang": "en"}
+{"text": "How do I use this?", "emotion": "neutral", "lang": "en"}
+{"text": "What does this mean?", "emotion": "neutral", "lang": "en"}
+{"text": "The environment is calm.", "emotion": "neutral", "lang": "en"}
+{"text": "What does this mean?", "emotion": "neutral", "lang": "en"}
+{"text": "Can you explain this concept?", "emotion": "neutral", "lang": "en"}
+{"text": "The instructions are straightforward.", "emotion": "neutral", "lang": "en"}
+{"text": "What is the capital of France?", "emotion": "neutral", "lang": "en"}
+{"text": "The meeting is scheduled for 3 PM.", "emotion": "neutral", "lang": "en"}
+{"text": "The project is on schedule.", "emotion": "neutral", "lang": "en"}
+{"text": "I'm processing the request.", "emotion": "neutral", "lang": "en"}
+{"text": "The task is finished.", "emotion": "neutral", "lang": "en"}
+{"text": "The explanation is helpful.", "emotion": "neutral", "lang": "en"}
+{"text": "I'm verifying the information.", "emotion": "neutral", "lang": "en"}
+{"text": "The day is pleasant.", "emotion": "neutral", "lang": "en"}
+{"text": "I'll think about it.", "emotion": "neutral", "lang": "en"}
+{"text": "That makes sense.", "emotion": "neutral", "lang": "en"}
+{"text": "The meeting is scheduled for 3 PM.", "emotion": "neutral", "lang": "en"}
+{"text": "Can you provide more information?", "emotion": "neutral", "lang": "en"}
+{"text": "That's interesting.", "emotion": "neutral", "lang": "en"}
+{"text": "How do I use this?", "emotion": "neutral", "lang": "en"}
+{"text": "I see.", "emotion": "neutral", "lang": "en"}
+{"text": "The information is correct.", "emotion": "neutral", "lang": "en"}
+{"text": "I need to check the schedule.", "emotion": "neutral", "lang": "en"}
+{"text": "I'm reviewing the materials.", "emotion": "neutral", "lang": "en"}
+{"text": "The solution is practical.", "emotion": "neutral", "lang": "en"}
+{"text": "What are the main features?", "emotion": "neutral", "lang": "en"}
+{"text": "Can you tell me the time?", "emotion": "neutral", "lang": "en"}
+{"text": "I'll take note of that.", "emotion": "neutral", "lang": "en"}
+{"text": "The circumstances are normal.", "emotion": "neutral", "lang": "en"}
+{"text": "What is the purpose of this?", "emotion": "neutral", "lang": "en"}
+{"text": "I need to check the schedule.", "emotion": "neutral", "lang": "en"}
 {"text": "The temperature is moderate.", "emotion": "neutral", "lang": "en"}
 {"text": "The sky is clear.", "emotion": "neutral", "lang": "en"}
-{"text": "The day is pleasant.", "emotion": "neutral", "lang": "en"}
-{"text": "The conditions are favorable.", "emotion": "neutral", "lang": "en"}
-{"text": "The situation is stable.", "emotion": "neutral", "lang": "en"}
-{"text": "The environment is calm.", "emotion": "neutral", "lang": "en"}
-{"text": "The atmosphere is peaceful.", "emotion": "neutral", "lang": "en"}
-{"text": "The setting is comfortable.", "emotion": "neutral", "lang": "en"}
-{"text": "The circumstances are normal.", "emotion": "neutral", "lang": "en"}
+{"text": "I'm reviewing the materials.", "emotion": "neutral", "lang": "en"}
+{"text": "I'm checking the details.", "emotion": "neutral", "lang": "en"}

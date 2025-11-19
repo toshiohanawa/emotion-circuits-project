@@ -1,118 +1,31 @@
-# Phase 3 — Emotion Vector Construction
+# Phase 3 — 感情ベクトル・サブスペース構築（run_phase3_vectors）
 
 ## 🎯 目的
-
-- sentence-end vectors（文章末の residual）
-- token-based vectors（emotion token ベース）
-- 各感情の平均ベクトルを計算
+- Phase2で抽出した活性から、感情ごとの差分ベクトルを計算し、層別に平均ベクトルとPCAサブスペースを得る。
 
 ## 📦 生成物
-
-- `emotion_vectors.pkl` (sentence-end)
-- `emotion_vectors_token_based.pkl` (token-based)
-- `docs/phase3_report.md`
+- `results/<profile>/emotion_vectors/<model>_vectors_token_based.pkl`
+- `results/<profile>/emotion_subspaces/<model>_subspaces.pkl`
+- 本レポート（例: `docs/phase3_report.md`）
 
 ## 🚀 実行コマンド例
-
 ```bash
-python -m src.analysis.emotion_vectors --model gpt2
-python -m src.analysis.emotion_vectors_token_based --model gpt2
+python -m src.analysis.run_phase3_vectors \
+  --profile baseline \
+  --model gpt2_small \
+  --n-components 8 \
+  --use-torch \
+  --device mps
 ```
+※ 配線確認なら baseline_smoke で少数サンプル実行。
+※ `--use-torch --device mps` でGPU/MPS加速PCAを使用（従来のsklearn版は `--no-use-torch`）。
 
 ## 📄 レポート項目
-
-### 1. sentence-end / token-based 手法の比較
-
-#### Sentence-end手法
-- 説明: [文章末のresidual streamを使用]
-- メリット: [メリットの説明]
-- デメリット: [デメリットの説明]
-
-#### Token-based手法
-- 説明: [感情語トークンのresidual streamを使用]
-- メリット: [メリットの説明]
-- デメリット: [デメリットの説明]
-
-#### 比較結果
-| 手法 | 安定性 | 解釈可能性 | 計算コスト |
-|------|--------|----------|-----------|
-| Sentence-end | [評価] | [評価]   | [評価]    |
-| Token-based  | [評価] | [評価]   | [評価]    |
-
-### 2. 感情間の cosine 類似（表）
-
-#### Sentence-end手法
-
-| 感情1 | 感情2 | Cosine類似度 |
-|------|------|------------|
-| Gratitude | Anger | [値] |
-| Gratitude | Apology | [値] |
-| Anger | Apology | [値] |
-
-#### Token-based手法
-
-| 感情1 | 感情2 | Cosine類似度 |
-|------|------|------------|
-| Gratitude | Anger | [値] |
-| Gratitude | Apology | [値] |
-| Anger | Apology | [値] |
-
-### 3. 層ごとのベクトル強度
-
-#### L1 Norm
-| 層 | Gratitude | Anger | Apology |
-|----|----------|-------|---------|
-| 0  | [値]     | [値]  | [値]    |
-| 3  | [値]     | [値]  | [値]    |
-| 6  | [値]     | [値]  | [値]    |
-| 9  | [値]     | [値]  | [値]    |
-| 11 | [値]     | [値]  | [値]    |
-
-#### L2 Norm
-| 層 | Gratitude | Anger | Apology |
-|----|----------|-------|---------|
-| 0  | [値]     | [値]  | [値]    |
-| 3  | [値]     | [値]  | [値]    |
-| 6  | [値]     | [値]  | [値]    |
-| 9  | [値]     | [値]  | [値]    |
-| 11 | [値]     | [値]  | [値]    |
-
-### 4. トークン数の影響
-
-#### 感情語トークン数
-| 感情カテゴリ | 平均トークン数 | 最小 | 最大 |
-|------------|-------------|------|------|
-| Gratitude  | [数]        | [数] | [数] |
-| Anger      | [数]        | [数] | [数] |
-| Apology    | [数]        | [数] | [数] |
-
-#### トークン数とベクトル安定性
-- [トークン数がベクトル安定性に与える影響の考察]
-
-### 5. モデル間比較
-
-#### モデル間の感情ベクトル類似度
-| モデル1 | モデル2 | Gratitude | Anger | Apology |
-|---------|---------|----------|-------|---------|
-| gpt2    | pythia-160m | [値] | [値] | [値] |
-| gpt2    | gpt-neo-125M | [値] | [値] | [値] |
-| pythia-160m | gpt-neo-125M | [値] | [値] | [値] |
-
-### 6. 考察
-
-#### 手法の選択
-- [どの手法を採用するか、その理由]
-
-#### 発見
-- [重要な発見]
-
-#### 課題
-- [発見された課題]
-
-#### 次のフェーズへの準備
-- [Phase 4以降で使用するベクトルの選択理由]
-
-## 📝 備考
-
-[その他の注意事項やメモ]
-
+1. 実行設定
+   - プロファイル / モデル / n_components / 入力活性ファイル
+2. 感情ベクトルの概要
+   - 層ごとのノルム、感情間cos類似など
+3. サブスペース（PCA）の概要
+   - explained_variance_ratio、主成分の解釈メモ
+4. 次のアクション
+   - Phase4 アライメント/Phase5 パッチングで利用するファイルパス

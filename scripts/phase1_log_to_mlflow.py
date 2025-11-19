@@ -1,5 +1,6 @@
 """
-Phase 1: データセット情報をMLflowに記録
+Phase 1: データセット概要をMLflowに記録する補助スクリプト。
+現行の標準パイプライン（baseline≈225/感情、baseline_smokeは少数）に対応。
 """
 import argparse
 import json
@@ -14,7 +15,7 @@ from src.utils.project_context import ProjectContext, profile_help_text
 
 def main():
     """データセット情報をMLflowに記録"""
-    parser = argparse.ArgumentParser(description="Log Phase 1 dataset statistics to MLflow")
+    parser = argparse.ArgumentParser(description="Phase1 データセット統計をMLflowに記録（現行パイプライン用）")
     parser.add_argument("--profile", type=str, choices=list_profiles(), default="baseline",
                         help=f"Dataset profile ({profile_help_text()})")
     args = parser.parse_args()

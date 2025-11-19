@@ -2,18 +2,16 @@
 
 各フェーズの実験レポートを作成するためのテンプレート集です。
 
-## 📁 テンプレート一覧
+## 📁 テンプレート一覧（現行パイプライン）
 
 - `phase0_setup_template.md` - Phase 0: 環境構築
 - `phase1_dataset_template.md` - Phase 1: データセット構築
-- `phase2_activations_template.md` - Phase 2: 活性抽出
-- `phase3_vectors_template.md` - Phase 3: 感情ベクトル構築
-- `phase3.5_subspace_template.md` - Phase 3.5: サブスペース解析とアライメント
-- `phase4_patching_template.md` - Phase 4: 簡易Activation Patching
-- `phase5_sweep_template.md` - Phase 5: 層×αスイープ実験
-- `phase6_head_screening_template.md` - Phase 6: HeadスクリーニングとAblation
-- `phase7_head_patching_template.md` - Phase 7: Head Patching
-- `phase8_circuit_analysis_template.md` - Phase 8: OV/QK回路解析
+- `phase2_activations_template.md` - Phase 2: 活性抽出（run_phase2_activations）
+- `phase3_vectors_template.md` - Phase 3: 感情ベクトル・サブスペース構築（run_phase3_vectors）
+- `phase4_alignment_template.md` - Phase 4: サブスペースアライメント（run_phase4_alignment）
+- `phase5_residual_patching_template.md` - Phase 5: 残差パッチング＋ランダム対照（run_phase5_residual_patching）
+- `phase6_head_template.md` - Phase 6: ヘッドパッチング/スクリーニング（run_phase6_head_patching, run_phase6_head_screening）
+- `phase7_statistics_template.md` - Phase 7: 統計集約（run_phase7_statistics）
 
 ## 🚀 使用方法
 
@@ -45,4 +43,3 @@
 
 - `docs/implementation_plan.md` - 実装計画の詳細
 - `docs/report/` - 実際のレポート例
-

@@ -1,6 +1,6 @@
 """
-Phase 2: 全モデル×全感情カテゴリで内部活性を抽出
-MLflowに記録しながら実行。データセットはプロファイルで指定する。
+Phase 2: 現行パイプラインの活性抽出をモデルごとに一括実行する補助スクリプト。
+`run_phase2_activations` をモデル単位で呼び出し、プロファイル（baseline/baseline_smoke）を指定して実行する。
 """
 import argparse
 import time
@@ -15,153 +15,89 @@ from src.utils.mlflow_utils import (
     log_metrics_dict,
     log_artifact_file,
 )
-from src.utils.model_utils import ensure_model_subdir, sanitize_model_name
+from src.utils.model_utils import sanitize_model_name
 from src.utils.project_context import ProjectContext, profile_help_text
+from src.models.model_registry import list_model_names
 
-# モデルリスト
-MODELS = [
-    "gpt2",
-    "EleutherAI/pythia-160m",
-    "EleutherAI/gpt-neo-125M"
-]
-
-# 感情カテゴリリスト
-EMOTIONS = ["gratitude", "anger", "apology", "neutral"]
-
-
-def extract_activations_for_model_emotion(
-    model: str,
-    emotion: str,
-    dataset_path: Path,
-    output_root: Path,
-) -> dict:
-    """
-    特定のモデル×感情カテゴリで活性を抽出
-    
-    Returns:
-        実行結果の辞書（処理時間、ファイルサイズなど）
-    """
-    model_short = sanitize_model_name(model)
-    output_dir = ensure_model_subdir(output_root, model)
-    
-    start_time = time.time()
-    
-    # 活性抽出を実行
+def run_phase2_for_model(model: str, profile: str, layers: str | None) -> dict:
+    """指定モデルで run_phase2_activations を実行し、ログを返す。"""
     import sys
+
     python_exec = sys.executable
     cmd = [
-        python_exec, "-m", "src.models.extract_activations",
-        "--model", model,
-        "--dataset", str(dataset_path),
-        "--output", str(output_dir),
-        "--emotion", emotion
+        python_exec,
+        "-m",
+        "src.analysis.run_phase2_activations",
+        "--profile",
+        profile,
+        "--model",
+        model,
     ]
-    
-    result = subprocess.run(
-        cmd,
-        capture_output=True,
-        text=True,
-        cwd=Path.cwd()
-    )
-    
+    if layers:
+        cmd += ["--layers"] + layers.split()
+    start_time = time.time()
+    result = subprocess.run(cmd, capture_output=True, text=True, cwd=Path.cwd())
     elapsed_time = time.time() - start_time
-    
-    # 出力ファイルのサイズを取得
-    output_file = output_dir / f"activations_{emotion}.pkl"
-    file_size = output_file.stat().st_size if output_file.exists() else 0
-    
     return {
         "success": result.returncode == 0,
         "elapsed_time": elapsed_time,
-        "file_size": file_size,
         "stdout": result.stdout,
-        "stderr": result.stderr
+        "stderr": result.stderr,
     }
 
 
 def main():
-    """全モデル×全感情カテゴリで活性抽出を実行"""
-    parser = argparse.ArgumentParser(description="Phase 2 activation extraction sweep")
+    """run_phase2_activations をモデルごとに呼び出すバッチスクリプト"""
+    parser = argparse.ArgumentParser(description="Phase2活性抽出をモデルごとに一括実行（現行パイプライン用）")
     parser.add_argument("--profile", type=str, choices=list_profiles(), default="baseline",
-                        help=f"Dataset profile to use ({profile_help_text()})")
+                        help=f"使用するプロファイル ({profile_help_text()})")
+    parser.add_argument("--models", type=str, nargs="*", default=None,
+                        help="実行するモデル（未指定ならmodel_registryの全モデル）")
+    parser.add_argument("--layers", type=str, default=None,
+                        help="層指定（例: \"0 3 6 9 11\"。未指定ならデフォルト）")
     args = parser.parse_args()
     
     context = ProjectContext(args.profile)
-    dataset_path = context.dataset_path()
-    output_root = context.results_dir() / "activations"
     logs_root = context.results_dir() / "logs" / "phase2"
     logs_root.mkdir(parents=True, exist_ok=True)
-    
-    # MLflow実験を設定
-    experiment_name = auto_experiment_from_repo()
-    
-    total_runs = len(MODELS) * len(EMOTIONS)
-    run_count = 0
-    
-    print(f"Starting Phase 2: Extracting activations for {total_runs} model×emotion combinations")
-    print(f"  - Dataset: {dataset_path}")
-    print(f"  - Results root: {output_root}")
-    print("=" * 80)
-    
-    for model in MODELS:
-        model_short = sanitize_model_name(model)
-        print(f"\n{'='*80}")
-        print(f"Model: {model} ({model_short})")
-        print(f"{'='*80}")
-        
-        for emotion in EMOTIONS:
-            run_count += 1
-            run_name = f"phase2_{model_short}_{emotion}"
-            
-            print(f"\n[{run_count}/{total_runs}] Processing: {model_short} × {emotion}")
-            
-            with mlflow.start_run(run_name=run_name, nested=True):
-                # パラメータを記録
-                params = {
-                    "phase": "phase2",
-                    "model": model,
-                    "model_short": model_short,
-                    "emotion": emotion,
-                    "dataset": str(dataset_path)
-                }
-                log_params_dict(params)
-                
-                # 活性抽出を実行
-                result = extract_activations_for_model_emotion(
-                    model,
-                    emotion,
-                    dataset_path,
-                    output_root,
-                )
-                
-                # ログファイルを書き出し、MLflowにアップロード
-                log_file = logs_root / f"{model_short}_{emotion}.log"
-                log_file.parent.mkdir(parents=True, exist_ok=True)
-                with open(log_file, "w") as fh:
-                    fh.write("=== STDOUT ===\n")
-                    fh.write(result["stdout"])
-                    fh.write("\n\n=== STDERR ===\n")
-                    fh.write(result["stderr"])
-                log_artifact_file(str(log_file), artifact_path=f"phase2/{model_short}")
+    models = args.models or list_model_names()
 
-                # メトリクスを記録
-                metrics = {
+    auto_experiment_from_repo()
+
+    total_runs = len(models)
+    run_count = 0
+    print(f"Phase2 batch start: profile={args.profile}, models={models}")
+    for model in models:
+        run_count += 1
+        run_name = f"phase2_{sanitize_model_name(model)}"
+        with mlflow.start_run(run_name=run_name, nested=True):
+            params = {
+                "phase": "phase2",
+                "model": model,
+                "profile": args.profile,
+                "layers": args.layers or "default",
+            }
+            log_params_dict(params)
+            result = run_phase2_for_model(model, args.profile, args.layers)
+            log_file = logs_root / f"{sanitize_model_name(model)}.log"
+            with open(log_file, "w") as fh:
+                fh.write("=== STDOUT ===\n")
+                fh.write(result["stdout"])
+                fh.write("\n\n=== STDERR ===\n")
+                fh.write(result["stderr"])
+            log_artifact_file(str(log_file), artifact_path="phase2")
+            log_metrics_dict(
+                {
                     "elapsed_time_seconds": result["elapsed_time"],
-                    "file_size_bytes": result["file_size"],
-                    "file_size_mb": result["file_size"] / (1024 * 1024),
-                    "success": 1 if result["success"] else 0
+                    "success": 1 if result["success"] else 0,
                 }
-                log_metrics_dict(metrics)
-                
-                if result["success"]:
-                    print(f"  ✓ Success: {result['elapsed_time']:.2f}s, {result['file_size']/(1024*1024):.2f}MB")
-                else:
-                    print(f"  ✗ Failed: {result['stderr']}")
-                    print(f"  Error output: {result['stderr'][:200]}")
-    
-    print(f"\n{'='*80}")
-    print(f"Phase 2 completed: {run_count}/{total_runs} runs")
-    print(f"{'='*80}")
+            )
+            if result["success"]:
+                print(f"[{run_count}/{total_runs}] {model}: ✓ ({result['elapsed_time']:.2f}s)")
+            else:
+                print(f"[{run_count}/{total_runs}] {model}: ✗ {result['stderr'][:200]}")
+
+    print(f"Phase2 batch finished: {run_count}/{total_runs}")
 
 
 if __name__ == "__main__":

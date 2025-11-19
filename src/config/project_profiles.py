@@ -53,14 +53,17 @@ DATASET_PROFILES: Mapping[str, DatasetProfile] = {
         dataset_file="emotion_dataset.jsonl",
         prompt_suffix="",
         results_subdir="baseline",
-        description="Original 70 prompts per emotion (280 samples total).",
+        description=(
+            "標準プロファイル（感情ごとに225サンプル前後を目標）。"
+            "旧版では70件/感情だったが、統計的検出力向上のため約225件に刷新。"
+        ),
     ),
-    "extended": DatasetProfile(
-        name="extended",
-        dataset_file="emotion_dataset_extended.jsonl",
-        prompt_suffix="_extended",
-        results_subdir="extended",
-        description="Extended 100 prompts per emotion (400 samples total).",
+    "baseline_smoke": DatasetProfile(
+        name="baseline_smoke",
+        dataset_file="emotion_dataset_smoke.jsonl",
+        prompt_suffix="",
+        results_subdir="baseline_smoke",
+        description="スモークテスト用の極小プロファイル（各感情3〜5サンプル程度、配線確認用）。",
     ),
 }
 
@@ -76,4 +79,3 @@ def get_profile(name: str) -> DatasetProfile:
         return DATASET_PROFILES[name]
     except KeyError as exc:
         raise KeyError(f"Unknown dataset profile '{name}'. Available: {list_profiles()}") from exc
-

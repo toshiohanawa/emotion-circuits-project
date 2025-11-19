@@ -1,15 +1,17 @@
 """
-Activation Patching実装
-中立文に対する推論時にresidual streamを改変して、感情方向の操作が出力に与える因果的影響を検証
+標準パイプラインで利用する残差パッチングのコア実装。
+中立文に対する推論時にresidual streamを改変し、感情方向の操作が出力へ与える因果的影響を検証する。
 """
 import json
 import pickle
-import torch
-import numpy as np
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Tuple
+
+import numpy as np
+import torch
 from transformer_lens import HookedTransformer
-from tqdm import tqdm
+
+from src.utils.device import get_default_device_str
 
 
 class ActivationPatcher:
@@ -24,7 +26,7 @@ class ActivationPatcher:
             device: 使用するデバイス
         """
         self.model_name = model_name
-        self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = device or get_default_device_str()
         
         print(f"Loading model: {model_name}")
         self.model = HookedTransformer.from_pretrained(model_name, device=self.device)
@@ -61,6 +63,28 @@ class ActivationPatcher:
         token_ids = new_tokens[0].tolist()
         decoded = self.model.tokenizer.decode(token_ids, skip_special_tokens=True)
         return decoded.strip()
+    
+    def _decode_new_tokens_batch(self, tokens: torch.Tensor, prompt_lengths: List[int]) -> List[str]:
+        """
+        バッチでデコード（各サンプルのprompt長が異なる場合に対応）。
+        
+        Args:
+            tokens: [batch_size, seq_len] のトークン
+            prompt_lengths: 各サンプルのプロンプト長のリスト
+        
+        Returns:
+            デコードされたテキストのリスト
+        """
+        texts = []
+        for i, prompt_len in enumerate(prompt_lengths):
+            new_tokens = tokens[i, prompt_len:]
+            if new_tokens.shape[0] == 0:
+                texts.append("")
+                continue
+            token_ids = new_tokens.tolist()
+            decoded = self.model.tokenizer.decode(token_ids, skip_special_tokens=True)
+            texts.append(decoded.strip())
+        return texts
 
     def _build_alpha_schedule(
         self,
@@ -186,6 +210,61 @@ class ActivationPatcher:
         continuation = self._decode_new_tokens(generated, tokens.shape[1])
         return (prompt + " " + continuation).strip()
     
+    def _generate_text_batch(
+        self,
+        prompts: List[str],
+        max_new_tokens: int = 20,
+        batch_size: int = 8,
+    ) -> List[str]:
+        """
+        バッチでパッチなしのテキスト生成。
+        
+        Args:
+            prompts: 入力プロンプトのリスト
+            max_new_tokens: 生成する最大トークン数
+            batch_size: バッチサイズ（デフォルト: 8）
+        
+        Returns:
+            生成されたテキストのリスト
+        """
+        # 各プロンプトをトークン化（長さごとにまとめて処理し、パディングを回避）
+        ordered_outputs: List[Optional[str]] = [None] * len(prompts)
+        prompt_records = []
+        for idx, prompt in enumerate(prompts):
+            tokens = self.model.to_tokens(prompt)
+            prompt_records.append((idx, prompt, tokens, tokens.shape[1]))
+        
+        # 長さでソートし、同じ長さのものだけを同一バッチとして処理
+        prompt_records.sort(key=lambda x: x[3])
+        pos = 0
+        while pos < len(prompt_records):
+            current_len = prompt_records[pos][3]
+            batch_items = []
+            while (
+                pos < len(prompt_records)
+                and prompt_records[pos][3] == current_len
+                and len(batch_items) < batch_size
+            ):
+                batch_items.append(prompt_records[pos])
+                pos += 1
+            
+            batch_tokens = torch.cat([item[2] for item in batch_items], dim=0)
+            prompt_lens = [current_len] * len(batch_items)
+            
+            with torch.no_grad():
+                generated = self.model.generate(
+                    batch_tokens,
+                    max_new_tokens=max_new_tokens,
+                    **self.generation_config,
+                )
+            
+            batch_texts = self._decode_new_tokens_batch(generated, prompt_lens)
+            for (orig_idx, prompt, _, _), text in zip(batch_items, batch_texts):
+                ordered_outputs[orig_idx] = (prompt + " " + text).strip()
+        
+        # 型ヒント回避のため再度キャスト
+        return [text for text in ordered_outputs if text is not None]
+    
     def generate_with_patching(
         self,
         prompt: str,
@@ -233,6 +312,126 @@ class ActivationPatcher:
         continuation = self._decode_new_tokens(generated, prompt_len)
         return (prompt + " " + continuation).strip()
     
+    def generate_with_patching_batch(
+        self,
+        prompts: List[str],
+        emotion_vector: np.ndarray,
+        layer_idx: int,
+        alpha: float = 1.0,
+        max_new_tokens: int = 20,
+        patch_window: Optional[int] = None,
+        patch_positions: Optional[Sequence[int]] = None,
+        alpha_schedule: Optional[Sequence[float]] = None,
+        alpha_decay_rate: Optional[float] = None,
+        patch_new_tokens_only: bool = False,
+        batch_size: int = 8,
+    ) -> List[str]:
+        """
+        バッチでパッチを適用してテキストを生成。
+        
+        Args:
+            prompts: 入力プロンプトのリスト
+            emotion_vector: 感情方向ベクトル [d_model]
+            layer_idx: パッチを適用する層
+            alpha: パッチの強度
+            max_new_tokens: 生成する最大トークン数
+            patch_window: 末尾から何トークン分をパッチするか
+            patch_positions: 明示的にパッチする位置
+            alpha_schedule: 各生成ステップのα
+            alpha_decay_rate: αを逓減させる場合のレート
+            patch_new_tokens_only: Trueの場合、生成済みトークンには適用しない
+            batch_size: バッチサイズ
+        
+        Returns:
+            生成されたテキストのリスト
+        """
+        schedule = self._build_alpha_schedule(
+            base_alpha=alpha,
+            max_steps=max_new_tokens,
+            alpha_schedule=alpha_schedule,
+            decay_rate=alpha_decay_rate,
+        )
+        patch_vector = torch.tensor(emotion_vector, device=self.device, dtype=self.model.cfg.dtype)
+        
+        ordered_outputs: List[Optional[str]] = [None] * len(prompts)
+        prompt_records = []
+        for idx, prompt in enumerate(prompts):
+            tokens = self.model.to_tokens(prompt)
+            prompt_records.append((idx, prompt, tokens, tokens.shape[1]))
+        
+        prompt_records.sort(key=lambda x: x[3])
+        pos = 0
+        while pos < len(prompt_records):
+            current_len = prompt_records[pos][3]
+            batch_items = []
+            while (
+                pos < len(prompt_records)
+                and prompt_records[pos][3] == current_len
+                and len(batch_items) < batch_size
+            ):
+                batch_items.append(prompt_records[pos])
+                pos += 1
+            
+            tokens_list = [item[2] for item in batch_items]
+            prompt_lens = [current_len] * len(batch_items)
+            batch_tokens = torch.cat(tokens_list, dim=0)
+            batch_size_actual = batch_tokens.shape[0]
+            
+            # Hook関数を定義（バッチ対応）
+            def patch_hook(activation, hook):
+                if hook.name != f"blocks.{layer_idx}.hook_resid_pre":
+                    return activation
+                if activation.shape[1] == 0:
+                    return activation
+                # activation shape: [batch, seq, d_model]
+                seq_len = activation.shape[1]
+                activation = activation.clone()
+                batch_limit = min(batch_size_actual, activation.shape[0])
+                
+                # 各サンプルごとに処理（prompt長が異なる可能性があるため）
+                for batch_idx in range(batch_limit):
+                    prompt_len = prompt_lens[batch_idx]
+                    generated_len = max(seq_len - prompt_len, 0)
+                    step = min(generated_len, max_new_tokens - 1)
+                    alpha_value = schedule[step] if step < len(schedule) else 0.0
+                    
+                    if alpha_value == 0.0:
+                        continue
+                    
+                    indices = self._resolve_patch_positions(
+                        seq_len,
+                        prompt_len,
+                        patch_window,
+                        patch_positions,
+                        patch_new_tokens_only,
+                    )
+                    
+                    for idx in indices:
+                        if 0 <= idx < activation.shape[1]:
+                            activation[batch_idx, idx, :] += alpha_value * patch_vector.to(activation.dtype)
+                
+                return activation
+            
+            hook_name = f"blocks.{layer_idx}.hook_resid_pre"
+            handle = self.model.add_hook(hook_name, patch_hook)
+            try:
+                with torch.no_grad():
+                    generated = self.model.generate(
+                        batch_tokens,
+                        max_new_tokens=max_new_tokens,
+                        **self.generation_config,
+                    )
+            finally:
+                if hook_name in self.model.hook_dict:
+                    hook_point = self.model.hook_dict[hook_name]
+                    hook_point.fwd_hooks = []
+            
+            batch_texts = self._decode_new_tokens_batch(generated, prompt_lens)
+            for (orig_idx, prompt, _, _), text in zip(batch_items, batch_texts):
+                ordered_outputs[orig_idx] = (prompt + " " + text).strip()
+        
+        return [text for text in ordered_outputs if text is not None]
+    
     def evaluate_patching_effect(
         self,
         prompts: List[str],
@@ -266,11 +465,13 @@ class ActivationPatcher:
         
         # Baseline（パッチなし）の生成
         print("Generating baseline outputs...")
-        for prompt in tqdm(prompts, desc="Baseline"):
+        for i, prompt in enumerate(prompts):
             results['baseline'][prompt] = self._generate_text(
                 prompt,
                 max_new_tokens=max_new_tokens,
             )
+            if (i + 1) % 10 == 0 or (i + 1) == len(prompts):
+                print(f"  Baseline進捗: {i+1}/{len(prompts)}")
         
         # 各感情方向でパッチング
         for emotion_label, emotion_vec in emotion_vectors.items():
@@ -282,7 +483,7 @@ class ActivationPatcher:
                 print(f"\nPatching {emotion_label} with alpha={alpha}...")
                 alpha_results = {}
                 
-                for prompt in tqdm(prompts, desc=f"{emotion_label} (α={alpha})"):
+                for i, prompt in enumerate(prompts):
                     try:
                         generated = self.generate_with_patching(
                             prompt,
@@ -300,6 +501,8 @@ class ActivationPatcher:
                     except Exception as e:
                         print(f"Error with prompt '{prompt}': {e}")
                         alpha_results[prompt] = f"ERROR: {str(e)}"
+                    if (i + 1) % 10 == 0 or (i + 1) == len(prompts):
+                        print(f"  {emotion_label} (α={alpha}) 進捗: {i+1}/{len(prompts)}")
                 
                 results['patched'][emotion_label][alpha] = alpha_results
         

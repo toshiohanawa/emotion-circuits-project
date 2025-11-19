@@ -1,120 +1,72 @@
 """
-Code-paper consistency checker.
-
-Lightweight consistency checks between paper claims and repo artifacts.
-Current checks:
-- Dataset sizes for baseline/extended JSONL
-- Presence of key result files (emotion_vectors, subspace overlaps)
-- CLI argument presence for major scripts
-
-Note:
-- Missing result artifacts (e.g., results/baseline/*.pkl) are treated as a WARNING and
-  cause the corresponding checks to be skipped, not as a CI failure.
-- The script only exits with a non-zero status when actual inconsistencies are detected.
+現行パイプライン用の簡易コンシステンシチェック。
+- データセット行数の目安（baseline≈900行=225/感情×4、baseline_smokeは少数）
+- 主要CLIが存在するかの確認
+結果アーティファクトは再生成前提のため存在チェックは行わない。
 """
+from __future__ import annotations
+
 import sys
-import json
 from pathlib import Path
 
-
-def check_dataset_sizes():
-    expected = {
-        "data/emotion_dataset.jsonl": 280,
-        "data/emotion_dataset_extended.jsonl": 400,
-    }
-    for rel_path, exp in expected.items():
-        path = Path(rel_path)
-        if not path.exists():
-            print(f"Missing dataset: {path}")
-            return False
-        count = sum(1 for _ in path.open())
-        if count != exp:
-            print(f"Dataset size mismatch for {path}: got {count}, expected {exp}")
-            return False
-    return True
+from src.config.project_profiles import EMOTION_LABELS, get_profile, list_profiles
 
 
-def check_required_files():
-    """
-    Check for required result artifacts.
-    Returns (check_executed, check_passed) tuple.
-    - check_executed: True if at least one file exists and was checked, False if all were missing
-    - check_passed: True if all existing files passed, False if any inconsistency found
-    """
-    required = [
-        "results/baseline/cross_model_subspace_overlap.csv",
-        "results/baseline/emotion_vectors/gpt2_vectors.pkl",
-        "results/baseline/alignment/model_alignment_gpt2_pythia.pkl",
-    ]
-    check_executed = False
-    check_passed = True
-    
-    for rel in required:
-        path = Path(rel)
-        if not path.exists():
-            print(f"[WARN] Missing artifact, skipping consistency check for this item: {rel}")
-            continue
-        
-        # File exists, so we're actually checking it
-        check_executed = True
-        # Currently we only check existence, so if we get here, it passed
-        # In the future, if we add more checks here, we'd validate them
-    
-    return check_executed, check_passed
-
-
-def check_cli_args():
-    # verify that key CLI flags mentioned in docs exist in scripts
-    targets = {
-        "src/models/activation_patching.py": ["--max-new-tokens", "--patch-window"],
-        "src/models/activation_patching_sweep.py": ["--alpha"],
-        "src/models/head_patching.py": ["--patch-mode"],
-    }
+def check_dataset_sizes() -> bool:
     ok = True
-    for rel, flags in targets.items():
-        content = Path(rel).read_text()
-        for flag in flags:
-            if flag not in content:
-                print(f"Flag {flag} not found in {rel}")
+    for profile_name in list_profiles():
+        profile = get_profile(profile_name)
+        path = profile.dataset_path()
+        if not path.exists():
+            print(f"[WARN] データセットが見つかりません: {path}")
+            ok = False
+            continue
+        count = sum(1 for _ in path.open())
+        if profile_name == "baseline":
+            target = 225 * len(EMOTION_LABELS)
+            if count < target:
+                print(f"[WARN] baseline の行数が目標より少ないかもしれません: {count} 行 (目安 {target} 行)")
                 ok = False
+        elif profile_name == "baseline_smoke":
+            if count > 50:
+                print(f"[WARN] baseline_smoke の行数が多すぎます: {count} 行（少数での配線確認用を想定）")
+                ok = False
+    return ok
+
+
+def check_cli_presence() -> bool:
+    """主要CLIファイルが存在するかを確認（中身の検証は行わない）。"""
+    required = [
+        "src/analysis/run_phase2_activations.py",
+        "src/analysis/run_phase3_vectors.py",
+        "src/analysis/run_phase4_alignment.py",
+        "src/analysis/run_phase5_residual_patching.py",
+        "src/analysis/run_phase6_head_patching.py",
+        "src/analysis/run_phase6_head_screening.py",
+        "src/analysis/run_phase7_statistics.py",
+    ]
+    ok = True
+    for rel in required:
+        if not Path(rel).exists():
+            print(f"[ERR] CLI が見つかりません: {rel}")
+            ok = False
     return ok
 
 
 def main():
     checks = [
-        ("dataset_sizes", check_dataset_sizes, True),  # (name, function, returns_simple_bool)
-        ("required_files", check_required_files, False),  # Returns tuple (check_executed, check_passed)
-        ("cli_args", check_cli_args, True),
+        ("dataset_sizes", check_dataset_sizes),
+        ("cli_presence", check_cli_presence),
     ]
     success = True
-    any_check_run = False
-    
-    for name, fn, returns_simple_bool in checks:
-        if returns_simple_bool:
-            # Simple boolean return
-            result = fn()
-            if result:
-                any_check_run = True
-            else:
-                success = False
-        else:
-            # Returns tuple (check_executed, check_passed)
-            check_executed, check_passed = fn()
-            if check_executed:
-                any_check_run = True
-            if not check_passed:
-                success = False
-    
-    # Determine exit behavior
-    if not any_check_run:
-        print("[INFO] No consistency checks were run because all required artifacts were missing. Treating as success in CI.")
+    for name, fn in checks:
+        if not fn():
+            success = False
+    if success:
+        print("✓ コンシステンシチェック通過")
         sys.exit(0)
-    
-    if not success:
+    else:
         sys.exit(1)
-    
-    print("Consistency checks passed.")
-    sys.exit(0)
 
 
 if __name__ == "__main__":

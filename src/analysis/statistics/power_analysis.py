@@ -1,4 +1,8 @@
-"""Power analysis helpers for Phase 7.5."""
+"""Phase 7 検出力分析ヘルパー。
+
+masterplan.md の Phase 7「統計的厳密性」の一部として、
+post-hoc power と必要サンプル数の計算を提供する。
+"""
 from __future__ import annotations
 
 from dataclasses import dataclass

@@ -7,6 +7,12 @@ from typing import Dict, List, Optional
 import numpy as np
 import pandas as pd
 
+try:
+    from joblib import Parallel, delayed
+    HAS_JOBLIB = True
+except ImportError:
+    HAS_JOBLIB = False
+
 from src.utils.project_context import ProjectContext
 
 
@@ -51,12 +57,31 @@ def collect_k_sweep_results(context: ProjectContext) -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True)
 
 
+def _bootstrap_k_sample(overlap: np.ndarray, seed: int) -> float:
+    """Single bootstrap sample for k-selection (for parallelization)."""
+    rng = np.random.default_rng(seed)
+    idx = rng.integers(0, len(overlap), size=len(overlap))
+    return float(overlap[idx].mean())
+
+
 def summarize_k_selection(
     k_df: pd.DataFrame,
     n_bootstrap: int = 2000,
     alpha: float = 0.05,
+    n_jobs: int = 1,
 ) -> pd.DataFrame:
-    """Compute bootstrap summaries for overlap as a function of k."""
+    """
+    Compute bootstrap summaries for overlap as a function of k.
+    
+    Args:
+        k_df: DataFrame with k-sweep results
+        n_bootstrap: Number of bootstrap samples
+        alpha: Significance level
+        n_jobs: Number of parallel jobs (1 = sequential)
+    
+    Returns:
+        DataFrame with bootstrap summaries
+    """
     if k_df.empty:
         return pd.DataFrame()
     rng = np.random.default_rng(0)
@@ -69,8 +94,19 @@ def summarize_k_selection(
         mean_overlap = float(overlap.mean())
         std_overlap = float(overlap.std(ddof=1)) if overlap.size > 1 else 0.0
         if overlap.size > 1:
-            boot_idx = rng.integers(0, overlap.size, size=(n_bootstrap, overlap.size))
-            boot_means = overlap[boot_idx].mean(axis=1)
+            # Generate seeds for reproducibility
+            seeds = rng.integers(0, 2**31, size=n_bootstrap)
+            
+            if n_jobs == 1 or not HAS_JOBLIB:
+                # Sequential processing
+                boot_means = np.array([_bootstrap_k_sample(overlap, int(seed)) for seed in seeds])
+            else:
+                # Parallel processing with joblib
+                boot_means = np.array(
+                    Parallel(n_jobs=n_jobs)(
+                        delayed(_bootstrap_k_sample)(overlap, int(seed)) for seed in seeds
+                    )
+                )
             ci_lower = float(np.percentile(boot_means, 100 * (alpha / 2.0)))
             ci_upper = float(np.percentile(boot_means, 100 * (1.0 - alpha / 2.0)))
         else:

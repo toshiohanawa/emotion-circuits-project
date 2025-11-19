@@ -2,11 +2,20 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
 from scipy import stats
+
+try:
+    from joblib import Parallel, delayed
+    HAS_JOBLIB = True
+except ImportError:
+    HAS_JOBLIB = False
+    # fallback to multiprocessing if joblib is not available
+    from multiprocessing import Pool
+    from functools import partial
 
 from .data_loading import PatchingRun
 
@@ -18,6 +27,24 @@ class EffectComputationConfig:
     n_bootstrap: int = 2000
     alpha: float = 0.05
     random_seed: Optional[int] = None
+    n_jobs: int = 1  # Number of parallel jobs for bootstrap (1 = sequential)
+
+
+def _bootstrap_sample_mean(data: np.ndarray, seed: int) -> float:
+    """Single bootstrap sample for mean statistic (for parallelization)."""
+    rng = np.random.default_rng(seed)
+    sample = rng.choice(data, size=len(data), replace=True)
+    return float(sample.mean())
+
+
+def _bootstrap_sample_effect_size(data: np.ndarray, seed: int) -> float:
+    """Single bootstrap sample for effect size statistic (for parallelization)."""
+    rng = np.random.default_rng(seed)
+    sample = rng.choice(data, size=len(data), replace=True)
+    std = sample.std(ddof=1)
+    if std > 0:
+        return float(sample.mean() / std)
+    return 0.0
 
 
 def _bootstrap_ci(
@@ -26,23 +53,89 @@ def _bootstrap_ci(
     n_bootstrap: int,
     alpha: float,
     statistic: str = "mean",
+    n_jobs: int = 1,
 ) -> tuple[float, float]:
-    """Return percentile bootstrap CI for the requested statistic."""
+    """
+    Return percentile bootstrap CI for the requested statistic.
+    
+    Args:
+        data: Input data array
+        rng: Random number generator (for seed generation)
+        n_bootstrap: Number of bootstrap samples
+        alpha: Significance level
+        statistic: Type of statistic ("mean" or "effect_size")
+        n_jobs: Number of parallel jobs (1 = sequential)
+    
+    Returns:
+        (lower, upper) confidence interval bounds
+    """
     if len(data) == 0:
         return np.nan, np.nan
-    if statistic == "mean":
-        boot_samples = rng.choice(data, size=(n_bootstrap, len(data)), replace=True)
-        stats_arr = boot_samples.mean(axis=1)
-    elif statistic == "effect_size":
-        boot_samples = rng.choice(data, size=(n_bootstrap, len(data)), replace=True)
-        stds = boot_samples.std(axis=1, ddof=1)
-        with np.errstate(divide="ignore", invalid="ignore"):
-            stats_arr = np.where(stds > 0, boot_samples.mean(axis=1) / stds, 0.0)
+    
+    # Generate seeds for reproducibility
+    seeds = rng.integers(0, 2**31, size=n_bootstrap)
+    
+    if n_jobs == 1 or not HAS_JOBLIB:
+        # Sequential processing
+        if statistic == "mean":
+            stats_arr = np.array([_bootstrap_sample_mean(data, int(seed)) for seed in seeds])
+        elif statistic == "effect_size":
+            stats_arr = np.array([_bootstrap_sample_effect_size(data, int(seed)) for seed in seeds])
+        else:
+            raise ValueError(f"Unsupported statistic '{statistic}'")
     else:
-        raise ValueError(f"Unsupported statistic '{statistic}'")
+        # Parallel processing with joblib
+        if statistic == "mean":
+            stats_arr = np.array(
+                Parallel(n_jobs=n_jobs)(
+                    delayed(_bootstrap_sample_mean)(data, int(seed)) for seed in seeds
+                )
+            )
+        elif statistic == "effect_size":
+            stats_arr = np.array(
+                Parallel(n_jobs=n_jobs)(
+                    delayed(_bootstrap_sample_effect_size)(data, int(seed)) for seed in seeds
+                )
+            )
+        else:
+            raise ValueError(f"Unsupported statistic '{statistic}'")
+    
     lower = np.percentile(stats_arr, 100 * (alpha / 2.0))
     upper = np.percentile(stats_arr, 100 * (1.0 - alpha / 2.0))
     return float(lower), float(upper)
+
+
+def _bootstrap_unpaired_sample(
+    baseline: np.ndarray,
+    patched: np.ndarray,
+    seed: int,
+) -> Tuple[float, float]:
+    """
+    Single bootstrap sample for unpaired comparison (for parallelization).
+    
+    Returns:
+        (diff_stat, effect_stat) tuple
+    """
+    rng = np.random.default_rng(seed)
+    n_base = len(baseline)
+    n_patch = len(patched)
+    
+    idx_base = rng.integers(0, n_base, size=n_base)
+    idx_patch = rng.integers(0, n_patch, size=n_patch)
+    sample_base = baseline[idx_base]
+    sample_patch = patched[idx_patch]
+    
+    diff_stat = float(sample_patch.mean() - sample_base.mean())
+    var_base = sample_base.var(ddof=1)
+    var_patch = sample_patch.var(ddof=1)
+    pooled = np.sqrt(((n_base - 1) * var_base + (n_patch - 1) * var_patch) / max(n_base + n_patch - 2, 1))
+    
+    if pooled > 0:
+        effect_stat = float((sample_patch.mean() - sample_base.mean()) / pooled)
+    else:
+        effect_stat = 0.0
+    
+    return diff_stat, effect_stat
 
 
 def _bootstrap_unpaired(
@@ -51,27 +144,42 @@ def _bootstrap_unpaired(
     rng: np.random.Generator,
     n_bootstrap: int,
     alpha: float,
+    n_jobs: int = 1,
 ) -> tuple[tuple[float, float], tuple[float, float]]:
-    """Bootstrap CIs for two independent samples."""
+    """
+    Bootstrap CIs for two independent samples.
+    
+    Args:
+        baseline: Baseline sample array
+        patched: Patched sample array
+        rng: Random number generator (for seed generation)
+        n_bootstrap: Number of bootstrap samples
+        alpha: Significance level
+        n_jobs: Number of parallel jobs (1 = sequential)
+    
+    Returns:
+        ((diff_lower, diff_upper), (effect_lower, effect_upper)) confidence intervals
+    """
     n_base = len(baseline)
     n_patch = len(patched)
     if n_base == 0 or n_patch == 0:
         return (np.nan, np.nan), (np.nan, np.nan)
-    diff_stats: List[float] = []
-    effect_stats: List[float] = []
-    for _ in range(n_bootstrap):
-        idx_base = rng.integers(0, n_base, size=n_base)
-        idx_patch = rng.integers(0, n_patch, size=n_patch)
-        sample_base = baseline[idx_base]
-        sample_patch = patched[idx_patch]
-        diff_stats.append(float(sample_patch.mean() - sample_base.mean()))
-        var_base = sample_base.var(ddof=1)
-        var_patch = sample_patch.var(ddof=1)
-        pooled = np.sqrt(((n_base - 1) * var_base + (n_patch - 1) * var_patch) / max(n_base + n_patch - 2, 1))
-        if pooled > 0:
-            effect_stats.append(float((sample_patch.mean() - sample_base.mean()) / pooled))
-        else:
-            effect_stats.append(0.0)
+    
+    # Generate seeds for reproducibility
+    seeds = rng.integers(0, 2**31, size=n_bootstrap)
+    
+    if n_jobs == 1 or not HAS_JOBLIB:
+        # Sequential processing
+        results = [_bootstrap_unpaired_sample(baseline, patched, int(seed)) for seed in seeds]
+    else:
+        # Parallel processing with joblib
+        results = Parallel(n_jobs=n_jobs)(
+            delayed(_bootstrap_unpaired_sample)(baseline, patched, int(seed)) for seed in seeds
+        )
+    
+    diff_stats = [r[0] for r in results]
+    effect_stats = [r[1] for r in results]
+    
     low = np.percentile(diff_stats, 100 * (alpha / 2.0))
     high = np.percentile(diff_stats, 100 * (1.0 - alpha / 2.0))
     eff_low = np.percentile(effect_stats, 100 * (alpha / 2.0))
@@ -144,6 +252,7 @@ def compute_effect_stats(
             cfg.n_bootstrap,
             cfg.alpha,
             statistic="mean",
+            n_jobs=cfg.n_jobs,
         )
         stats_row["ci_lower"] = ci_lower
         stats_row["ci_upper"] = ci_upper
@@ -153,6 +262,7 @@ def compute_effect_stats(
             cfg.n_bootstrap,
             cfg.alpha,
             statistic="effect_size",
+            n_jobs=cfg.n_jobs,
         )
         stats_row["effect_size_ci_lower"] = eff_lower
         stats_row["effect_size_ci_upper"] = eff_upper
@@ -185,6 +295,7 @@ def compute_effect_stats(
             rng,
             cfg.n_bootstrap,
             cfg.alpha,
+            n_jobs=cfg.n_jobs,
         )
         stats_row["ci_lower"] = ci_lower
         stats_row["ci_upper"] = ci_upper

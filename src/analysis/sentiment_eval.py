@@ -10,7 +10,6 @@ import numpy as np
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Any
 from transformer_lens import HookedTransformer
-from tqdm import tqdm
 
 try:
     from transformers import AutoTokenizer, AutoModelForSequenceClassification
@@ -48,6 +47,44 @@ class TransformerSequenceClassifier:
             probs = torch.softmax(outputs.logits, dim=-1)[0].cpu().numpy()
         label_map = self.id2label or {i: str(i) for i in range(len(probs))}
         return {label_map[i]: float(probs[i]) for i in range(len(probs))}
+    
+    def predict_proba_batch(self, texts: List[str], batch_size: int = 32) -> List[Dict[str, float]]:
+        """
+        複数テキストをバッチで処理して確率分布を返す。
+        
+        Args:
+            texts: 評価するテキストのリスト
+            batch_size: バッチサイズ
+        
+        Returns:
+            各テキストの確率分布のリスト
+        """
+        results: List[Dict[str, float]] = []
+        label_map = self.id2label or {}
+        
+        for i in range(0, len(texts), batch_size):
+            batch_texts = texts[i:i + batch_size]
+            inputs = self.tokenizer(
+                batch_texts,
+                return_tensors="pt",
+                truncation=True,
+                max_length=512,
+                padding=True,
+            )
+            inputs = {k: v.to(self.device) for k, v in inputs.items()}
+            
+            with torch.no_grad():
+                outputs = self.model(**inputs)
+                probs = torch.softmax(outputs.logits, dim=-1).cpu().numpy()
+            
+            for prob in probs:
+                if label_map:
+                    result = {label_map.get(j, str(j)): float(prob[j]) for j in range(len(prob))}
+                else:
+                    result = {str(j): float(prob[j]) for j in range(len(prob))}
+                results.append(result)
+        
+        return results
 
 
 class SentimentEvaluator:
@@ -313,7 +350,7 @@ class SentimentEvaluator:
         """
         results = []
         
-        for prompt in tqdm(prompts, desc="Evaluating generations"):
+        for i, prompt in enumerate(prompts):
             try:
                 evaluation = self.evaluate_generation(
                     prompt,
@@ -328,6 +365,8 @@ class SentimentEvaluator:
                     'prompt': prompt,
                     'error': str(exc)
                 })
+            if (i + 1) % 10 == 0 or (i + 1) == len(prompts):
+                print(f"  評価進捗: {i+1}/{len(prompts)}")
         
         return results
 

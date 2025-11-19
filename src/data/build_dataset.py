@@ -1,229 +1,220 @@
 """
-プロンプトJSONファイルからJSONLデータセットを構築。
-プロファイル（baseline/extendedなど）を指定すると、一貫したファイルセットを自動解決する。
-"""
-import json
-import argparse
-from pathlib import Path
-from typing import List, Dict, Optional
+標準化データセットの構築スクリプト。
 
-from src.config.project_profiles import list_profiles
+主な目的:
+- ユーザーが用意するCSV/JSONLをプロファイル基準のJSONLに変換する
+- 既存のプロンプトJSON (emotion_prompts*.json) からの旧来生成も互換維持
+
+想定する入力:
+- CSV: 列に `text`, `label` (または `emotion`) を含む
+- JSONL: 各行に {"text": ..., "emotion": ...}
+
+規模の目安:
+- baseline: 感情4種 × 各225サンプル前後（合計約900行）を想定（サンプルはユーザーが準備）
+- baseline_smoke: 各感情3〜5件程度の配線確認用
+
+CLI例:
+    python -m src.data.build_dataset \\
+      --profile baseline \\
+      --input data/emotion_dataset.jsonl
+"""
+from __future__ import annotations
+
+import argparse
+import csv
+import json
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Dict, Iterable, List, Optional, Sequence, Tuple
+
+from src.config.project_profiles import EMOTION_LABELS, list_profiles
 from src.utils.project_context import ProjectContext, profile_help_text
 
 
-def find_prompt_file(data_dir: Path, emotion: str, prefer_extended: bool = False) -> Optional[Path]:
-    """
-    プロンプトファイルを検索（_extendedを優先）
-    
-    Args:
-        data_dir: データディレクトリのパス
-        emotion: 感情ラベル（例: "anger", "gratitude"）
-        prefer_extended: Trueの場合、_extendedファイルを優先
-    
-    Returns:
-        見つかったファイルのパス、見つからない場合はNone
-    """
-    if prefer_extended:
-        # まず_extendedファイルを探す
-        extended_file = data_dir / f"{emotion}_prompts_extended.json"
-        if extended_file.exists():
-            return extended_file
-        # なければ通常版を探す
-        regular_file = data_dir / f"{emotion}_prompts.json"
-        if regular_file.exists():
-            return regular_file
-    else:
-        # 通常版を優先
-        regular_file = data_dir / f"{emotion}_prompts.json"
-        if regular_file.exists():
-            return regular_file
-        extended_file = data_dir / f"{emotion}_prompts_extended.json"
-        if extended_file.exists():
-            return extended_file
-    
-    return None
+# ---------------------------------------------------------------------------#
+# データ構造
+# ---------------------------------------------------------------------------#
+@dataclass
+class Sample:
+    text: str
+    emotion: str
+    lang: str = "en"
 
 
-def build_dataset_from_prompts(
-    prompt_files: List[Path] = None,
-    output_path: Path = None,
-    data_dir: Path = None,
-    emotions: List[str] = None,
-    emotion_mapping: Dict[str, str] = None,
-    prefer_extended: bool = False
+# ---------------------------------------------------------------------------#
+# 入力ローダ
+# ---------------------------------------------------------------------------#
+def _load_from_csv(
+    path: Path,
+    text_field: str = "text",
+    label_field: str = "label",
+    allowed_emotions: Sequence[str] | None = None,
+) -> List[Sample]:
+    samples: List[Sample] = []
+    allowed = set(allowed_emotions or EMOTION_LABELS)
+    with path.open("r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            text = (row.get(text_field) or "").strip()
+            label = (row.get(label_field) or row.get("emotion") or "").strip()
+            if not text or not label:
+                continue
+            if allowed and label not in allowed:
+                continue
+            samples.append(Sample(text=text, emotion=label))
+    return samples
+
+
+def _load_from_jsonl(
+    path: Path,
+    allowed_emotions: Sequence[str] | None = None,
+) -> List[Sample]:
+    allowed = set(allowed_emotions or EMOTION_LABELS)
+    samples: List[Sample] = []
+    with path.open("r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            data = json.loads(line)
+            text = (data.get("text") or "").strip()
+            label = (data.get("emotion") or data.get("label") or "").strip()
+            if not text or not label:
+                continue
+            if allowed and label not in allowed:
+                continue
+            samples.append(Sample(text=text, emotion=label))
+    return samples
+
+
+def _load_from_prompt_json(path: Path, label: str) -> List[Sample]:
+    with path.open("r", encoding="utf-8") as f:
+        payload = json.load(f)
+    prompts: Iterable[str] = payload.get("prompts", [])
+    return [Sample(text=p, emotion=label) for p in prompts]
+
+
+# ---------------------------------------------------------------------------#
+# メインロジック
+# ---------------------------------------------------------------------------#
+def build_dataset(
+    input_path: Optional[Path],
+    output_path: Path,
+    profile: Optional[str],
+    text_field: str = "text",
+    label_field: str = "label",
+    prefer_prompts: bool = False,
+    allowed_emotions: Sequence[str] | None = None,
 ) -> Dict:
     """
-    プロンプトJSONファイルからJSONLデータセットを構築
-    
+    CSV/JSONL/プロンプトJSONから標準JSONLを生成。
+
     Args:
-        prompt_files: プロンプトJSONファイルのパスリスト（指定された場合）
-        output_path: 出力JSONLファイルのパス
-        data_dir: データディレクトリ（prompt_filesがNoneの場合に使用）
-        emotions: 感情ラベルのリスト（prompt_filesがNoneの場合に使用）
-        emotion_mapping: ファイル名から感情ラベルへのマッピング（Noneの場合は自動推測）
-        prefer_extended: Trueの場合、_extendedファイルを優先的に使用
-    
-    Returns:
-        データセット統計情報の辞書
+        input_path: 入力ファイル（csv/json/jsonl）。Noneの場合、プロンプトJSONを探索。
+        output_path: 出力先 (JSONL)
+        profile: プロファイル名（ログ出力用）
+        text_field: CSVの本文列名
+        label_field: CSVのラベル列名
+        prefer_prompts: Trueの場合、input_pathが無くてもプロンプトJSON探索を優先
+        allowed_emotions: 使用する感情ラベル
     """
-    dataset = []
-    emotion_counts = {}
-    
-    # prompt_filesが指定されていない場合、data_dirとemotionsから自動検索
-    if prompt_files is None:
-        if data_dir is None:
-            data_dir = Path("data")
-        if emotions is None:
-            emotions = ["gratitude", "anger", "apology", "neutral"]
-        
-        prompt_files = []
-        for emotion in emotions:
-            found_file = find_prompt_file(data_dir, emotion, prefer_extended)
-            if found_file:
-                prompt_files.append(found_file)
-                print(f"Found prompt file for {emotion}: {found_file.name}")
+    allowed = tuple(allowed_emotions or EMOTION_LABELS)
+    samples: List[Sample] = []
+
+    if input_path:
+        suffix = input_path.suffix.lower()
+        if suffix in {".csv"}:
+            samples = _load_from_csv(input_path, text_field=text_field, label_field=label_field, allowed_emotions=allowed)
+        elif suffix in {".jsonl"}:
+            samples = _load_from_jsonl(input_path, allowed_emotions=allowed)
+        elif suffix in {".json"}:
+            # 単一JSONは旧来のpromptファイルとは限らないが、prompts配列があれば利用
+            data = json.loads(input_path.read_text(encoding="utf-8"))
+            if "prompts" in data and len(allowed) == 1:
+                label = allowed[0]
+                samples = [Sample(text=t, emotion=label) for t in data["prompts"]]
             else:
-                print(f"Warning: No prompt file found for {emotion}")
-    
-    # 感情マッピングが指定されていない場合、ファイル名から推測
-    if emotion_mapping is None:
-        emotion_mapping = {}
-        for prompt_file in prompt_files:
-            # ファイル名から感情ラベルを抽出（例: gratitude_prompts.json -> gratitude）
-            stem = prompt_file.stem.replace("_prompts", "").replace("_extended", "")
-            emotion_mapping[str(prompt_file)] = stem
-    
-    for prompt_file in prompt_files:
-        if not prompt_file.exists():
-            print(f"Warning: {prompt_file} not found, skipping...")
-            continue
-        
-        # プロンプトファイルを読み込み
-        with open(prompt_file, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            prompts = data.get('prompts', [])
-        
-        # 感情ラベルを取得
-        emotion = emotion_mapping.get(str(prompt_file), prompt_file.stem.replace("_prompts", "").replace("_extended", ""))
-        
-        # データセットエントリを作成
-        for text in prompts:
-            entry = {
-                "text": text,
-                "emotion": emotion,
-                "lang": "en"
-            }
-            dataset.append(entry)
-        
-        emotion_counts[emotion] = emotion_counts.get(emotion, 0) + len(prompts)
-    
-    # JSONL形式で保存
+                raise ValueError("JSON入力はprompts配列を持つ単一感情ファイルのみをサポートします。")
+        else:
+            raise ValueError(f"未対応の入力拡張子です: {suffix}")
+    else:
+        if not prefer_prompts:
+            raise ValueError("input_pathが指定されていません。CSV/JSONLを --input で渡してください。")
+        # レガシー: emotion_prompts*.json から構築
+        ctx = ProjectContext(profile or "baseline")
+        for emotion in allowed:
+            prompt_file = ctx.prompt_file(emotion)
+            if not prompt_file.exists():
+                print(f"⚠ プロンプトファイルが見つかりません: {prompt_file}")
+                continue
+            samples.extend(_load_from_prompt_json(prompt_file, emotion))
+
+    if not samples:
+        raise ValueError("有効なサンプルが1件も読み込まれませんでした。入力を確認してください。")
+
+    # 書き出し
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_path, 'w', encoding='utf-8') as f:
-        for entry in dataset:
-            f.write(json.dumps(entry, ensure_ascii=False) + '\n')
-    
-    # 統計情報を計算
-    text_lengths = [len(entry['text']) for entry in dataset]
+    with output_path.open("w", encoding="utf-8") as f:
+        for s in samples:
+            f.write(json.dumps({"text": s.text, "emotion": s.emotion, "lang": s.lang}, ensure_ascii=False) + "\n")
+
+    counts: Dict[str, int] = {emo: 0 for emo in allowed}
+    lengths: List[int] = []
+    for s in samples:
+        counts[s.emotion] = counts.get(s.emotion, 0) + 1
+        lengths.append(len(s.text))
+
     stats = {
-        'total_samples': len(dataset),
-        'emotion_counts': emotion_counts,
-        'text_length': {
-            'avg': sum(text_lengths) / len(text_lengths) if text_lengths else 0,
-            'min': min(text_lengths) if text_lengths else 0,
-            'max': max(text_lengths) if text_lengths else 0
-        }
+        "total_samples": len(samples),
+        "emotion_counts": counts,
+        "text_length": {
+            "avg": sum(lengths) / len(lengths),
+            "min": min(lengths),
+            "max": max(lengths),
+        },
+        "profile": profile or "custom",
+        "input": str(input_path) if input_path else "prompt_json",
+        "output": str(output_path),
     }
-    
-    print(f"✓ Dataset created: {output_path}")
-    print(f"✓ Total samples: {stats['total_samples']}")
-    for emotion, count in sorted(stats['emotion_counts'].items()):
-        print(f"  - {emotion}: {count} samples")
-    print(f"✓ Text length: avg={stats['text_length']['avg']:.1f}, min={stats['text_length']['min']}, max={stats['text_length']['max']}")
-    
+
+    print("✓ データセットを書き出しました")
+    print(f"  - 出力: {output_path}")
+    print(f"  - プロファイル: {profile or 'custom'}")
+    for emo, cnt in counts.items():
+        print(f"    * {emo}: {cnt}")
+    print(f"  - 文字数: 平均 {stats['text_length']['avg']:.1f} / 最小 {stats['text_length']['min']} / 最大 {stats['text_length']['max']}")
     return stats
 
 
+# ---------------------------------------------------------------------------#
+# CLI
+# ---------------------------------------------------------------------------#
 def main():
-    """メイン関数"""
     parser = argparse.ArgumentParser(
-        description="Build JSONL dataset from prompt JSON files. "
-                    "Use --profile for deterministic prompt selection."
+        description="CSV/JSONLを標準化した感情データセット(JSONL)に変換します。",
     )
-    parser.add_argument(
-        "--profile",
-        type=str,
-        choices=list_profiles(),
-        default=None,
-        help=f"Dataset profile name ({profile_help_text()}).",
-    )
-    parser.add_argument("--prompts", type=str, nargs='+', default=None, 
-                       help="Prompt JSON file paths (optional, if not specified, auto-finds from --data_dir)")
-    parser.add_argument(
-        "--output",
-        type=str,
-        default=None,
-        help="Output JSONL file path (defaults to profile dataset location if --profile is supplied)",
-    )
-    parser.add_argument("--data_dir", type=str, default="data", 
-                       help="Data directory (used when --prompts is not specified)")
-    parser.add_argument("--emotions", type=str, nargs='+', default=None,
-                       help="Emotion labels to include (default: gratitude, anger, apology, neutral)")
-    parser.add_argument("--emotion_mapping", type=str, nargs='+', default=None, 
-                       help="Emotion mapping (format: file:emotion, e.g., gratitude_prompts.json:gratitude)")
-    parser.add_argument(
-        "--prefer_extended",
-        action="store_true",
-        default=False,
-        help="Prefer *_extended files when auto-detecting prompts (deprecated; use --profile).",
-    )
-    parser.add_argument(
-        "--no_prefer_extended",
-        action="store_false",
-        dest="prefer_extended",
-        help="Disable preference for *_extended files (default).",
-    )
-    
+    parser.add_argument("--profile", type=str, choices=list_profiles(), default="baseline", help=profile_help_text())
+    parser.add_argument("--input", type=str, default=None, help="入力ファイル (csv/json/jsonl)。指定しない場合は旧来のemotion_prompts*.jsonを探索。")
+    parser.add_argument("--output", type=str, default=None, help="出力JSONLパス。未指定ならプロファイル既定パスに保存。")
+    parser.add_argument("--text-field", type=str, default="text", help="CSVにおける本文列名")
+    parser.add_argument("--label-field", type=str, default="label", help="CSVにおけるラベル列名（emotion列があればそちら優先）")
+    parser.add_argument("--prefer-prompts", action="store_true", help="inputが無い場合に旧来のemotion_prompts*.jsonを使用")
+    parser.add_argument("--emotions", type=str, nargs="*", default=list(EMOTION_LABELS), help="使用する感情ラベル（フィルタ用）")
+
     args = parser.parse_args()
-    
-    data_dir = Path(args.data_dir)
-    context = ProjectContext(args.profile, data_dir=data_dir) if args.profile else None
-    
-    output_path = Path(args.output) if args.output else None
-    if context and output_path is None:
-        output_path = context.dataset_path()
-    
-    if output_path is None:
-        raise ValueError("Output path must be provided via --output or inferred from --profile.")
-    
-    # プロンプトファイルのパスを変換
-    prompt_files = None
-    if args.prompts:
-        prompt_files = [Path(p) for p in args.prompts]
-    elif context:
-        prompt_files = list(context.prompt_files(args.emotions).values())
-    
-    # 感情マッピングを解析
-    emotion_mapping = None
-    if args.emotion_mapping:
-        emotion_mapping = {}
-        for mapping in args.emotion_mapping:
-            if ':' in mapping:
-                file_path, emotion = mapping.split(':', 1)
-                emotion_mapping[file_path] = emotion
-    
-    # データセットを構築
-    stats = build_dataset_from_prompts(
-        prompt_files=prompt_files,
+    context = ProjectContext(args.profile)
+    output_path = Path(args.output) if args.output else context.dataset_path()
+    input_path = Path(args.input) if args.input else None
+
+    build_dataset(
+        input_path=input_path,
         output_path=output_path,
-        data_dir=data_dir,
-        emotions=args.emotions,
-        emotion_mapping=emotion_mapping,
-        prefer_extended=args.prefer_extended
+        profile=args.profile,
+        text_field=args.text_field,
+        label_field=args.label_field,
+        prefer_prompts=args.prefer_prompts,
+        allowed_emotions=args.emotions,
     )
-    
-    print("\n✓ Dataset build completed!")
-    return stats
 
 
 if __name__ == "__main__":

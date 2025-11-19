@@ -68,10 +68,10 @@ python -m ipykernel install --user --name emotion-circuits --display-name "Pytho
 
 ```bash
 # モジュールが正しくインポートできるか確認
-python -c "from src.models.extract_activations import ActivationExtractor; print('OK')"
+python -c "from src.models.activation_api import get_activations; print('OK')"
 
 # ヘルプを表示してCLIが動作するか確認
-python -m src.models.extract_activations --help
+python -m src.analysis.run_phase2_activations --help
 ```
 
 ## データの準備
@@ -84,21 +84,19 @@ python -m src.models.extract_activations --help
 - `data/gratitude_prompts.json`: 感謝プロンプト70文 ✅
 - `data/anger_prompts.json`: 怒りプロンプト70文 ✅
 - `data/apology_prompts.json`: 謝罪プロンプト70文 ✅
-- `data/gratitude_prompts_extended.json`: 感謝プロンプト拡張版100文 ✅
-- `data/anger_prompts_extended.json`: 怒りプロンプト拡張版100文 ✅
-- `data/apology_prompts_extended.json`: 謝罪プロンプト拡張版100文 ✅
-- `data/neutral_prompts_extended.json`: 中立プロンプト拡張版100文 ✅
 - `data/real_world_samples.json`: 実世界テキストサンプル35文 ✅
 
-プロンプトデータは、`src/data/create_individual_prompt_files.py`を使用して作成できます。拡張版データセットは`src/data/build_dataset.py`を使用してJSONL形式に変換できます。
+プロンプトデータは、`src/data/create_individual_prompt_files.py`を使用して作成できます。データセットは`src/data/build_dataset.py`を使用してJSONL形式に変換できます。
+
+> ⚠️ **注意**: 現行パイプラインでは `baseline` プロファイル（約225サンプル/感情）を標準とし、`baseline_smoke` を配線確認用として使用します。旧 `extended` プロファイルは廃止されました。
 
 ### 実験結果データ
 
 `results/`ディレクトリには実験結果が保存されます。初回実行時は空です。
 
 **ディレクトリ構造**:
-- `results/baseline/`: Baselineデータセットの結果
-- `results/extended/`: Extendedデータセットの結果（拡張版データセット用）
+- `results/baseline/`: 標準データセットの結果（約225サンプル/感情）
+- `results/baseline_smoke/`: 配線確認用の最小データセット結果（各感情3-5件）
 
 **重要な注意事項**:
 - 実験結果ファイル（`.pkl`, `.pt`など）は非常に大きくなる可能性があります（数MB〜数百MB）
@@ -124,78 +122,110 @@ MLflowサーバーが起動していることを確認してください。詳�
 # 1. 個別プロンプトファイルの作成
 python -m src.data.create_individual_prompt_files --data_dir data
 
-# 2. Baselineデータセットの構築（プロファイルベース）
+# 2. Baselineデータセットの構築（標準プロファイル、約225サンプル/感情）
 python -m src.data.build_dataset --profile baseline
 
-# 3. Extendedデータセットの構築（プロファイルベース）
-python -m src.data.build_dataset --profile extended
+# 3. Smoke testデータセットの構築（配線確認用、各感情3-5件）
+python -m src.data.build_dataset --profile baseline_smoke
 
 # 4. データセットの検証
 python -m src.data.validate_dataset data/emotion_dataset.jsonl
-python -m src.data.validate_dataset data/emotion_dataset_extended.jsonl
 ```
 
-> ℹ️ **プロファイルベースのワークフロー**: プロジェクトでは、データセットプロファイル（`baseline`/`extended`）を使用して、プロンプトファイル、データセット、結果ディレクトリを自動的に解決します。多くのスクリプトは `--profile` 引数を受け取り、適切なパスを自動的に設定します。
+> ℹ️ **プロファイルベースのワークフロー**: プロジェクトでは、データセットプロファイル（`baseline`/`baseline_smoke`）を使用して、プロンプトファイル、データセット、結果ディレクトリを自動的に解決します。多くのスクリプトは `--profile` 引数を受け取り、適切なパスを自動的に設定します。`baseline` は統計的に有意な分析用、`baseline_smoke` は配線確認用です。
 
 ### 最小限の実行例（GPT-2 smallのみ）
 
 ```bash
-# 1. 内部活性を抽出（Baseline、プロファイルベースのスイープスクリプトを使用）
-PYTHONPATH=. python scripts/phase2_extract_all_activations.py --profile baseline
+# 1. 内部活性を抽出（標準パイプライン Phase 2）
+python -m src.analysis.run_phase2_activations \
+  --profile baseline \
+  --model gpt2_small \
+  --layers 0 3 6 9 11 \
+  --device mps \
+  --batch-size 16
 
-# または、個別に実行する場合:
-python -m src.models.extract_activations \
-  --model gpt2 \
-  --dataset data/emotion_dataset.jsonl \
-  --output results/baseline/activations/gpt2/
+# 2. 感情方向ベクトルを抽出（標準パイプライン Phase 3）
+python -m src.analysis.run_phase3_vectors \
+  --profile baseline \
+  --model gpt2_small \
+  --n-components 8 \
+  --use-torch \
+  --device mps
 
-# 2. 感情方向ベクトルを抽出（Token-based）
-python -m src.analysis.emotion_vectors_token_based \
-  --activations_dir results/baseline/activations/gpt2 \
-  --output results/baseline/emotion_vectors/gpt2_vectors_token_based.pkl
-
-# 3. Activation Patching実験
-python -m src.models.activation_patching_sweep \
-  --model gpt2 \
-  --vectors_file results/baseline/emotion_vectors/gpt2_vectors_token_based.pkl \
-  --prompts_file data/neutral_prompts.json \
-  --output results/baseline/patching/gpt2_sweep_token_based.pkl \
-  --layers 3 5 7 9 11 \
-  --alpha -2 -1 -0.5 0 0.5 1 2
-```
-
-### Extendedデータセットでの実行例
-
-```bash
-# Extendedデータセットでの活性抽出
-python -m src.models.extract_activations \
-  --model gpt2 \
-  --dataset data/emotion_dataset_extended.jsonl \
-  --output results/extended/activations/gpt2/
-
-# Extendedデータセットでのベクトル抽出
-python -m src.analysis.emotion_vectors_token_based \
-  --activations_dir results/extended/activations/gpt2 \
-  --output results/extended/emotion_vectors/gpt2_vectors_token_based.pkl
-```
-
-### ランダム対照実験
-
-```bash
-# ランダム対照ベクトルでのPatching実験
-python -m src.models.activation_patching_random \
-  --model gpt2 \
-  --vectors_file results/extended/emotion_vectors/gpt2_vectors_token_based.pkl \
-  --prompts_file data/neutral_prompts.json \
-  --output_dir results/extended/patching_random \
-  --layers 7 \
+# 3. Activation Patching実験（標準パイプライン Phase 5）
+python -m src.analysis.run_phase5_residual_patching \
+  --profile baseline \
+  --model gpt2_small \
+  --layers 0 3 6 9 11 \
   --alpha 1.0 \
-  --num_random 3
+  --max-samples-per-emotion 8 \
+  --device mps \
+  --batch-size 16
+```
 
-# ランダム vs 感情ベクトルの比較分析
-python -m src.analysis.random_vs_emotion_effect \
-  --results_file results/extended/patching_random/gpt2_random_control.pkl \
-  --output_dir results/extended/plots/random_control
+### 標準パイプラインでの実行例（Phase 2-7）
+
+```bash
+# Phase 2: 活性抽出（バッチ処理対応）
+python -m src.analysis.run_phase2_activations \
+  --profile baseline \
+  --model gpt2_small \
+  --layers 0 1 2 3 4 5 6 7 8 9 10 11 \
+  --device mps \
+  --batch-size 32
+
+# Phase 3: 感情ベクトル構築（torch/sklearn切り替え可能）
+python -m src.analysis.run_phase3_vectors \
+  --profile baseline \
+  --model gpt2_small \
+  --n-components 8 \
+  --use-torch \
+  --device mps
+
+# Phase 4: 自己アライメント（torch/numpy切り替え可能）
+python -m src.analysis.run_phase4_alignment \
+  --profile baseline \
+  --model-a gpt2_small \
+  --model-b gpt2_small \
+  --k-max 8 \
+  --use-torch \
+  --device mps
+
+# Phase 5: 残差パッチング（バッチ処理対応）
+python -m src.analysis.run_phase5_residual_patching \
+  --profile baseline \
+  --model gpt2_small \
+  --layers 0 3 6 9 11 \
+  --alpha 1.0 \
+  --max-samples-per-emotion 8 \
+  --device mps \
+  --batch-size 16
+
+# Phase 6: ヘッドスクリーニング（バッチ処理対応）
+python -m src.analysis.run_phase6_head_screening \
+  --profile baseline \
+  --model gpt2_small \
+  --layers 0 1 2 3 4 5 6 7 8 9 10 11 \
+  --max-samples 8 \
+  --device mps \
+  --batch-size 8
+
+# Phase 7: 統計分析（並列処理対応）
+python -m src.analysis.run_phase7_statistics \
+  --profile baseline \
+  --mode effect \
+  --n-jobs 4
+```
+
+### Smoke testでの配線確認
+
+```bash
+# 最小限のデータで配線確認（各感情3-5件）
+python -m src.analysis.run_phase2_activations \
+  --profile baseline_smoke \
+  --model gpt2_small \
+  --layers 0 5 11
 ```
 
 ## トラブルシューティング
@@ -211,13 +241,15 @@ uv pip install -e .
 pip install -e .
 ```
 
-### 問題2: CUDA/GPU関連のエラー
+### 問題2: CUDA/GPU/MPS関連のエラー
 
 **原因**: CUDAがインストールされていない、またはPyTorchがCPU版
 
 **解決策**:
 - CPUモードで実行: `--device cpu`を追加
+- Apple Silicon（M1/M2/M3/M4）の場合: `--device mps`を使用
 - CUDA版PyTorchをインストール: https://pytorch.org/get-started/locally/
+- デバイスの自動選択: `--device`を省略すると自動的に最適なデバイスを選択
 
 ### 問題3: TransformerLensのモデルロードエラー
 
@@ -233,9 +265,10 @@ pip install -e .
 **原因**: GPU/CPUメモリが不足
 
 **解決策**:
-- バッチサイズを小さくする（コード内で調整）
-- CPUモードで実行
+- バッチサイズを小さくする（`--batch-size 4` などCLI引数で調整可能）
+- CPUモードで実行（`--device cpu`）
 - より小さなモデルを使用
+- サンプル数を減らす（`--max-samples-per-emotion 4` など）
 
 ### 問題5: ファイルが見つからないエラー
 
@@ -244,7 +277,7 @@ pip install -e .
 **解決策**:
 ```bash
 # 必要なディレクトリを作成（プロファイルごとに用意）
-mkdir -p results/{baseline,extended}/{activations,emotion_vectors,subspaces,patching,alignment,evaluation,plots}
+mkdir -p results/{baseline,baseline_smoke}/{activations,emotion_vectors,subspaces,patching,alignment,evaluation,plots,statistics}
 ```
 
 ## Gitリポジトリの管理
@@ -298,6 +331,8 @@ export HF_TOKEN=your_token_here
 ```
 
 ## Phase 8: 中規模モデルのセットアップ
+
+> ⚠️ **注意**: Phase 8の標準パイプラインスクリプト（`run_phase8_*.py`）は現在開発中です。以下は参考情報として記載しています。中規模モデルの活性抽出には`src/models/activation_api.py`の`get_activations()`が対応しています。
 
 Phase 8 では、Llama3 8B / Gemma3 12B / Qwen3 8B などの中規模モデルを使用します。これらのモデルにアクセスするには、追加の設定が必要です。
 
@@ -398,11 +433,11 @@ python3 -m src.analysis.run_phase8_pipeline --n-samples 20
 ## 次のステップ
 
 1. `docs/implementation_plan.md`を読んでプロジェクトの全体像を理解
-2. `docs/report/`配下のPhase 0-8のレポートを確認
-3. 小さな実験から始める（GPT-2 smallのみ、Baselineデータセット）
-4. 結果を確認してから、Extendedデータセットやより大きな実験に進む
-5. Phase 7.5 の統計分析で結果の厳密性を検証
-6. Phase 8 の中規模モデルでスケーリング検証を実施
+2. `masterplan.md`で各Phaseの目標と成果物を確認
+3. `baseline_smoke`プロファイルで配線確認（各感情3-5件、数分で完了）
+4. `baseline`プロファイルで本格的な分析（1感情225件前後を想定）
+5. Phase 7の統計分析で結果の厳密性を検証
+6. `docs/report_template/`のテンプレートを参考にレポートを作成
 7. MLflowで実験結果を追跡・比較
 
 ## サポート

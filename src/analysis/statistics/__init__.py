@@ -1,4 +1,8 @@
-"""Phase 7.5 statistical analysis helpers."""
+"""Phase 7 統計的厳密性のためのヘルパーモジュール。
+
+masterplan.md の Phase 7「統計的厳密性」に対応する統計計算モジュール群。
+効果量、p値、検出力分析、k選択などの計算を提供する。
+"""
 from .data_loading import PatchingRun, collect_patching_runs
 from .effect_sizes import (
     EffectComputationConfig,

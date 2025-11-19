@@ -605,7 +605,7 @@
                     <li><span class="file-path">src/analysis/statistics/effect_sizes.py</span>: Cohen's d、t検定、ブートストラップ信頼区間</li>
                     <li><span class="file-path">src/analysis/statistics/power_analysis.py</span>: 事後検出力と必要サンプルサイズの推定</li>
                     <li><span class="file-path">src/analysis/statistics/k_selection.py</span>: k=2の最適性をブートストラップで検証</li>
-                    <li><span class="file-path">src/analysis/run_statistics.py</span>: 統合CLIパイプライン</li>
+                    <li><span class="file-path">src/analysis/run_phase7_statistics.py</span>: 統計CLIパイプライン</li>
                 </ul>
             </p>
             <p><strong>出力</strong>: 統計結果（<span class="file-path">results/baseline/statistics/effect_sizes.csv</span>、<span class="file-path">power_analysis.csv</span>、<span class="file-path">k_selection.csv</span>）</p>
@@ -719,7 +719,7 @@
                     <td>Phase 6-7</td>
                 </tr>
                 <tr>
-                    <td><span class="file-path">src/analysis/run_statistics.py</span></td>
+                    <td><span class="file-path">src/analysis/run_phase7_statistics.py</span></td>
                     <td>統計的厳密性の強化（効果量、検出力分析、k選択検証）</td>
                     <td>Phase 7.5</td>
                 </tr>
@@ -884,7 +884,7 @@
                 </tr>
                 <tr>
                     <td>Phase 7.5</td>
-                    <td><code>python3 -m src.analysis.run_statistics --profile baseline --mode all --n-bootstrap 500 --seed 42</code></td>
+                    <td><code>python3 -m src.analysis.run_phase7_statistics --profile baseline --mode all --n-bootstrap 500 --seed 42</code></td>
                 </tr>
                 <tr>
                     <td>Phase 8</td>
@@ -924,4 +924,3 @@
     </script>
 </body>
 </html>
-
