@@ -13,6 +13,7 @@
   - gpt2_small (ランダム10本): 約2時間39分  
   - pythia-160m: 約2時間40分  
   - gpt-neo-125m: 約2時間34分  
+- llama3_8b (MPS, 225サンプル/層5本/ランダムなし): 約36分（バッチ4）  
 - Phase 6 Headスクリーニング+パッチング: 約1時間10分  
   - スクリーニング: 約23分/モデル（3モデル計）  
   - パッチング: 約30秒/モデル（3モデル計）  
@@ -32,6 +33,7 @@
   - `results/baseline/patching/head_patching/gpt2_small_head_ablation.pkl`  
   - `results/baseline/patching/head_patching/pythia-160m_head_ablation.pkl`  
   - `results/baseline/patching/head_patching/gpt-neo-125m_head_ablation.pkl`  
+  - `results/baseline/patching/head_patching/llama3_8b_head_ablation.pkl`（サンプル20, 層0/6/11, head0-3, MPSテスト）  
 - Phase 7 統計:  
   - `results/baseline/statistics/effect_sizes.csv`  
   - `results/baseline/statistics/power_analysis.csv`  
@@ -44,9 +46,9 @@
 - スクリーニングJSONが ~118MB/モデルと大きいため、長期保存時は圧縮・アーカイブ推奨。  
 - Phase4はpinv(SVD)でCPU警告が出るが処理は継続、総時間への影響は小。  
 - バッチ32で問題なし。より大きなバッチはMPSではスループット頭打ちのことが多い。  
+- llama3_8bでPhase5（MPS）は約36分/225サンプル。ヘッドスクリーニングはMPSで極端に遅く、CUDA推奨。  
 
 ## 次の一手（必要なら）
 1. ランダム対照を20/50本に拡張し、Phase5→Phase7を再実行。  
 2. よく使うメトリクスの可視化（Layer×Emotionヒートマップ、Head上位ランキングなど）を追加。  
 3. スクリーン結果の圧縮・バックアップでストレージ最適化。  
-
