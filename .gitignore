@@ -51,17 +51,21 @@ results/*/emotion_vectors/**/*.pkl
 results/*/emotion_subspaces/**/*.pkl
 results/*/subspaces/**/*.pkl
 results/*/patching/**/*.pkl
+results/*/patching_random/**/*.pkl
 results/*/evaluation/**/*.pkl
 results/*/alignment/**/*.pkl
 results/*/alignment/**/*.pt
+results/*/screening/**/*.json
 # Keep directory structure but ignore large data files
 !results/*/activations/.gitkeep
 !results/*/emotion_vectors/.gitkeep
 !results/*/emotion_subspaces/.gitkeep
 !results/*/subspaces/.gitkeep
 !results/*/patching/.gitkeep
+!results/*/patching_random/.gitkeep
 !results/*/evaluation/.gitkeep
 !results/*/alignment/.gitkeep
+!results/*/screening/.gitkeep
 !results/*/plots/
 
 # Model cache (HuggingFace)
