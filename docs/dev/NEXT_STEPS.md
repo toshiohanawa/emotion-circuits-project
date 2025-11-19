@@ -100,18 +100,19 @@ python -m src.analysis.run_phase2_activations --model gpt2 --layers 0 6 --batch-
 # Phase 5（残差パッチング）
 python -m src.analysis.run_phase5_residual_patching --model gpt2 --layers 0 6 --batch-size 16
   # ランダム対照はオプション（--random-control --num-random N）。標準ではオフ。
+  # 大モデル（LLama3等）はCUDA推奨: --device cuda --batch-size 8
 
 # Phase 6（Head Patching）小型（HookedTransformer）
 python -m src.analysis.run_phase6_head_patching --model gpt2 --heads 0:0 --batch-size 4
 
-# Phase 6（Head Patching）大モデル（LargeHFModel, 例: llama3_8b）
-python -m src.analysis.run_phase6_head_patching --model llama3_8b --heads 0:0-11 3:0-11 --batch-size 4 --max-samples 50 --sequence-length 30 --device mps
+# Phase 6（Head Patching）大モデル（LargeHFModel, 例: llama3_8b）※CUDA推奨
+python -m src.analysis.run_phase6_head_patching --model llama3_8b --heads 0:0-11 3:0-11 --batch-size 8 --max-samples 50 --sequence-length 30 --device cuda
 
 # Phase 6（Head Screening）小型
 python -m src.analysis.run_phase6_head_screening --model gpt2 --layers 0 1 --batch-size 4
 
-# Phase 6（Head Screening）大モデル
-python -m src.analysis.run_phase6_head_screening --model llama3_8b --layers 0 3 6 9 11 --batch-size 4 --max-samples 50 --sequence-length 30 --device mps
+# Phase 6（Head Screening）大モデル ※CUDA推奨（MPSは極端に遅い）
+python -m src.analysis.run_phase6_head_screening --model llama3_8b --layers 0 3 6 9 11 --batch-size 8 --max-samples 50 --sequence-length 30 --device cuda
 ```
 
 ---

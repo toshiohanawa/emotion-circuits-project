@@ -183,16 +183,17 @@ python -m src.analysis.run_phase3_vectors \
   --use-torch \
   --device mps
 
-# Phase 4: 自己アライメント（torch/numpy切り替え可能）
+# Phase 4: 自己アライメント（torch/numpy切り替え可能、CUDA推奨）
 python -m src.analysis.run_phase4_alignment \
   --profile baseline \
   --model-a gpt2_small \
   --model-b gpt2_small \
   --k-max 8 \
   --use-torch \
-  --device mps
+  --device cuda
 
 # Phase 5: 残差パッチング（バッチ処理対応）
+## 小型（HookedTransformer）
 python -m src.analysis.run_phase5_residual_patching \
   --profile baseline \
   --model gpt2_small \
@@ -202,13 +203,33 @@ python -m src.analysis.run_phase5_residual_patching \
   --device mps \
   --batch-size 16
 
+## 大型（LargeHFModel, 例: llama3_8b）CUDA推奨
+python -m src.analysis.run_phase5_residual_patching \
+  --profile baseline \
+  --model llama3_8b \
+  --layers 0 3 6 9 11 \
+  --alpha 1.0 \
+  --max-samples-per-emotion 50 \
+  --device cuda \
+  --batch-size 8
+
 # Phase 6: ヘッドスクリーニング（バッチ処理対応）
+## 小型（HookedTransformer）
 python -m src.analysis.run_phase6_head_screening \
   --profile baseline \
   --model gpt2_small \
   --layers 0 1 2 3 4 5 6 7 8 9 10 11 \
   --max-samples 8 \
   --device mps \
+  --batch-size 8
+
+## 大型（LargeHFModel, 例: llama3_8b）※CUDA推奨（MPSは非常に遅い）
+python -m src.analysis.run_phase6_head_screening \
+  --profile baseline \
+  --model llama3_8b \
+  --layers 0 3 6 9 11 \
+  --max-samples 50 \
+  --device cuda \
   --batch-size 8
 
 # Phase 7: 統計分析（並列処理対応）

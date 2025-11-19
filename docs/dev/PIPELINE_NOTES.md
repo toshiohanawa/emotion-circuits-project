@@ -275,6 +275,16 @@ python3 -m src.analysis.run_phase7_statistics \
 - Phase7: `python -m src.analysis.run_phase7_statistics --profile baseline --mode effect`  
   - 出力: `results/baseline/statistics/effect_sizes.csv`
 
+## NVIDIA/CUDA 環境用メモ（llama3等の大モデルを高速に回す場合）
+1. セットアップ: `docs/dev/setup_ubuntu_gpu.md` に手順あり（Ubuntu 22.04 + RTX3090 + CUDA12.1 + PyTorch 2.5.1/cu121 + vLLM）。FlashInferは無効化（環境変数 `VLLM_ATTENTION_BACKEND=FLASHINFER_OFF`）。
+2. 推奨実行: 大モデルは CUDA で実行（MPS は大幅に遅い）。
+   - Phase2 (例) `python -m src.analysis.run_phase2_activations --profile baseline --model llama3_8b --layers 0 3 6 9 11 --device cuda --max-samples-per-emotion 50 --batch-size 8 --hook-pos resid_post`
+   - Phase3 (例) `python -m src.analysis.run_phase3_vectors --profile baseline --model llama3_8b --use-torch --device cuda`
+   - Phase5 (例) `python -m src.analysis.run_phase5_residual_patching --profile baseline --model llama3_8b --layers 0 3 6 9 11 --batch-size 8 --device cuda --max-samples-per-emotion 50`
+   - Phase6 Patching/Screening (例) `--device cuda --batch-size 8`（ヘッド数や層を絞る）
+3. ランダム対照は標準オフ。必要なら Phase5 で `--random-control --num-random N` を付け、完了後に Phase7 を再計算。
+4. MPS はヘッドスクリーニングで極端に遅くなるため、CUDA 環境が望ましい。
+
 ### ベースラインの「フル」実験用コマンド（推奨; 長時間想定・未実行）
 - Phase2（全層×225サンプル想定）  
   `python -m src.analysis.run_phase2_activations --profile baseline --model gpt2_small --layers 0 1 2 3 4 5 6 7 8 9 10 11 --device mps --max-samples-per-emotion 225`

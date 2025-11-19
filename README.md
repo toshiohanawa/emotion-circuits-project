@@ -38,20 +38,20 @@ python -m src.analysis.run_phase4_alignment --profile baseline --model-a gpt2_sm
 # Phase5: 残差パッチング（バッチ処理対応）
 # 小型（HookedTransformer）
 python -m src.analysis.run_phase5_residual_patching --profile baseline --model gpt2_small --layers 0 1 2 3 4 5 6 7 8 9 10 11 --patch-window 3 --sequence-length 30 --alpha 1.0 --max-samples-per-emotion 8 --device mps --batch-size 16
-# 大型（LargeHFModel, 例: llama3_8b） ※ランダム対照は任意（標準はオフ）
-python -m src.analysis.run_phase5_residual_patching --profile baseline --model llama3_8b --layers 0 3 6 9 11 --patch-window 3 --sequence-length 30 --alpha 1.0 --max-samples-per-emotion 50 --device mps --batch-size 4
+# 大型（LargeHFModel, 例: llama3_8b） ※ランダム対照は任意（標準はオフ） / CUDA推奨
+python -m src.analysis.run_phase5_residual_patching --profile baseline --model llama3_8b --layers 0 3 6 9 11 --patch-window 3 --sequence-length 30 --alpha 1.0 --max-samples-per-emotion 50 --device cuda --batch-size 8
 
 # Phase6: ヘッドパッチング（バッチ処理対応）
 # 小型（HookedTransformer）
 python -m src.analysis.run_phase6_head_patching --profile baseline --model gpt2_small --heads 0:0-11 3:0-11 6:0-11 9:0-11 11:0-11 --max-samples 8 --sequence-length 30 --device mps --batch-size 8
-# 大型（LargeHFModel）
-python -m src.analysis.run_phase6_head_patching --profile baseline --model llama3_8b --heads 0:0-11 3:0-11 6:0-11 9:0-11 11:0-11 --max-samples 50 --sequence-length 30 --device mps --batch-size 4
+# 大型（LargeHFModel, CUDA推奨）
+python -m src.analysis.run_phase6_head_patching --profile baseline --model llama3_8b --heads 0:0-11 3:0-11 6:0-11 9:0-11 11:0-11 --max-samples 50 --sequence-length 30 --device cuda --batch-size 8
 
 # Phase6: ヘッドスクリーニング（バッチ処理対応）
 # 小型（HookedTransformer）
 python -m src.analysis.run_phase6_head_screening --profile baseline --model gpt2_small --layers 0 1 2 3 4 5 6 7 8 9 10 11 --max-samples 8 --sequence-length 30 --device mps --batch-size 8
-# 大型（LargeHFModel）
-python -m src.analysis.run_phase6_head_screening --profile baseline --model llama3_8b --layers 0 3 6 9 11 --max-samples 50 --sequence-length 30 --device mps --batch-size 4
+# 大型（LargeHFModel, CUDA推奨）
+python -m src.analysis.run_phase6_head_screening --profile baseline --model llama3_8b --layers 0 3 6 9 11 --max-samples 50 --sequence-length 30 --device cuda --batch-size 8
 
 # Phase7: 統計（並列処理対応）
 python -m src.analysis.run_phase7_statistics --profile baseline --mode all --n-jobs 4
@@ -89,6 +89,7 @@ effect_df = pd.read_csv("results/baseline/statistics/effect_sizes.csv")
 - **--use-torch / --no-use-torch**: PCA/Procrustes計算でtorch（GPU/MPS加速）を使用するか（Phase 3/4）。
 - **--n-jobs**: bootstrap並列計算のジョブ数（Phase 7）。-1で全CPU使用。
 - **--random-control --num-random N**: Phase5のランダム対照（オプション）。標準フローではオフ。
+- **CUDA推奨**: llama3 等の大モデルは CUDA 環境での実行を推奨（MPSは大幅に遅い）。
 
 これらのオプションにより、M4 Max等の高性能マシンで大幅な高速化が可能です（従来比10-100倍以上）。
 

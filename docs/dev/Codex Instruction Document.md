@@ -401,8 +401,8 @@ python -m src.analysis.run_phase6_head_patching --model gpt2_small --heads 0:0 1
 - メモリ制約に応じてバッチサイズを調整可能
 
 **対象モデル**:
-- 計算コストの観点から、主に小型モデル（GPT-2 系）で重点的に実行
-  （必要に応じて中規模モデルの一部層でも試験）
+- 小型（GPT-2 系）に加え、大モデル（LargeHFModel, 例: Llama3 等）も実行可能
+- 大モデルは CUDA 環境推奨（MPS は極端に遅い）。GPU セットアップは `docs/dev/setup_ubuntu_gpu.md` に手順あり（Ubuntu 22.04 + CUDA 12.1 + PyTorch 2.5.1/cu121 + RTX3090 実績）。
 
 **アウトプット**:
 - head スコアリング結果
