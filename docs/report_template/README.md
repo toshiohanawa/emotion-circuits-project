@@ -20,6 +20,19 @@
 3. テンプレート内の`[値]`や`[説明]`を実際の結果で置き換え
 4. 必要に応じてセクションを追加・削除
 
+### ⏱ 自動サマリ付きレポート生成
+タイミングログ（`results/<profile>/timing/phase_timings.jsonl`）が生成済みなら、以下のCLIでテンプレート＋実行サマリ付きのレポートを自動生成できる。
+
+```bash
+python -m src.reporting.generate_phase_report \
+  --phase phase3 \
+  --profile baseline_smoke \
+  --model gpt2_small \
+  --output docs/report/phase3_baseline_smoke_gpt2_small.md
+```
+
+`--timing-run-id` を指定すると特定ランの記録を埋め込める。テンプレート本文は手動で加筆し、末尾の「自動生成サマリ」でLLM査読者に向けた実験メタデータを共有できる。
+
 ## 📝 テンプレートの構造
 
 各テンプレートは以下の構造を持ちます：

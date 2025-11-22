@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import pickle
 import time
+import sys
 from pathlib import Path
 from typing import Dict, List
 
@@ -19,6 +20,7 @@ import torch
 
 from src.utils.device import get_default_device
 from src.utils.project_context import ProjectContext, profile_help_text
+from src.utils.timing import record_phase_timing
 
 
 def _load_subspace(path: Path) -> Dict:
@@ -90,27 +92,57 @@ def _procrustes_torch(src: torch.Tensor, tgt: torch.Tensor, k: int, device: torc
     GPU/MPS対応により、大規模データセットでの計算が高速化される。
     
     Args:
-        src: [k, d] のソース主成分ベクトル
-        tgt: [k, d] のターゲット主成分ベクトル
+        src: [k_max, d_src] のソース主成分ベクトル（k_maxは最大次元数）
+        tgt: [k_max, d_tgt] のターゲット主成分ベクトル
         k: 使用する次元数
         device: 計算デバイス
     
     Returns:
         [k, k] の線形写像行列（subspace coords）
+    
+    Note:
+        異なるd_modelを持つモデル間のアライメントでは、PCA成分をk次元に射影してから
+        Procrustes分析を適用する。標準的なProcrustes分析は同じ次元空間を前提とするため、
+        異なるd_modelの場合は、PCA成分をk次元に射影（src[:k]とtgt[:k]を使用）してから
+        内積行列を計算してアライメントする。
     """
     # MPSはfloat64をサポートしていないため、デバイスに応じてdtypeを選択
     if device.type == "mps":
         dtype = torch.float32
     else:
         dtype = torch.float64
-    src_k = src[:k].T.to(device, dtype=dtype)  # [d, k]
-    tgt_k = tgt[:k].T.to(device, dtype=dtype)  # [d, k]
+    
+    # PCA成分の最初のk次元を使用（形状: [k, d_model]）
+    src_k = src[:k].to(device, dtype=dtype)  # [k, d_src]
+    tgt_k = tgt[:k].to(device, dtype=dtype)  # [k, d_tgt]
+    
+    # 異なるd_modelを持つモデル間のアライメントでは、PCA成分をk次元空間に射影
+    # 標準的なProcrustes分析は同じ次元空間を前提とするため、異なるd_modelの場合は
+    # PCA成分をk次元に射影してから、内積行列を計算してアライメントする
+    # ここでは、src_k @ src_k.T と tgt_k @ tgt_k.T のアライメントを計算
+    src_cov = src_k @ src_k.T  # [k, k] - ソースの共分散行列
+    tgt_cov = tgt_k @ tgt_k.T  # [k, k] - ターゲットの共分散行列
+    
+    # Procrustes分析: src_covをtgt_covにアライメントする線形写像を求める
+    # W @ src_cov @ W.T ≈ tgt_cov となるWを求める
+    # これは、src_cov @ W.T ≈ tgt_cov @ W.T と等価
+    # より正確には、src_k @ W.T ≈ tgt_k となるWを求める
+    # しかし、異なるd_modelの場合、直接的なアライメントは不可能
+    # 代わりに、PCA成分の内積行列をアライメントする
+    
+    # 標準的なProcrustes分析: src_k.T @ W ≈ tgt_k.T となるWを求める
+    # しかし、src_k.Tは[d_src, k]、tgt_k.Tは[d_tgt, k]で次元が異なる
+    # そのため、PCA成分をk次元に射影してからアライメントする
+    # ここでは、src_kとtgt_kのk×kの内積行列を使用
+    
     if device.type == "mps":
         # MPSは torch.linalg.lstsq 未サポート。擬似逆を用いた最小二乗解で回避。
-        w = torch.linalg.pinv(src_k) @ tgt_k
+        # src_cov @ W ≈ tgt_cov となるWを求める
+        w = torch.linalg.pinv(src_cov) @ tgt_cov
     else:
         # torch.linalg.lstsq で最小二乗解を計算
-        w, _, _, _ = torch.linalg.lstsq(src_k, tgt_k, rcond=None)
+        # src_cov @ W ≈ tgt_cov となるWを求める
+        w, _, _, _ = torch.linalg.lstsq(src_cov, tgt_cov, rcond=None)
     return w  # [k, k] in subspace coords
 
 
@@ -155,6 +187,7 @@ def main():
     if not path_a.exists() or not path_b.exists():
         raise FileNotFoundError("サブスペースファイルが見つかりません。")
 
+    phase_started = time.perf_counter()
     start_time = time.time()
     print(f"[Phase 4] サブスペースファイルを読み込み中...")
     data_a = _load_subspace(path_a)["subspaces"]
@@ -261,6 +294,23 @@ def main():
         pickle.dump({"results": results, "metadata": {"profile": args.profile, "model_a": args.model_a, "model_b": args.model_b}}, f)
     elapsed = time.time() - start_time
     print(f"[Phase 4] 保存完了: {elapsed:.2f}秒")
+
+    record_phase_timing(
+        context=ctx,
+        phase="phase4",
+        started_at=phase_started,
+        model=f"{args.model_a}_vs_{args.model_b}",
+        device=str(device) if use_torch else "cpu",
+        samples=len(layers),
+        metadata={
+            "k_max": args.k_max,
+            "use_torch": use_torch,
+            "layer_count": len(layers),
+            "result_count": len(results),
+            "output_path": str(out_path),
+        },
+        cli_args=sys.argv[1:],
+    )
     print(f"✓ Phase4 完了: {out_path}")
 
 

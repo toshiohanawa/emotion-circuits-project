@@ -26,9 +26,12 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
+import sys
+import time
 
 from src.config.project_profiles import EMOTION_LABELS, list_profiles
 from src.utils.project_context import ProjectContext, profile_help_text
+from src.utils.timing import record_phase_timing
 
 
 # ---------------------------------------------------------------------------#
@@ -206,7 +209,8 @@ def main():
     output_path = Path(args.output) if args.output else context.dataset_path()
     input_path = Path(args.input) if args.input else None
 
-    build_dataset(
+    started_at = time.perf_counter()
+    stats = build_dataset(
         input_path=input_path,
         output_path=output_path,
         profile=args.profile,
@@ -214,6 +218,23 @@ def main():
         label_field=args.label_field,
         prefer_prompts=args.prefer_prompts,
         allowed_emotions=args.emotions,
+    )
+    record_phase_timing(
+        context=context,
+        phase="phase1_dataset",
+        started_at=started_at,
+        model=None,
+        device=None,
+        samples=stats["total_samples"],
+        metadata={
+            "emotion_counts": stats["emotion_counts"],
+            "input_path": str(input_path) if input_path else None,
+            "output_path": str(output_path),
+            "text_field": args.text_field,
+            "label_field": args.label_field,
+            "prefer_prompts": args.prefer_prompts,
+        },
+        cli_args=sys.argv[1:],
     )
 
 

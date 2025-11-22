@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import pickle
 import time
+import sys
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
@@ -25,6 +26,7 @@ from src.data.dataset_loader import load_dataset_for_profile
 from src.models.model_registry import get_model_spec
 from src.utils.device import get_default_device_str
 from src.utils.project_context import ProjectContext, profile_help_text
+from src.utils.timing import record_phase_timing
 from src.models.phase8_large.head_patcher import LargeHeadAblator
 
 
@@ -194,6 +196,7 @@ def main():
             
             return all_texts
 
+    phase_started = time.perf_counter()
     # 評価器を初期化
     start_time = time.time()
     print(f"[Phase 6] 評価器を初期化中...")
@@ -250,6 +253,23 @@ def main():
         pickle.dump(payload, f)
     elapsed = time.time() - start_time
     print(f"[Phase 6] 保存完了: {elapsed:.2f}秒")
+
+    record_phase_timing(
+        context=ctx,
+        phase="phase6_head_patching",
+        started_at=phase_started,
+        model=spec.name,
+        device=device,
+        samples=len(prompts),
+        metadata={
+            "heads": heads,
+            "sequence_length": args.sequence_length,
+            "batch_size": args.batch_size,
+            "output_path": str(out_path),
+            "max_samples": args.max_samples,
+        },
+        cli_args=sys.argv[1:],
+    )
     print(f"✓ Head Ablation 結果を保存: {out_path}")
 
 

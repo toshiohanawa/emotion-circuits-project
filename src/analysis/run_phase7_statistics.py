@@ -7,6 +7,7 @@ from __future__ import annotations
 import argparse
 import json
 import time
+import sys
 from pathlib import Path
 from typing import List, Optional
 
@@ -24,6 +25,7 @@ from src.analysis.statistics.power_analysis import (
     summarize_power_requirements,
 )
 from src.analysis.statistics.k_selection import collect_k_sweep_results, summarize_k_selection
+from src.utils.timing import record_phase_timing
 
 
 def _save_dataframe(df: pd.DataFrame, path: Path) -> None:
@@ -229,6 +231,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
 
 def main(argv: Optional[List[str]] = None) -> None:
     phase7_start = time.time()
+    phase_started = time.perf_counter()
     parser = build_arg_parser()
     args = parser.parse_args(argv)
     context = ProjectContext(profile_name=args.profile)
@@ -248,6 +251,26 @@ def main(argv: Optional[List[str]] = None) -> None:
     
     phase7_elapsed = time.time() - phase7_start
     print(f"[Phase 7] 統計解析完了: {phase7_elapsed:.2f}秒 ({phase7_elapsed/60:.2f}分)")
+
+    record_phase_timing(
+        context=context,
+        phase="phase7_statistics",
+        started_at=phase_started,
+        model=None,
+        device=args.head_metrics_device,
+        samples=None,
+        metadata={
+            "mode": args.mode,
+            "phase_filter": args.phase_filter,
+            "n_bootstrap": args.n_bootstrap,
+            "n_jobs": args.n_jobs,
+            "alpha": args.alpha,
+            "power_target": args.power_target,
+            "effect_targets": args.effect_targets,
+            "output_dir": str(output_dir),
+        },
+        cli_args=argv if argv is not None else sys.argv[1:],
+    )
 
 
 if __name__ == "__main__":

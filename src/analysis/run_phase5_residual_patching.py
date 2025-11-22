@@ -10,6 +10,7 @@ import pickle
 import time
 from pathlib import Path
 from typing import Dict, List, Sequence
+import sys
 
 import numpy as np
 import torch
@@ -22,6 +23,7 @@ from src.models.activation_patching_large import LargeActivationPatcher
 from src.models.model_registry import get_model_spec
 from src.utils.device import get_default_device_str
 from src.utils.project_context import ProjectContext, profile_help_text
+from src.utils.timing import record_phase_timing
 
 
 def _load_emotion_vectors(path: Path) -> tuple[Dict[str, np.ndarray], Dict]:
@@ -89,6 +91,7 @@ def main():
     else:
         patcher = ActivationPatcher(spec.hf_id, device=device)
     alpha_sched = _alpha_schedule(args.alpha, args.sequence_length)
+    phase_started = time.perf_counter()
 
     # 評価器を初期化（スクリプト全体で1回だけ）
     start_time = time.time()
@@ -137,6 +140,10 @@ def main():
     
     phase5_start = time.time()
     print(f"[Phase 5] 残差パッチングを開始... (感情数: {total_emotions}, 層数: {total_layers}, サンプル数: {len(neutral_prompts)})")
+    
+    # 進捗表示をバッファリング（I/O改善）
+    progress_buffer: List[str] = []
+    PROGRESS_INTERVAL = 5  # 5件ごとにまとめて出力
     
     for emotion, layer_vecs in vector_map.items():
         if emotion == "neutral":
@@ -194,7 +201,13 @@ def main():
             processed += 1
             layer_elapsed = time.time() - layer_start
             total_elapsed = time.time() - phase5_start
-            print(f"  [Phase 5] {emotion} Layer {layer_idx} 完了: {layer_elapsed:.1f}秒 (進捗: {processed}/{total_combinations}, 累計: {total_elapsed/60:.1f}分)")
+            # 進捗情報をバッファに追加（即座に出力しない）
+            progress_buffer.append(f"  [Phase 5] {emotion} Layer {layer_idx} 完了: {layer_elapsed:.1f}秒 (進捗: {processed}/{total_combinations}, 累計: {total_elapsed/60:.1f}分)")
+            
+            # 一定間隔でまとめて出力（I/O改善）
+            if len(progress_buffer) >= PROGRESS_INTERVAL or processed == total_combinations:
+                print("\n".join(progress_buffer))
+                progress_buffer.clear()
     
     phase5_elapsed = time.time() - phase5_start
     print(f"[Phase 5] 残差パッチング完了: {phase5_elapsed:.2f}秒 ({phase5_elapsed/60:.2f}分)")
@@ -221,6 +234,7 @@ def main():
     print(f"[Phase 5] 保存完了: {elapsed:.2f}秒")
     print(f"✓ 残差パッチング結果を保存: {sweep_path}")
 
+    random_path_str = None
     if args.random_control:
         random_start = time.time()
         total_random = total_emotions * total_layers * args.num_random
@@ -274,7 +288,8 @@ def main():
                         entries.append({"prompt": prompt, "text": patched_texts[prompt], "metrics": metrics})
                     random_results[emotion][layer_idx][r_idx][args.alpha] = entries
                     random_processed += 1
-                    if random_processed % 10 == 0:
+                    # 進捗表示をバッファリング（I/O改善）
+                    if random_processed % 10 == 0 or random_processed == total_random:
                         elapsed = time.time() - random_start
                         print(f"  [Phase 5] ランダム対照進捗: {random_processed}/{total_random} ({elapsed/60:.1f}分)")
 
@@ -300,7 +315,28 @@ def main():
         elapsed = time.time() - start_time
         print(f"[Phase 5] 保存完了: {elapsed:.2f}秒")
         print(f"✓ ランダム対照を保存: {rand_path}")
+        random_path_str = str(rand_path)
 
+    record_phase_timing(
+        context=ctx,
+        phase="phase5",
+        started_at=phase_started,
+        model=spec.name,
+        device=device,
+        samples=len(neutral_prompts),
+        metadata={
+            "layers": args.layers,
+            "patch_window": args.patch_window,
+            "sequence_length": args.sequence_length,
+            "alpha": args.alpha,
+            "batch_size": args.batch_size,
+            "random_control": args.random_control,
+            "num_random": args.num_random if args.random_control else 0,
+            "result_path": str(sweep_path),
+            "random_result_path": random_path_str,
+        },
+        cli_args=sys.argv[1:],
+    )
 
 if __name__ == "__main__":
     main()

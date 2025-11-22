@@ -10,6 +10,7 @@ import pickle
 import time
 from pathlib import Path
 from typing import Dict, List, Sequence
+import sys
 
 import numpy as np
 import torch
@@ -19,6 +20,7 @@ from src.config.project_profiles import EMOTION_LABELS, list_profiles
 from src.models.model_registry import get_model_spec
 from src.utils.device import get_default_device
 from src.utils.project_context import ProjectContext, profile_help_text
+from src.utils.timing import record_phase_timing
 
 
 def _load_activation_file(path: Path) -> Dict:
@@ -169,6 +171,7 @@ def main():
     if not act_path.exists():
         raise FileNotFoundError(f"活性ファイルが見つかりません: {act_path}")
 
+    phase_started = time.perf_counter()
     start_time = time.time()
     print(f"[Phase 3] 活性ファイルを読み込み中...")
     data = _load_activation_file(act_path)
@@ -235,6 +238,25 @@ def main():
         )
     elapsed = time.time() - start_time
     print(f"[Phase 3] 保存完了: {elapsed:.2f}秒")
+
+    record_phase_timing(
+        context=ctx,
+        phase="phase3",
+        started_at=phase_started,
+        model=spec.name,
+        device=str(compute_device),
+        samples=int(resid.shape[0]),
+        metadata={
+            "n_components": args.n_components,
+            "use_torch": args.use_torch,
+            "layer_count": len(layer_indices),
+            "activation_path": str(act_path),
+            "vector_output": str(out_vec_dir / f"{spec.name}_vectors_token_based.pkl"),
+            "subspace_output": str(out_sub_dir / f"{spec.name}_subspaces.pkl"),
+        },
+        cli_args=sys.argv[1:],
+    )
+
     print("✓ Phase3 完了: ベクトルとサブスペースを保存しました。")
 
 

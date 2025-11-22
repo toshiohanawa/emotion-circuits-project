@@ -166,13 +166,25 @@ python -m src.analysis.run_phase6_head_screening --model llama3_8b --layers 0 3 
 
 ---
 
-#### 7. 数値検証スクリプト
-**対象**: 新規スクリプト `scripts/verify_refactoring.py`
+#### 7. 数値検証スクリプト ✅ 実装済
+**対象**: `scripts/verify_refactoring.py`
 
 **内容**:
-- Before/After の出力比較
-- 許容範囲内の差分確認（1e-3〜1e-2）
-- スモークテスト用の簡易スクリプト
+- Before/After の成果物（CSV/JSON/JSONL/NPY/PKL）を一括比較
+- `--atol` / `--rtol` で許容差分を制御（既定: 1e-3 / 1e-4）
+- `--profiles baseline baseline_smoke` で統計成果物の標準検証を自動化
+- `--compare-all` により `results/` 配下の主要成果物を網羅的に比較
+
+**利用手順**:
+```bash
+python scripts/verify_refactoring.py \
+  --before /path/to/main_checkout \
+  --after  /path/to/feature_branch \
+  --profiles baseline baseline_smoke \
+  --allow-missing
+```
+
+Slack/PR にはコマンドと結果サマリを貼り付け、数値の不一致が無いことを証明する。
 
 ---
 

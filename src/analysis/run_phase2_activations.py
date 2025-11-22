@@ -10,12 +10,14 @@ import argparse
 import time
 from pathlib import Path
 from typing import Dict, List, Sequence
+import sys
 
 from src.config.project_profiles import EMOTION_LABELS, list_profiles
 from src.data.dataset_loader import load_dataset_for_profile
 from src.models.activation_api import get_activations, save_activation_batch
 from src.models.model_registry import get_model_spec, list_large_models, list_model_names, list_small_models
 from src.utils.project_context import ProjectContext, profile_help_text
+from src.utils.timing import record_phase_timing
 
 
 def _select_prompts_per_emotion(rows: List[Dict[str, str]], max_per_emotion: int | None) -> tuple[List[str], List[str]]:
@@ -71,6 +73,7 @@ def main():
     print(f"✓ プロファイル: {args.profile} / モデル: {spec.pretty_name} / サンプル: {len(prompts)}")
     print(f"  - 層: {list(layers)}")
     
+    phase_started = time.perf_counter()
     start_time = time.time()
     print(f"[Phase 2] 活性抽出を開始...")
     batch = get_activations(spec, prompts=prompts, labels=labels, layers=layers, device=device, hook_pos=args.hook_pos, batch_size=args.batch_size)
@@ -86,6 +89,23 @@ def main():
     save_activation_batch(batch, out_path)
     elapsed = time.time() - start_time
     print(f"[Phase 2] 保存完了: {elapsed:.2f}秒")
+
+    record_phase_timing(
+        context=ctx,
+        phase="phase2",
+        started_at=phase_started,
+        model=spec.name,
+        device=device,
+        samples=len(prompts),
+        metadata={
+            "layers": list(layers),
+            "hook_pos": args.hook_pos,
+            "batch_size": args.batch_size,
+            "max_samples_per_emotion": args.max_samples_per_emotion,
+            "output_path": str(out_path),
+        },
+        cli_args=sys.argv[1:],
+    )
 
     print("✓ Phase2 完了")
 

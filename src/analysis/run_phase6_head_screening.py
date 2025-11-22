@@ -14,6 +14,7 @@ import argparse
 import json
 import statistics
 import time
+import sys
 from pathlib import Path
 from typing import Any, Dict, List, Sequence, Tuple
 
@@ -27,6 +28,7 @@ from src.config.project_profiles import list_profiles
 from src.data.dataset_loader import load_dataset_for_profile
 from src.models.model_registry import get_model_spec
 from src.utils.project_context import ProjectContext, profile_help_text
+from src.utils.timing import record_phase_timing
 from src.models.phase8_large.head_patcher import LargeHeadAblator
 
 
@@ -96,6 +98,7 @@ def main():
     from src.utils.device import get_default_device_str
 
     device = args.device or get_default_device_str()
+    phase_started = time.perf_counter()
     
     start_time = time.time()
     print(f"[Phase 6] 評価器を初期化中...")
@@ -198,6 +201,10 @@ def main():
     phase6_start = time.time()
     print(f"[Phase 6] Head Screening を開始... (層数: {len(layers)}, ヘッド数/層: {n_heads_total}, 総ヘッド数: {total_heads}, サンプル数: {len(prompts)})")
     
+    # 進捗表示をバッファリング（I/O改善）
+    progress_buffer: List[str] = []
+    PROGRESS_INTERVAL = 10  # 10件ごとにまとめて出力
+    
     head_scores: List[Dict] = []
     head_samples: List[Dict] = []
     for layer_idx in layers:
@@ -255,8 +262,13 @@ def main():
             processed += 1
             head_elapsed = time.time() - head_start
             total_elapsed = time.time() - phase6_start
-            if processed % 10 == 0 or processed == total_heads:
-                print(f"  [Phase 6] Layer {layer_idx} Head {head_idx} 完了: {head_elapsed:.1f}秒 (進捗: {processed}/{total_heads}, 累計: {total_elapsed/60:.1f}分)")
+            # 進捗情報をバッファに追加（即座に出力しない）
+            progress_buffer.append(f"  [Phase 6] Layer {layer_idx} Head {head_idx} 完了: {head_elapsed:.1f}秒 (進捗: {processed}/{total_heads}, 累計: {total_elapsed/60:.1f}分)")
+            
+            # 一定間隔でまとめて出力（I/O改善）
+            if len(progress_buffer) >= PROGRESS_INTERVAL or processed == total_heads:
+                print("\n".join(progress_buffer))
+                progress_buffer.clear()
     
     phase6_elapsed = time.time() - phase6_start
     print(f"[Phase 6] Head Screening 完了: {phase6_elapsed:.2f}秒 ({phase6_elapsed/60:.2f}分)")
@@ -279,6 +291,22 @@ def main():
     out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     elapsed = time.time() - start_time
     print(f"[Phase 6] 保存完了: {elapsed:.2f}秒")
+
+    record_phase_timing(
+        context=ctx,
+        phase="phase6_head_screening",
+        started_at=phase_started,
+        model=spec.name,
+        device=device,
+        samples=len(prompts),
+        metadata={
+            "layers": layers,
+            "sequence_length": args.sequence_length,
+            "batch_size": args.batch_size,
+            "output_path": str(out_path),
+        },
+        cli_args=sys.argv[1:],
+    )
     print(f"✓ Head Screening 結果を保存: {out_path}")
 
 

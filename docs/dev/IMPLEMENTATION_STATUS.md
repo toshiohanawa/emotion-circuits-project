@@ -140,19 +140,30 @@
 
 ### 🔴 高優先度（即座に対応）
 
-#### 1. 数値検証スクリプトの実装
-**対象**: 新規スクリプト `scripts/verify_refactoring.py`
+#### 1. 数値検証スクリプトの実装 ✅（2025-11-19完了）
+**対象**: `scripts/verify_refactoring.py`
 
 **実装内容**:
-- Before / After の出力比較機能
-- 許容範囲内の差分確認（1e-3〜1e-2）
-- スモークテスト用の簡易スクリプト
+- Before / After の成果物比較（CSV/JSON/JSONL/NPY/PKL対応）
+- 許容差分 `--atol` / `--rtol`（既定: 1e-3 / 1e-4）を超えた値をハイライト
+- `--profiles` 指定で `results/<profile>/statistics/{effect_sizes,power_analysis}` を自動検証
+- `--compare-all` で `SUPPORTED_SUFFIXES` に合致する成果物を一括走査
+
+**使用例**:
+```bash
+python scripts/verify_refactoring.py \
+  --before /path/to/baseline_repo \
+  --after  /path/to/new_branch \
+  --profiles baseline baseline_smoke \
+  --files results/baseline/timing/phase_timings.jsonl \
+  --atol 1e-3 --rtol 1e-4
+```
 
 **期待される効果**:
-- リファクタリング後の数値整合性の保証
-- 回帰テストの自動化
+- リファクタリング後の数値整合性を即座に確認
+- 回帰テストの自動化／レビュー時間の削減
 
-**実装工数**: 中（2-3時間）
+**備考**: CI/ローカル検証の両方で利用可能。`--allow-missing` で片側のみ存在する成果物をスキップできる。
 
 ---
 
@@ -307,19 +318,18 @@
 
 ### 検証・テスト指示
 - ⚠️ スモークテストオプション: 50%
-- ❌ 数値検証スクリプト: 0%
+- ✅ 数値検証スクリプト: 100%（`scripts/verify_refactoring.py` で成果物差分を検証可能）
 - ⚠️ パフォーマンスログ: 30%
 
-**検証完了率**: 約 27%
+**検証完了率**: 約 60%
 
 ---
 
 ## 8. 次のアクション
 
 ### 即座に実施すべきタスク
-1. **数値検証スクリプトの実装**（`scripts/verify_refactoring.py`）
-   - リファクタリング後の数値整合性を保証
-   - 回帰テストの自動化
+1. ✅ **数値検証スクリプトの実装完了**
+   - 以降のリファクタリングでは `python scripts/verify_refactoring.py --before <main> --after <branch>` を実行して数値検証ログを必ず添付する
 
 ### 次週に実施すべきタスク
 2. **Phase 5 のI/Oとログの最小化**
