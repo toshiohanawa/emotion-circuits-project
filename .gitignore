@@ -68,6 +68,9 @@ results/*/screening/**/*.json
 !results/*/screening/.gitkeep
 !results/*/plots/
 
+# Exclude results_baseline_phase5_io directory (contains very large files)
+results_baseline_phase5_io/
+
 # Model cache (HuggingFace)
 .cache/
 /models/
